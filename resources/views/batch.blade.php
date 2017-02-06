@@ -12,175 +12,19 @@
     ></script>  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script type="text/javascript" src="{!! asset('script/script.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <script>
-        function getObjectFromJson(jsonObject,key)
-        {
-            getObjectFromJson(jsonObject,key,null);
-        }
-
-
-        function getObjectFromJson(jsonObject,key,defaultVal)
-        {
-            if(jsonObject.hasOwnProperty(key)){
-                return jsonObject[key];
-            }else
-            {
-                return (defaultVal==null ?"":defaultVal);
-            }
-        }
-
-
-
 
         $( document ).ready(function() {
 
             var val = '<?php echo $books ?>';
             val=JSON.parse(val);
             console.log(val);
-            for(var i=0;i<val.length;i++){
-
-                $('#dev-table tbody').append('<tr><td>'+getObjectFromJson(val[i],"title")+'</td><td>'
-                    +getObjectFromJson(val[i],"isbn_13")+'</td><td>'
-                    +getObjectFromJson(val[i],"copies")+'</td><td>'
-                    +getObjectFromJson(val[i],"amount")+'</td><td>'+getObjectFromJson(val[i],"total_amount")+'</td><td><span class=\'glyphicon glyphicon-pencil\' data-toggle=\"modal\" data-target=\"#batch\" data-batch='+val[i].batch_id+' data-title='+val[i].title_id+'  ></span></td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+val[i].batch_id+','+val[i].title_id+');\'></span></td></tr>');
-            }
-
-
-
-            $('#batch').on('show.bs.modal', function (event) {
-
-                var button = $(event.relatedTarget);
-                // Button that triggered the modal
-                var title = button.data('title');
-                var batch = button.data('batch');
-
-                $.ajax({
-                    type: "POST",
-                    url: "batchExpand",
-                    data: {'batch_id': batch,'title_id':title},
-                    async: true,
-                    dataType: 'json',
-                    enctype: 'multipart/form-data',
-                    cache: false,
-                    success: function (data) {
-                        console.log(data);
-                        var modal = $(this);
-                        modal.find('.modal-title').text(data[0].title);
-                        $('#expand-table tbody').empty();
-                        populateBatch(data);
-
-
-
-                    },
-                    error: function (err) {
-
-                        console.log(err.responseText);
-
-                    }
-                });
-            });
-
-
-
-
-
-
-
-
+            populateMain(val);
 
 
         });
-
-
-        function deleteID(row,batch_id,title_id)
-        {
-
-            var answer = confirm ("Are you sure you want to delete from the database?");
-            if (answer)
-            {
-
-                $.ajax({
-                    type: "POST",
-                    url: "deleteBobm",
-                    data: {'batch_id': batch_id,'title_id':title_id},
-                    async: true,
-                    dataType: 'json',
-                    enctype: 'multipart/form-data',
-                    cache: false,
-                    success: function (data) {
-                        console.log(data.status);
-                        if(data.status==200) {
-                            var i = row.parentNode.parentNode.rowIndex;
-                            document.getElementById("dev-table").deleteRow(i);
-                        }
-
-                    },
-                    error: function (err) {
-
-                        console.log(err.responseText);
-
-                    }
-                });
-
-
-            }
-
-        }
-
-
-        function populateBatch(jsonVal)
-        {
-
-
-            var jsonObj=jsonVal;
-            //var htmlToAppend='';
-            for(var i=0;i<jsonObj.length;i++){
-
-                $('#expand-table tbody').append('<tr><td>'+getObjectFromJson(jsonObj[i],"title")+'</td><td>'+getObjectFromJson(jsonObj[i],"branchname")+'</td><td>'+getObjectFromJson(jsonObj[i],"branch_order_id")+'</td><td>'+getObjectFromJson(jsonObj[i],"amount")+'</td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteBID(this,'+jsonObj[i].branch_order_id+');\'></span></td></tr>');
-            }
-
-
-        }
-
-
-        function deleteBID(row,BID)
-        {
-
-            var answer = confirm ("Are you sure you want to delete from the database?");
-            if (answer)
-            {
-
-                $.ajax({
-                    type: "POST",
-                    url: "deleteBID",
-                    data: {'id':BID },
-                    async: true,
-                    dataType: 'json',
-                    enctype: 'multipart/form-data',
-                    cache: false,
-                    success: function (data) {
-                        console.log(data.status);
-                        if(data.status==200) {
-                            var i = row.parentNode.parentNode.rowIndex;
-                            document.getElementById("expand-table").deleteRow(i);
-                        }
-
-                    },
-                    error: function (err) {
-
-                        console.log(err.responseText);
-
-                    }
-                });
-
-
-            }
-
-        }
-
-
-
-
 
     </script>
 </head>
@@ -271,55 +115,7 @@
 </div>
 </body>
 <script>
-    (function(){
-        'use strict';
-        var $ = jQuery;
-        $.fn.extend({
-            filterTable: function(){
-                return this.each(function(){
-                    $(this).on('keyup', function(e){
-                        $('.filterTable_no_results').remove();
-                        var $this = $(this),
-                            search = $this.val().toLowerCase(),
-                            target = $this.attr('data-filters'),
-                            $target = $(target),
-                            $rows = $target.find('tbody tr');
 
-                        if(search == '') {
-                            $rows.show();
-                        } else {
-                            $rows.each(function(){
-                                var $this = $(this);
-                                $this.text().toLowerCase().indexOf(search) === -1 ? $this.hide() : $this.show();
-                            })
-                            if($target.find('tbody tr:visible').size() === 0) {
-                                var col_count = $target.find('tr').first().find('td').size();
-                                var no_results = $('<tr class="filterTable_no_results"><td colspan="'+col_count+'">No results found</td></tr>')
-                                $target.find('tbody').append(no_results);
-                            }
-                        }
-                    });
-                });
-            }
-        });
-        $('[data-action="filter"]').filterTable();
-    })(jQuery);
-
-    $(function(){
-        // attach table filter plugin to inputs
-        $('[data-action="filter"]').filterTable();
-
-        $('.container').on('click', '.panel-heading span.filter', function(e){
-            var $this = $(this),
-                $panel = $this.parents('.panel');
-
-            $panel.find('.panel-body').slideToggle();
-            if($this.css('display') != 'none') {
-                $panel.find('.panel-body input').focus();
-            }
-        });
-        $('[data-toggle="tooltip"]').tooltip();
-    })
 </script>
 <style>.row{
         margin-top:40px;

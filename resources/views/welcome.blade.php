@@ -12,90 +12,15 @@
          ></script>  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
       <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+      <script type="text/javascript" src="{!! asset('script/main.js') !!}"></script>
+      <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
+
       <script>
 
-         $(document).ready(
-             function () {
-                 $( "#datepicker_start" ).datepicker({
-                     changeMonth: true,//this option for allowing user to select month
-                     changeYear: true,//this option for allowing user to select from year range
-                     dateFormat: 'yy-mm-dd'
-                 });
-                 $( "#datepicker_end" ).datepicker({
-                     changeMonth: true,//this option for allowing user to select month
-                     changeYear: true,//this option for allowing user to select from year range
-                     dateFormat: 'yy-mm-dd'
-                 });
-             }
-         );
       </script>
    </head>
    <script>
-      $(document).ready(function () {
-         $.ajax({ 
-             type: 'GET',
-             url: 'http://localhost:8081/getBatch',
-             data: { get_param: 'value' }, 
-             success: function (data) {
-                 console.log(data);
-               populateBatch(data);
-               
-             },
-             error:function(err)
-             {
-               console.log(err);
-             }
-         });
-      });
-      
-      function populateBatch(jsonVal)
-      {
 
-
-       var jsonObj=jsonVal;
-       //var htmlToAppend='';
-       for(var i=0;i<jsonObj.length;i++){
-      
-           $('#dev-table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].description+'</td><td>'+jsonObj[i].from_date+'</td><td>'+jsonObj[i].to_date+'</td><td>'+jsonObj[i].created_at+'</td><td>'+jsonObj[i].status+'</td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+jsonObj[i].id+');\'></span></td></tr>');
-       }
-       
-      
-      }
-
-
-
-      function deleteID(row,id)
-      {
-          var answer = confirm ("Are you sure you want to delete from the database?");
-          if (answer)
-          {
-
-              $.ajax({
-                  type: "POST",
-                  url: "deleteBatch",
-                  data: {'id': id},
-                  async: true,
-                  dataType: 'json',
-                  enctype: 'multipart/form-data',
-                  cache: false,
-                  success: function (data) {
-                      console.log(data);
-                      var i = row.parentNode.parentNode.rowIndex;
-                      document.getElementById("dev-table").deleteRow(i);
-
-                  },
-                  error: function (err) {
-
-                      console.log(err);
-
-                  }
-              });
-
-
-      }
-
-      }
-      
       
    </script>
    <body>
@@ -204,57 +129,7 @@
       </div>
       </div>
    </body>
-   <script>
-      (function(){
-          'use strict';
-        var $ = jQuery;
-        $.fn.extend({
-          filterTable: function(){
-            return this.each(function(){
-              $(this).on('keyup', function(e){
-                $('.filterTable_no_results').remove();
-                var $this = $(this), 
-                              search = $this.val().toLowerCase(), 
-                              target = $this.attr('data-filters'), 
-                              $target = $(target), 
-                              $rows = $target.find('tbody tr');
-                              
-                if(search == '') {
-                  $rows.show(); 
-                } else {
-                  $rows.each(function(){
-                    var $this = $(this);
-                    $this.text().toLowerCase().indexOf(search) === -1 ? $this.hide() : $this.show();
-                  })
-                  if($target.find('tbody tr:visible').size() === 0) {
-                    var col_count = $target.find('tr').first().find('td').size();
-                    var no_results = $('<tr class="filterTable_no_results"><td colspan="'+col_count+'">No results found</td></tr>')
-                    $target.find('tbody').append(no_results);
-                  }
-                }
-              });
-            });
-          }
-        });
-        $('[data-action="filter"]').filterTable();
-      })(jQuery);
-      
-      $(function(){
-          // attach table filter plugin to inputs
-        $('[data-action="filter"]').filterTable();
-        
-        $('.container').on('click', '.panel-heading span.filter', function(e){
-          var $this = $(this), 
-            $panel = $this.parents('.panel');
-          
-          $panel.find('.panel-body').slideToggle();
-          if($this.css('display') != 'none') {
-            $panel.find('.panel-body input').focus();
-          }
-        });
-        $('[data-toggle="tooltip"]').tooltip();
-      })
-   </script>
+
    <style>.row{
       margin-top:40px;
       padding: 0 10px;
