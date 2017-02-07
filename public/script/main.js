@@ -23,6 +23,9 @@ $(document).ready(function () {
         success: function (data) {
             console.log(data);
             populateBatch(data);
+            $('#dev-table').DataTable();
+            $(".dataTables_filter").hide();
+
 
         },
         error:function(err)

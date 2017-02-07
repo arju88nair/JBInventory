@@ -12,6 +12,8 @@
          ></script>  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
       <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+      <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
+      <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
       <script type="text/javascript" src="{!! asset('script/main.js') !!}"></script>
       <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
 
@@ -96,7 +98,7 @@
             <div class="col-md-12">
                <div class="panel panel-primary">
                   <div class="panel-heading">
-                     <h3 class="panel-title">Total Drivers</h3>
+                     <h3 class="panel-title">Total Batches</h3>
                      <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
@@ -106,7 +108,7 @@
                   <div class="panel-body">
                      <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
                   </div>
-                  <table class="table table-hover" id="dev-table">
+                  <table class="table table-hover table-striped" id="dev-table">
                      <thead>
                         <tr>
                            <th>#</th>
@@ -146,6 +148,20 @@
       }
       .panel-body{
       display: none;
+      }
+
+      #dev-table_length{
+         margin-left: 1%;
+         padding-top: 1%;
+      }
+      #dev-table_info{
+         margin-left: 1%;
+         padding-top: 2%;
+      }
+      #dev-table_paginate{
+         padding-top: 1%;
+         padding-bottom: 1%;
+         padding-right: 1%;
       }
    </style>
 </html>

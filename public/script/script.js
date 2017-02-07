@@ -18,7 +18,7 @@ $( document ).ready(function() {
             success: function (data) {
                 console.log(data);
                 var modal = $(this);
-                modal.find('.modal-title').text(data[0].title);
+                $('.modal-title').text(data[0].title);
                 $('#expand-table tbody').empty();
                 populateBatch(data);
 
