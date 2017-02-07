@@ -4,7 +4,7 @@ namespace App\Models;
 
 use DB;
 use View;
-
+use Illuminate\Support\Facades\Input;
 use Illuminate\Database\Eloquent\Model;
 
 class Batch extends Model
@@ -145,6 +145,25 @@ class Batch extends Model
 
 
         }
+
+
+
+
+
+        public static function viewBatch($input)
+        {
+            $id=$_GET['batch'];
+            $batchQuery="select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount from
+                        opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
+                        join jbprod.titles t on bo.title_id=t.titleid where bobm.batch_id=$id and bobm.active=1
+                        group by title_id,amount,isbn_13,title,batch_id";
+
+            $batchResult=DB::select($batchQuery);
+            $batchResult=json_encode($batchResult);
+            return View::make('batch')->with('books',$batchResult)->with('batchID',$id);
+        }
+
+
 
 
 }

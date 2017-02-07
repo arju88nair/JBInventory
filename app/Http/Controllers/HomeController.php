@@ -52,4 +52,10 @@ class HomeController extends Controller
         return Batch::deleteBID($request->all());
     }
 
+
+    public function viewBatch(Request $request)
+    {
+        return Batch::viewBatch($request->all());
+    }
+
 }

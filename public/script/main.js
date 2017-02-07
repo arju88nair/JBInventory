@@ -23,7 +23,9 @@ $(document).ready(function () {
         success: function (data) {
             console.log(data);
             populateBatch(data);
-            $('#dev-table').DataTable();
+            $('#dev-table').DataTable( {
+                "order": [[ 5, "desc" ]]
+            } );
             $(".dataTables_filter").hide();
 
 
@@ -41,9 +43,9 @@ function populateBatch(jsonVal)
 
     var jsonObj=jsonVal;
     //var htmlToAppend='';
-    for(var i=0;i<jsonObj.length;i++){
 
-        $('#dev-table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].description+'</td><td>'+jsonObj[i].from_date+'</td><td>'+jsonObj[i].to_date+'</td><td>'+jsonObj[i].created_at+'</td><td>'+jsonObj[i].status+'</td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+jsonObj[i].id+');\'></span></td></tr>');
+    for(var i=0;i<jsonObj.length;i++){
+        $('#dev-table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].description+'</td><td>'+jsonObj[i].from_date+'</td><td>'+jsonObj[i].to_date+'</td><td>'+jsonObj[i].created_at+'</td><td>'+jsonObj[i].status+'</td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+jsonObj[i].id+');\'></span>&nbsp;&nbsp;&nbsp; <a href=\"viewBatch?batch='+jsonObj[i].id+'\"><span class=\"glyphicon glyphicon-circle-arrow-right\"></span></a></span></td></tr>');
     }
 
 

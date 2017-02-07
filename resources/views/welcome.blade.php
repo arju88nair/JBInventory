@@ -17,9 +17,6 @@
       <script type="text/javascript" src="{!! asset('script/main.js') !!}"></script>
       <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
 
-      <script>
-
-      </script>
    </head>
    <script>
 
@@ -32,7 +29,7 @@
                <a class="navbar-brand" href="#">Just Books</a>
             </div>
             <ul class="nav navbar-nav">
-               <li class="active"><a href="#">Batches</a></li>
+               <li class="active"><a href="/">Batches</a></li>
                <li><a href="#">PO</a></li>
             </ul>
          </div>
@@ -118,7 +115,7 @@
                            <th>To</th>
                            <th>Created_at</th>
                            <th>Status</th>
-                           <th>Remove</th>
+                           <th></th>
                         </tr>
                      </thead>
                      <tbody class="populate">

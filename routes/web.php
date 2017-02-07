@@ -29,6 +29,8 @@ Route::post('batchExpand','HomeController@batchExpand');
 
 Route::post('deleteBID','HomeController@deleteBID');
 
+Route::get('viewBatch','HomeController@viewBatch');
+
 Route::get('batch',function ()
 {
     return view('batch');

@@ -36,7 +36,7 @@
             <a class="navbar-brand" href="#">Just Books</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Batches</a></li>
+            <li class="active"><a href="/">Batches</a></li>
             <li><a href="#">PO</a></li>
         </ul>
     </div>
@@ -57,6 +57,8 @@
                                 <thead>
                                 <tr>
                                     <th>Title</th>
+                                    <th>ISBN</th>
+                                    <th>Copies</th>
                                     <th>Branch Name</th>
                                     <th>Branch OrderID</th>
                                     <th>Cost</th>
@@ -112,6 +114,7 @@
     </div>
 </div>
 </div>
+<a href="/" class="btn btn-primary btn-lg" role="button" style="float: right;margin-right: 6.5%">Complete Batch</a>
 </div>
 </body>
 <script>
@@ -133,6 +136,12 @@
     }
     .panel-body{
         display: none;
+    }
+     #batch .modal-dialog {
+        /* new custom width */
+        width: 58%;
+        /* must be half of the width, minus scrollbar on the left (30px) */
+
     }
 </style>
 </html>

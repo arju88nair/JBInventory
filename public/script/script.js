@@ -1,4 +1,9 @@
 $( document ).ready(function() {
+    $('#batch').on('hidden.bs.modal', function () {
+       var total=$("#expand-table >tbody >tr").length;
+
+
+    });
     // Populating the modal for the corresponding edit row
     $('#batch').on('show.bs.modal', function (event) {
 
@@ -6,6 +11,8 @@ $( document ).ready(function() {
         // Button that triggered the modal
         var title = button.data('title');
         var batch = button.data('batch');
+        var rowThis=button.data('row');
+        console.log(rowThis);
 
         $.ajax({
             type: "POST",
@@ -95,7 +102,7 @@ function populateBatch(jsonVal) //Populating the modal
     //var htmlToAppend='';
     for(var i=0;i<jsonObj.length;i++){
 
-        $('#expand-table tbody').append('<tr><td>'+getObjectFromJson(jsonObj[i],"title")+'</td><td>'+getObjectFromJson(jsonObj[i],"branchname")+'</td><td>'+getObjectFromJson(jsonObj[i],"branch_order_id")+'</td><td>'+getObjectFromJson(jsonObj[i],"amount")+'</td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteBID(this,'+jsonObj[i].branch_order_id+');\'></span></td></tr>');
+        $('#expand-table tbody').append('<tr><td>'+getObjectFromJson(jsonObj[i],"title")+'</td><td>'+getObjectFromJson(jsonObj[i],"isbn_13")+'</td><td>'+getObjectFromJson(jsonObj[i],"copies")+'</td><td>'+getObjectFromJson(jsonObj[i],"branchname")+'</td><td>'+getObjectFromJson(jsonObj[i],"branch_order_id")+'</td><td>'+getObjectFromJson(jsonObj[i],"amount")+'</td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteBID(this,'+jsonObj[i].branch_order_id+');\'></span></td></tr>');
     }
 
 
@@ -145,7 +152,7 @@ function populateMain(val) // Populating the main table
         $('#dev-table tbody').append('<tr><td>'+getObjectFromJson(val[i],"title")+'</td><td>'
             +getObjectFromJson(val[i],"isbn_13")+'</td><td>'
             +getObjectFromJson(val[i],"copies")+'</td><td>'
-            +getObjectFromJson(val[i],"amount")+'</td><td>'+getObjectFromJson(val[i],"total_amount")+'</td><td><span class=\'glyphicon glyphicon-pencil\' data-toggle=\"modal\" data-target=\"#batch\" data-batch='+val[i].batch_id+' data-title='+val[i].title_id+'  ></span></td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+val[i].batch_id+','+val[i].title_id+');\'></span></td></tr>');
+            +getObjectFromJson(val[i],"amount")+'</td><td>'+getObjectFromJson(val[i],"total_amount")+'</td><td><span  class=\'glyphicon glyphicon-pencil\' data-toggle=\"modal\" id='+i+'  data-target=\"#batch\" data-batch='+val[i].batch_id+' data-title='+val[i].title_id+' data-row='+i+' ></span></td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+val[i].batch_id+','+val[i].title_id+');\'></span></td></tr>');
     }
 }
 
