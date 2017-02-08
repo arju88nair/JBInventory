@@ -58,4 +58,10 @@ class HomeController extends Controller
         return Batch::viewBatch($request->all());
     }
 
+
+    public function test(Request $request)
+    {
+        return Batch::test($request->all());
+    }
+
 }

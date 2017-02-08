@@ -64,6 +64,7 @@
                         <form role="form" method="post" action="{{ action('HomeController@addBatch') }}"
                               enctype="multipart/form-data"
                               accept-charset="UTF-8">
+
                            <div class="form-group">
                               <label for="name">Batch Name:</label>
                               <input type="text" class="form-control" id="name" name="name" required maxlength="20">
@@ -76,6 +77,10 @@
                               <label for="from" >End Date:</label>
                               <input type="date" class="form-control" id="datepicker_end" name="end" required>
                            </div>
+                            <div class="form-group">
+                                <label for="name">Upload File:</label>
+                                <input id="fileSelect" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                            </div>
                            <div class="form-group">
                               <label for="comment">Description:</label>
                               <textarea class="form-control" rows="5" id="description" maxlength="255" name="description"></textarea>

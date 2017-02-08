@@ -4,11 +4,15 @@ namespace App\Models;
 
 use DB;
 use View;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Database\Eloquent\Model;
 
 class Batch extends Model
 {
+
+    protected static $_parallelImports = 50;
+    protected static $_insertCache = array();
     //
     protected $table = "BATCH";
 
@@ -42,10 +46,72 @@ class Batch extends Model
         $model->to_date=$endDate;
         $model->status="onGOing";
         $model->active=1;
+        $isExcelUpload=false;
+
+
+
+        if($_FILES['file']['name'])
+        {
+            $isExcelUpload=true;
+            $excel=Excel::load($_FILES["file"]["tmp_name"], function($reader) {
+
+            })->get();
+//
+
+
+            $added = 0; $loopCounter=0;
+            $sql = 'INSERT INTO "TEMP_TEST" ("title_id", "count") ';
+            $values = '';
+
+            foreach ($excel[0] as $inputItem) {
+
+                $title=$inputItem["title"];
+                $count=$inputItem["count"];
+                $added ++;
+
+                if(trim($title)=='') continue;
+                if($values =='')
+                {
+                    $values = "select '$title','$count' from dual";
+                }else
+                {
+                    $values = $values. " union all select '$title','$count' from dual";
+                }
+
+
+                $loopCounter++;
+                if ($loopCounter==50)
+                {
+                    $loopCounter=0;
+
+                    echo $sql . $values;
+                    DB::insert($sql . $values);
+                    $values="";
+                 
+                }
+            }
+            if($values !="")
+            {
+                DB::raw($sql . $values);
+                $values="";
+            }
+            die;
+
+
+        }
+
         $isSaved=$model->save();
+
+
 
         if($isSaved){
             $id= $model['id'];
+
+            if($isExcelUpload)
+            {
+                //call a function
+            }
+
             $query="INSERT INTO opac.BRANCH_ORDER_BATCH_MAP (BATCH_ID,BRANCH_ORDER_ID,created_at) ( select $id,id,sysdate from branch_orders where trunc(created_at) >=to_date('$startDate','YYYY-MM-DD') and trunc(created_at) <= to_date('$endDate','YYYY-MM-DD') and state ='Assigned' )";
             $result= DB::insert($query);
             if($result)
@@ -62,10 +128,6 @@ class Batch extends Model
                 return View::make('batch')->with('books',$batchResult)->with('batchID',$id);
             }
             return response(array('message'=>"Something went wrong,Try again"));
-
-
-
-
 
         }
 
@@ -165,5 +227,38 @@ class Batch extends Model
 
 
 
+
+
+//        public static function test($input)
+//        {
+//
+//
+//        }
+
+
+
+   public static function addCaseToInsertCache($col1, $col2)
+    {
+        // maybe do validity checks here and return 0 if an element is not added
+        self::$_insertCache[] = array($col1, $col2);
+        return 1;
+    }
+
+    public static function flushInsertCache()
+    {
+//        $db = self::getDb();
+        $sql = 'INSERT INTO "TEMP_TEST" ("COL1", "COL2")';
+        $values = '';
+        foreach (self::$_insertCache as $insert) {
+            $values .= (empty($values)) ? '' : ' UNION ALL ';
+            $values .= 'SELECT ' .
+                $insert[0] . ', ' .
+                $insert[1] . ', ' .
+                $insert[5] . ' FROM DUAL';
+        } // if using string values, then don't forget to use quotes!
+
+        DB::raw($sql . $values);
+        self::$_insertCache = array();
+    }
 
 }

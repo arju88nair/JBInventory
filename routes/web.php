@@ -31,6 +31,9 @@ Route::post('deleteBID','HomeController@deleteBID');
 
 Route::get('viewBatch','HomeController@viewBatch');
 
+Route::post('test','HomeController@test');
+
+
 Route::get('batch',function ()
 {
     return view('batch');
