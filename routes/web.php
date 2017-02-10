@@ -31,7 +31,18 @@ Route::post('deleteBID','HomeController@deleteBID');
 
 Route::get('viewBatch','HomeController@viewBatch');
 
-Route::post('test','HomeController@test');
+Route::get('vendors',function(){
+
+   return view('vendorSelect');
+
+
+});
+
+
+Route::post('addVendor','HomeController@addVendor');
+
+Route::get('getVendors','HomeController@getVendors');
+
 
 
 Route::get('batch',function ()
@@ -39,4 +50,20 @@ Route::get('batch',function ()
     return view('batch');
 });
 
+Route::get('purchaseOrders',function ()
+{
+    return view('purchaseOrders');
+});
 
+
+Route::get('getBatches','HomeController@getBatches');
+
+Route::get('getPOBatch','HomeController@getPOBatch');
+
+Route::get('getPOVendors','HomeController@getPOVendors');
+
+Route::post('getPODetails','HomeController@getPODetails');
+
+Route::post('getIsbnVendors','HomeController@getIsbnVendors');
+
+Route::post('savePoVendor','HomeController@savePoVendor');

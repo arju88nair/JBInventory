@@ -1,6 +1,8 @@
 
 $(document).ready(
+
     function () {
+        $(".spinner").show();
         $( "#datepicker_start" ).datepicker({
             changeMonth: true,//this option for allowing user to select month
             changeYear: true,//this option for allowing user to select from year range
@@ -21,6 +23,7 @@ $(document).ready(function () {
         url: 'http://localhost:8081/getBatch',
         data: { get_param: 'value' },
         success: function (data) {
+            $(".spinner").hide();
             console.log(data);
             populateBatch(data);
             $('#dev-table').DataTable( {
@@ -56,6 +59,7 @@ function populateBatch(jsonVal)
 function deleteID(row,id)
 {
     var answer = confirm ("Are you sure you want to delete from the database?");
+    $(".spinner").show();
     if (answer)
     {
 
@@ -68,6 +72,7 @@ function deleteID(row,id)
             enctype: 'multipart/form-data',
             cache: false,
             success: function (data) {
+                $(".spinner").hide();
                 console.log(data);
                 var i = row.parentNode.parentNode.rowIndex;
                 document.getElementById("dev-table").deleteRow(i);

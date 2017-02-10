@@ -30,7 +30,8 @@
             </div>
             <ul class="nav navbar-nav">
                <li class="active"><a href="/">Batches</a></li>
-               <li><a href="#">PO</a></li>
+               <li><a href="vendors">Vendors</a></li>
+               <li><a href="purchaseOrders">Purchase Orders</a></li>
             </ul>
          </div>
       </nav>
@@ -43,7 +44,10 @@
             </div>
          @endif
 
-
+             <div class="spinner"  style='display: none'>
+                 <div class="double-bounce1"></div>
+                 <div class="double-bounce2"></div>
+             </div>
          <div id="data"></div>
          <div class="row">
             <div class="col-md-12" id="create" style="padding-bottom: 15px">
@@ -76,6 +80,15 @@
                            <div class="form-group">
                               <label for="from" >End Date:</label>
                               <input type="date" class="form-control" id="datepicker_end" name="end" required>
+                           </div>
+                           <div class="form-group">
+                              <label for="sel1">Select Procurement Type:</label>
+                              <select class="form-control" id="sel1" name="select">
+                                 <option value="1">New Arrivals</option>
+                                 <option value="2">New Branch</option>
+                                 <option value="3">IBT</option>
+                                 <option value="4">Warehouse Procurement</option>
+                              </select>
                            </div>
                             <div class="form-group">
                                 <label for="name">Upload File:</label>
@@ -165,6 +178,69 @@
          padding-bottom: 1%;
          padding-right: 1%;
       }
+   </style>
+   <style>
+   .spinner {
+   /*width: 40px;*/
+   /*height: 40px;*/
+
+   /*position: relative;*/
+   margin: 100px auto;
+   position: fixed;
+   z-index: 999;
+   height: 2em;
+   width: 2em;
+   overflow: show;
+   margin: auto;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 0;
+   }
+   .spinner:before {
+   content: '';
+   display: block;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0,0,0,0.3);
+   }
+
+   .double-bounce1, .double-bounce2 {
+   width: 100%;
+   height: 100%;
+   border-radius: 50%;
+   background-color: #333;
+   opacity: 0.6;
+   position: absolute;
+   top: 0;
+   left: 0;
+
+   -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+   animation: sk-bounce 2.0s infinite ease-in-out;
+   }
+
+   .double-bounce2 {
+   -webkit-animation-delay: -1.0s;
+   animation-delay: -1.0s;
+   }
+
+   @-webkit-keyframes sk-bounce {
+   0%, 100% { -webkit-transform: scale(0.0) }
+   50% { -webkit-transform: scale(1.0) }
+   }
+
+   @keyframes sk-bounce {
+   0%, 100% {
+   transform: scale(0.0);
+   -webkit-transform: scale(0.0);
+   } 50% {
+   transform: scale(1.0);
+   -webkit-transform: scale(1.0);
+   }
+   }
    </style>
 </html>
 

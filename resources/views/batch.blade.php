@@ -12,16 +12,19 @@
     ></script>  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{!! asset('script/script.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <script>
 
         $( document ).ready(function() {
-
+            $(".spinner").show();
             var val = '<?php echo $books ?>';
             val=JSON.parse(val);
             console.log(val);
             populateMain(val);
+
 
 
         });
@@ -37,11 +40,18 @@
         </div>
         <ul class="nav navbar-nav">
             <li class="active"><a href="/">Batches</a></li>
-            <li><a href="#">PO</a></li>
+            <li><a href="vendors">Vendors</a></li>
+            <li><a href="purchaseOrders">Purchase Orders</a></li>
         </ul>
     </div>
 </nav>
 <div class="container">
+    <div class="spinner"  style='display: none'>
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
+    </div>
+
+
     <div id="batch" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -142,6 +152,82 @@
         width: 58%;
         /* must be half of the width, minus scrollbar on the left (30px) */
 
+    }
+    #dev-table_length{
+        margin-left: 1%;
+        padding-top: 1%;
+    }
+    #dev-table_info{
+        margin-left: 1%;
+        padding-top: 2%;
+    }
+    #dev-table_paginate{
+        padding-top: 1%;
+        padding-bottom: 1%;
+        padding-right: 1%;
+    }
+</style>
+<style>
+    .spinner {
+        /*width: 40px;*/
+        /*height: 40px;*/
+
+        /*position: relative;*/
+        margin: 100px auto;
+        position: fixed;
+        z-index: 999;
+        height: 2em;
+        width: 2em;
+        overflow: show;
+        margin: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+    .spinner:before {
+        content: '';
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.3);
+    }
+
+    .double-bounce1, .double-bounce2 {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background-color: #333;
+        opacity: 0.6;
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+        animation: sk-bounce 2.0s infinite ease-in-out;
+    }
+
+    .double-bounce2 {
+        -webkit-animation-delay: -1.0s;
+        animation-delay: -1.0s;
+    }
+
+    @-webkit-keyframes sk-bounce {
+        0%, 100% { -webkit-transform: scale(0.0) }
+        50% { -webkit-transform: scale(1.0) }
+    }
+
+    @keyframes sk-bounce {
+        0%, 100% {
+            transform: scale(0.0);
+            -webkit-transform: scale(0.0);
+        } 50% {
+              transform: scale(1.0);
+              -webkit-transform: scale(1.0);
+          }
     }
 </style>
 </html>

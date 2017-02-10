@@ -1,0 +1,6 @@
+from date,to date,number of books,number of titles and amount
+
+select distinct titleid from  (
+select jt.titleid from jbprod.titles jt join opac.temp_excel_upload tep on tep.title_id=jt.titleid union all
+select jt.titleid from jbprod.titles jt join opac.temp_excel_upload tep on tep.isbn=jt.isbn_13 union all
+select jt.titleid from jbprod.titles jt join opac.temp_excel_upload tep on tep.isbn=jt.isbn_10 )

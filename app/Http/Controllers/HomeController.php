@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PO;
 use Illuminate\Http\Request;
 use App\Models\Batch;
+use App\Models\Vendor;
 
 class HomeController extends Controller
 {
@@ -37,6 +39,10 @@ class HomeController extends Controller
         return Batch::deleteBobm($request->all());
     }
 
+    public function addVendor(Request $request)
+    {
+        return Vendor::addVendor($request->all());
+    }
 
 
 
@@ -63,5 +69,50 @@ class HomeController extends Controller
     {
         return Batch::test($request->all());
     }
+
+
+    public function getVendors(Request $request)
+    {
+        return Vendor::getVendors($request->all());
+    }
+
+    public function getBatches(Request $request)
+    {
+        return PO::getBatches($request->all());
+
+
+    }
+    public function getPOBatch(Request $request)
+    {
+        return PO::getPOBatch($request->all());
+    }
+
+
+
+    public function getPOVendors(Request $request)
+    {
+
+
+        return PO::getPOVendors($request->all());
+    }
+
+
+    public function getPODetails(Request $request)
+    {
+       return PO::getPODetails($request->all());
+    }
+
+
+    public function getIsbnVendors(Request $request)
+    {
+
+        return PO::getIsbnVendors($request->all());
+    }
+
+    public function savePoVendor(Request $request)
+    {
+        return PO::savePoVendor($request->all());
+    }
+
 
 }

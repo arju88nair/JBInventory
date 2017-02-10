@@ -40,6 +40,7 @@ class Batch extends Model
         $startDate= $_POST['start'];
         $endDate=$_POST['end'];
         $description=$_POST['description'];
+        $model->PROCUREMENT_TYPE_ID=$_POST['select'];
         $model->name=$name;
         $model->description=$description;
         $model->from_date=$startDate;
@@ -60,22 +61,25 @@ class Batch extends Model
 
 
             $added = 0; $loopCounter=0;
-            $sql = 'INSERT INTO "TEMP_TEST" ("title_id", "count") ';
+            $sql = 'INSERT INTO "TEMP_EXCEL_UPLOAD" (title_id,isbn,quantity) ';
             $values = '';
 
             foreach ($excel[0] as $inputItem) {
 
-                $title=$inputItem["title"];
+                $title=is_numeric($inputItem["title"]) && strlen($inputItem["title"]) < 8? $inputItem["title"]:-1;
+                $isbn=$inputItem["title"];
                 $count=$inputItem["count"];
+
                 $added ++;
 
                 if(trim($title)=='') continue;
+                $query= "select $title,'$isbn',$count from dual ";;
                 if($values =='')
                 {
-                    $values = "select '$title','$count' from dual";
+                    $values =$query;
                 }else
                 {
-                    $values = $values. " union all select '$title','$count' from dual";
+                    $values = $values. " union all ". $query;
                 }
 
 
@@ -87,6 +91,7 @@ class Batch extends Model
                     echo $sql . $values;
                     DB::insert($sql . $values);
                     $values="";
+
                  
                 }
             }
@@ -95,7 +100,7 @@ class Batch extends Model
                 DB::raw($sql . $values);
                 $values="";
             }
-            die;
+
 
 
         }
@@ -220,6 +225,7 @@ class Batch extends Model
                         join jbprod.titles t on bo.title_id=t.titleid where bobm.batch_id=$id and bobm.active=1
                         group by title_id,amount,isbn_13,title,batch_id";
 
+
             $batchResult=DB::select($batchQuery);
             $batchResult=json_encode($batchResult);
             return View::make('batch')->with('books',$batchResult)->with('batchID',$id);
@@ -237,28 +243,5 @@ class Batch extends Model
 
 
 
-   public static function addCaseToInsertCache($col1, $col2)
-    {
-        // maybe do validity checks here and return 0 if an element is not added
-        self::$_insertCache[] = array($col1, $col2);
-        return 1;
-    }
-
-    public static function flushInsertCache()
-    {
-//        $db = self::getDb();
-        $sql = 'INSERT INTO "TEMP_TEST" ("COL1", "COL2")';
-        $values = '';
-        foreach (self::$_insertCache as $insert) {
-            $values .= (empty($values)) ? '' : ' UNION ALL ';
-            $values .= 'SELECT ' .
-                $insert[0] . ', ' .
-                $insert[1] . ', ' .
-                $insert[5] . ' FROM DUAL';
-        } // if using string values, then don't forget to use quotes!
-
-        DB::raw($sql . $values);
-        self::$_insertCache = array();
-    }
 
 }

@@ -1,11 +1,15 @@
 $( document ).ready(function() {
+
+
     $('#batch').on('hidden.bs.modal', function () {
        var total=$("#expand-table >tbody >tr").length;
 
 
     });
     // Populating the modal for the corresponding edit row
+
     $('#batch').on('show.bs.modal', function (event) {
+        $(".spinner").show();
 
         var button = $(event.relatedTarget);
         // Button that triggered the modal
@@ -23,6 +27,7 @@ $( document ).ready(function() {
             enctype: 'multipart/form-data',
             cache: false,
             success: function (data) {
+                $(".spinner").hide();
                 console.log(data);
                 var modal = $(this);
                 $('.modal-title').text(data[0].title);
@@ -60,6 +65,7 @@ function getObjectFromJson(jsonObject,key,defaultVal) // Validating the existenc
 
 function deleteID(row,batch_id,title_id) //Deleting the row from the main table
 {
+    $(".spinner").show();
 
     var answer = confirm ("Are you sure you want to delete from the database?");
     if (answer)
@@ -74,6 +80,7 @@ function deleteID(row,batch_id,title_id) //Deleting the row from the main table
             enctype: 'multipart/form-data',
             cache: false,
             success: function (data) {
+                $(".spinner").hide();
                 console.log(data.status);
                 if(data.status==200) {
                     var i = row.parentNode.parentNode.rowIndex;
@@ -97,8 +104,9 @@ function deleteID(row,batch_id,title_id) //Deleting the row from the main table
 function populateBatch(jsonVal) //Populating the modal
 {
 
-
+    $(".spinner").hide();
     var jsonObj=jsonVal;
+
     //var htmlToAppend='';
     for(var i=0;i<jsonObj.length;i++){
 
@@ -111,7 +119,7 @@ function populateBatch(jsonVal) //Populating the modal
 
 function deleteBID(row,BID) // Deleting the row from the modal
 {
-
+    $(".spinner").show();
     var answer = confirm ("Are you sure you want to delete from the database?");
     if (answer)
     {
@@ -125,6 +133,7 @@ function deleteBID(row,BID) // Deleting the row from the modal
             enctype: 'multipart/form-data',
             cache: false,
             success: function (data) {
+                $(".spinner").hide();
                 console.log(data.status);
                 if(data.status==200) {
                     var i = row.parentNode.parentNode.rowIndex;
@@ -147,6 +156,8 @@ function deleteBID(row,BID) // Deleting the row from the modal
 
 function populateMain(val) // Populating the main table
 {
+
+
     for(var i=0;i<val.length;i++){
 
         $('#dev-table tbody').append('<tr><td>'+getObjectFromJson(val[i],"title")+'</td><td>'
@@ -154,6 +165,11 @@ function populateMain(val) // Populating the main table
             +getObjectFromJson(val[i],"copies")+'</td><td>'
             +getObjectFromJson(val[i],"amount")+'</td><td>'+getObjectFromJson(val[i],"total_amount")+'</td><td><span  class=\'glyphicon glyphicon-pencil\' data-toggle=\"modal\" id='+i+'  data-target=\"#batch\" data-batch='+val[i].batch_id+' data-title='+val[i].title_id+' data-row='+i+' ></span></td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+val[i].batch_id+','+val[i].title_id+');\'></span></td></tr>');
     }
+    $(".spinner").hide();
+    $('#dev-table').DataTable( {
+        "order": [[ 5, "desc" ]]
+    } );
+    $(".dataTables_filter").hide();
 }
 
 
