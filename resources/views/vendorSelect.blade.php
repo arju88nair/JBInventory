@@ -57,7 +57,7 @@
         <ul class="nav navbar-nav">
             <li ><a href="/">Batches</a></li>
             <li class="active"><a href="vendors">Vendors</a></li>
-            <li><a href="purchaseOrders">Purchase Orders</a></li>
+            <li><a href="getPO">Purchase Orders</a></li>
         </ul>
         </ul>
         <ul class="nav navbar-nav navbar-right">

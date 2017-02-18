@@ -11,7 +11,6 @@
 |
 */
 //use Barryvdh\DomPDF\PDF;
-use Barryvdh\DomPDF\Facade as PDF;
 use Auth;
 
 Route::get('getBatch', 'HomeController@index');
@@ -110,7 +109,7 @@ Route::get('scanner',function(){
 
 Route::post('insertPO','HomeController@insertPO');
 
-Route::get('testPDF','HomeController@testPDF');
+Route::get('PDF','HomeController@testPDF');
 
 Route::get('getPO',function()
 {
@@ -125,7 +124,7 @@ Route::get('getPO',function()
 
 Route::get('getPOs','HomeController@getPO');
 
-//Auth::routes();
+Auth::routes();
 //
 //Route::get('/home', 'HomeController@index');
 

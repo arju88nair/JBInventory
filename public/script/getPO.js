@@ -50,15 +50,13 @@ function populatePO(val)
 {
     for(var i=0;i<val.length;i++){
 
-        $('#totalPO tbody').append('<tr><td class="idrow">'+getObjectFromJson(val[i],"po_id")+'</td><td>'
-            +getObjectFromJson(val[i],"title")+'</td><td>'
-            +getObjectFromJson(val[i],"vendor_id")+'</td><td>'
-            +getObjectFromJson(val[i],"batch_id")+'</td><td>'
-            +getObjectFromJson(val[i],"ordered_date")+'</td></tr>');
+        var j=i+1
+        $('#totalPO tbody').append('<tr><td class="idrow">'+j+'</td><td>'
+            +getObjectFromJson(val[i],"name")+'</td><td>'
+            +getObjectFromJson(val[i],"orderid")+'</td><td>'
+            +getObjectFromJson(val[i],"quantity")+'</td><td> <a href="PDF?id='+val[i].orderid+'&vid='+val[i].vendor_id+'" class="btn btn-info" role="button">Generate PDF</a></td></tr>');
     }
-    var table=$('#totalPO').DataTable( {
-        "order": [[ 1, "asc" ]]
-    } );
+    var table=$('#totalPO').DataTable( );
 
     // $(".dataTables_filter").hide();
     $(".spinner").hide();

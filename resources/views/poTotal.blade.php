@@ -17,7 +17,22 @@
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/getPO.js') !!}"></script>
 
+<style>td
+    {
+        height: 50px;
+        width:50px;
+    }
 
+    #totalPO td
+    {
+        text-align:center;
+        vertical-align:middle;
+    }
+    #totalPO th
+    {
+        text-align:center;
+        vertical-align:middle;
+    }</style>
 </head>
 <script>
 
@@ -49,7 +64,7 @@
         <div class="double-bounce2"></div>
     </div>
 
-        <a href="purchaseOrders" class="btn btn-info btn-lg" role="button" id="navig" style="float: left;display:none" >Generate New Purchase Order</a>
+        <a href="purchaseOrders" class="btn btn-warning btn-lg" role="button" id="navig" style="float: left;display:none;margin-left: 11px" >Generate New Purchase Order</a>
        <br><br><br>
         <div id="POTotalTableDiv" style="display: none;">
             <br><br>
@@ -70,11 +85,11 @@
                         <thead>
                         <tr>
 
-                            <th>PO ID</th>
-                            <th>Title</th>
-                            <th>Vendor ID</th>
-                            <th>Batch ID</th>
-                            <th>Created Date</th>
+                            <th align="center">#</th>
+                            <th align="center">Name</th>
+                            <th align="center">PO Order ID</th>
+                            <th align="center">Qauntity</th>
+                            <th align="center">Generate PDF</th>
 
 
                         </tr>

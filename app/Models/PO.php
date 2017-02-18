@@ -2,6 +2,7 @@
 
 namespace App\Models;
 use DB;
+use View;
 use PDF;
 use Illuminate\Database\Eloquent\Model;
 
@@ -162,8 +163,17 @@ class PO extends Model
 
     public static function test($input)
     {
-        $data="select * from ams.suppliers";
-        $data= DB::select($data);
+        $id=$_GET['id'];
+        $vid=$_GET['vid'];
+        $query="select isbn,title,ordered_quantity,author,publisher,price,discount,price-dis net_price,ordered_quantity*(price-dis) total from
+(select t.isbn,title,ordered_quantity,a.name author,p.name publisher,price,discount,(price*discount/100) dis from
+memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
+left join ams.authors a on t.authorid=a.id
+left join ams.publishers p on t.publisherid=p.id
+left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
+left join ams.suppliers s on s.id=bvp.vendor_id
+where orderid='$id' ) a";
+        $data= DB::select($query);
         $array=[];
         foreach ($data as $row)
         {
@@ -171,16 +181,19 @@ class PO extends Model
         }
 
 
+        $idQuery="select name from ams.suppliers where id=$vid";
+        $vendor=DB::select($idQuery);
+        $vendor= $vendor[0]->name;
 //        $data1=json_encode($data);
-        $pdf = PDF::loadView('pdf',compact('array'));
+        $pdf = PDF::loadView('pdf',compact('array','vendor','id'));
         return $pdf->download('invoice.pdf');
     }
 
 
     public static function getPO()
     {
-        $query="select po_id,title,batch_id ,vendor_id,ordered_quantity,ordered_date from memp.titles t join memp.batch_vendor_po bvp on bvp.title_id=t.id              
-";
+        $query="select b.name,orderid,sum(ordered_quantity) quantity,vendor_id from opac.batch b join memp.batch_vendor_po bvp
+on b.id=bvp.po_id  group by b.name,orderid,vendor_id  ";
         $array=[];
         $response=DB::select($query);
         foreach ($response as $arr)
