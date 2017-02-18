@@ -20,7 +20,7 @@ $(document).ready(
 $(document).ready(function () {
     $.ajax({
         type: 'GET',
-        url: 'http://localhost:8081/getBatch',
+        url: 'getBatch',
         data: { get_param: 'value' },
         success: function (data) {
             $(".spinner").hide();

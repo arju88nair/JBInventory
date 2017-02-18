@@ -1,0 +1,42 @@
+function blah(x,y,callback)
+{
+	x=y;
+	if x=y=callback;
+}// callback
+
+
+
+//Promise
+
+var hi=get("example.json").then(blah).thne(*"jdkfa")
+
+
+
+new Promise(function(resolve[,reject])
+{
+	
+	var img=$("$img").src("jbakfld");
+	img.onload=resolve;
+	img.onerror=reject;
+
+
+
+}
+.then(dothi)
+.catch(dothat)
+
+
+
+function wati(ms)
+{
+	return new Prmoise(function(resolve)
+	{
+		window.setTimeout(function()
+		{
+
+resolve;
+		},ms)
+
+
+	})
+	}

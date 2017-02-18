@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
+use App\User;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +14,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        Eloquent::unguard();
+
+        $this->call('UserTableSeeder');
     }
+}
+class UserTableSeeder extends Seeder
+{
+
+    public function run()
+    {
+        DB::table('users')->delete();
+        User::create(array(
+            'name'     => 'Arjun Naie',
+            'username' => 'nair',
+            'email'    => 'nair@nair.io',
+            'password' => Hash::make('nair'),
+        ));
+    }
+
 }

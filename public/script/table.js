@@ -29,7 +29,7 @@
             });
         }
     });
-    $('[data-action="filter"]').filterTable();
+    // $('[data-action="filter"]').filterTable();
 })(jQuery);
 
 $(function(){

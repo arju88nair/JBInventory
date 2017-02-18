@@ -59,6 +59,10 @@
             <li class="active"><a href="vendors">Vendors</a></li>
             <li><a href="purchaseOrders">Purchase Orders</a></li>
         </ul>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
+        </ul>
     </div>
 </nav>
 <div class="container">
@@ -83,7 +87,7 @@
                 <br>
                 <div class="form-group">
                     <label for="name">Upload File:</label>
-                    &nbsp;&nbsp;&nbsp; <input id="fileSelect" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                    &nbsp;&nbsp;&nbsp; <input id="fileSelect" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required/>
                 </div>
                 <br><br>
 

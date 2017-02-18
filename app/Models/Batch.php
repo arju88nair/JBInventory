@@ -20,6 +20,7 @@ class Batch extends Model
     {
 
 
+
         $response =  self::where('active','=',1)->orderBy('created_at', 'desc')->get();
         if (empty($response) || count($response) == 0) {
             return response(array("message" => "No result found"));

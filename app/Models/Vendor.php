@@ -2,6 +2,7 @@
 
 
 namespace App\Models;
+ini_set('max_execution_time', 5000);
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Facades\Excel;
@@ -34,10 +35,10 @@ class Vendor extends Model
         $vendor_id=$response[0]->vendor_id;
 
         $deleteQuery="delete from opac.VENDOR_STOCK_DETAILS where vendor_id= $vendor_id ";
-        $deleteResponse=DB::delete($deleteQuery);
+//        $deleteResponse=DB::delete($deleteQuery);
 
 
-        Excel::filter('chunk')->load($_FILES["file"]["tmp_name"])->chunk(350, function($results) use ($vendor_id,$isbn_header,$currency_header,$price_header,$stock_header)
+        Excel::filter('chunk')->load($_FILES["file"]["tmp_name"])->chunk(1000, function($results) use ($vendor_id,$isbn_header,$currency_header,$price_header,$stock_header)
         {
             $sql = 'INSERT INTO "VENDOR_STOCK_DETAILS" (vendor_id, isbn,currency,price,quantity) ';
             $values = '';

@@ -16,8 +16,16 @@
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
-        #dev-table td {text-align:center; vertical-align:middle;}
-        th {width: 60px;}
+        .dataTables_filter{
+            margin-top: 8px;
+            margin-right: 1%;
+        }
+        .clickable.filter{
+            display:none;
+        }
+        /*#dev-table td {text-align:center; vertical-align:middle;table-layout:fixed;*/
+            /*width:100%;}*/
+        /*th {width: 50px;}*/
         row{
             margin-top:40px;
             padding: 0 10px;
@@ -74,6 +82,48 @@
             width: 433px;
             margin-left: -10%;
         }
+        #batch-table_length{
+            margin-left: 1%;
+            padding-top: 1%;
+        }
+        #batch-table_info{
+            margin-left: 1%;
+            padding-top: 2%;
+        }
+        #batch-table_paginate{
+            padding-top: 1%;
+            padding-bottom: 1%;
+            padding-right: 1%;
+        }
+        .hideC {
+            display: none;
+        }
+        #vendors-table_length{
+            margin-left: 1%;
+            padding-top: 1%;
+        }
+        #vendors-table_info{
+            margin-left: 1%;
+            padding-top: 2%;
+        }
+        #vendors-table_paginate{
+            padding-top: 1%;
+            padding-bottom: 1%;
+            padding-right: 1%;
+        }
+        td {
+            white-space: nowrap;
+            text-wrap: normal;
+            word-wrap: break-word;
+        }
+        #batch-table tbody tr:hover, tr.selected {
+            background-color: orange;
+            cursor: pointer;
+        }
+        #vendors-table tbody tr:hover, tr.selected {
+            background-color: orange;
+            cursor: pointer;
+        }
         #dev-table_length{
             margin-left: 1%;
             padding-top: 1%;
@@ -87,11 +137,7 @@
             padding-bottom: 1%;
             padding-right: 1%;
         }
-        td {
-            white-space: nowrap;
-            text-wrap: normal;
-            word-wrap: break-word;
-        }
+
     </style>
 
 
@@ -110,12 +156,15 @@
         <ul class="nav navbar-nav">
             <li ><a href="/">Batches</a></li>
             <li><a href="vendors">Vendors</a></li>
-            <li class="active"><a href="purchaseOrders" >Purchase Orders</a></li>
+            <li class="active"><a href="getPO" >Purchase Orders</a></li>
         </ul>
     </div>
 </nav>
 
 <div class="container">
+    <div class="alert alert-success" style="display: none">
+        <strong>Success!</strong> Successfully updated
+    </div>
     <div class="spinner"  style='display: none'>
         <div class="double-bounce1"></div>
         <div class="double-bounce2"></div>
@@ -134,7 +183,7 @@
                         <table class="table" id="expand-table">
                             <thead>
                             <tr>
-                                <th>Vendor Name</th>
+                                <th>Book Name</th>
                                 <th>Quantity</th>
                             </tr>
                             </thead>
@@ -152,47 +201,104 @@
     </div>
 </div>
 
-
-    <div class="container container-table">
-        <div class="row vertical-center-row">
-            <div class="text-center col-md-4 col-md-offset-4" >
-
-                <p><b>Select a Batch</b></p>
-
-                <input class="form-control tags" id="inputdefault" type="text" >
-                <br>
-                <div class="well well-lg" style="display:none">
-                    <table id="main_table">
-                        <tr>
-                            <td class="tab"><b>Total Books </b></td>
-                            <td class="tab"><b>Total PO Created </b></td>
-                            <td class="tab"><b>Total PO Pending </b></td>
-                        </tr>
-                        <tr>
-                            <td class="tab" id="Totalbooks"></td>
-                            <td class="tab"  id="created">0</td>
-                            <td class="tab" id="pending"></td>
-                        </tr>
-                    </table>
+    {{--First Branch--}}
 
 
+<div id="batchTableDiv" style="display: none;">
+        <h3 style="text-align: center">SELECT A BATCH</h3>
+<br><br>
+        <div class="col-md-12" id ="Batchdivision" >
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Total Batches Available</h3>
+                    <div class="pull-right">
+                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                        <i class="glyphicon glyphicon-filter"></i>
+                        </span>
+                    </div>
                 </div>
+                <div class="panel-body">
+                    <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                </div>
+                <table class="table table-hover table-striped" id="batch-table">
+                    <thead>
+                    <tr>
+
+                        <th>Batch ID</th>
+                        <th>Batch Name</th>
+                        <th>From Date</th>
+                        <th>To date</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+
+
+                    </tr>
+                    </thead>
+                    <tbody class="populateBatchTable">
+                    </tbody>
+                </table>
 
             </div>
         </div>
-    </div>
-    <div class="text-center col-md-4 col-md-offset-4" >
-    <label for="tags">Vendors: </label>
-    <input id="tags" name="vendors">
+
+
+        <button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Select Vendor</button>
+
+
     </div>
 
 
+<div id="vendorDivision" style="display: none;">
+    <h3 style="text-align: center">SELECT A VENDOR</h3>
     <br><br>
-
-    <div class="col-md-12" style="display: none;" id ="division">
+    <div class="col-md-12" id ="Batchdivision" >
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">Total Batches</h3>
+                <h3 class="panel-title">Total Vendors Available</h3>
+                <div class="pull-right">
+                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                        <i class="glyphicon glyphicon-filter"></i>
+                        </span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+            </div>
+            <table class="table table-hover table-striped" id="vendors-table">
+                <thead>
+                <tr>
+
+                    <th>Vendor ID</th>
+                    <th>Vendor Name</th>
+                    <th>Phone</th>
+                    <th>City </th>
+                    <th>Discount</th>
+
+
+
+                </tr>
+                </thead>
+                <tbody class="populateVendorTable">
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-success btn-lg "  style="float: left;" onclick="POStatusBack()">Previous</button>
+
+    <button type="button" class="btn btn-success btn-lg disabled" id="VendorsNext" style="float: right;" >Update PO</button>
+
+
+</div>
+
+{{--PO Divisoin--}}
+
+<div id="poDivision" style="display: none;">
+    <div class="col-md-12"  id ="division" >
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Purchase Order</h3>
                 <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
@@ -205,22 +311,75 @@
             <table class="table table-hover table-striped" id="dev-table">
                 <thead>
                 <tr>
-                    <th>#</th>
+
                     <th>Book Name</th>
-                    <th>Quantity</th>
+                    <th>Title Id</th>
                     <th>Quantity Required</th>
-                    <th>Currency</th>
+                    <th>Quantity Available</th>
+                    <th>Quantity Ordered</th>
+                    <th>Total</th>
                     <th>Price</th>
-                    <th>Save</th>
                     <th>Availability</th>
+                    <th class="hideC">Branch ID</th>
 
                 </tr>
                 </thead>
-                <tbody class="populate">
+                <tbody id="populate">
                 </tbody>
             </table>
+
         </div>
     </div>
+    <button class="btn btn-lg btn-success" onclick="poInsertBack()" style="float: left">Previous</button>
+
+    <button class="btn btn-lg btn-success" onclick="array_combine()" style="float: right">Update</button>
+
+
+
+
+</div>
+
+
+    {{--<div class="container container-table">--}}
+        {{--<div class="row vertical-center-row">--}}
+            {{--<div class="text-center col-md-4 col-md-offset-4" >--}}
+
+
+
+
+                {{--<p><b>Select a Batch</b></p>--}}
+
+                {{--<input class="form-control tags" id="inputdefault" type="text" >--}}
+                {{--<br>--}}
+                {{--<div class="well well-lg" style="display:none">--}}
+                    {{--<table id="main_table">--}}
+                        {{--<tr>--}}
+                            {{--<td class="tab"><b>Total Books </b></td>--}}
+                            {{--<td class="tab"><b>Total PO Created </b></td>--}}
+                            {{--<td class="tab"><b>Total PO Pending </b></td>--}}
+                        {{--</tr>--}}
+                        {{--<tr>--}}
+                            {{--<td class="tab" id="Totalbooks"></td>--}}
+                            {{--<td class="tab"  id="created">0</td>--}}
+                            {{--<td class="tab" id="pending"></td>--}}
+                        {{--</tr>--}}
+                    {{--</table>--}}
+
+
+                {{--</div>--}}
+
+            {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+    {{--<div class="text-center col-md-4 col-md-offset-4" >--}}
+    {{--<label for="tags">Vendors: </label>--}}
+    {{--<input id="tags" name="vendors">--}}
+    {{--</div>--}}
+
+
+    <br><br>
+
+
 </div>
 
 

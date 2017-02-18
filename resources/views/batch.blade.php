@@ -41,7 +41,11 @@
         <ul class="nav navbar-nav">
             <li class="active"><a href="/">Batches</a></li>
             <li><a href="vendors">Vendors</a></li>
-            <li><a href="purchaseOrders">Purchase Orders</a></li>
+            <li><a href="getPO">Purchase Orders</a></li>
+        </ul>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
         </ul>
     </div>
 </nav>
