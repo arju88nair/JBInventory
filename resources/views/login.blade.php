@@ -41,8 +41,8 @@
         background: #ffb7b7; /* Gecko Browsers */
     }
     * {
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
+        /*-moz-box-sizing: border-box;*/
+        /*-webkit-box-sizing: border-box;*/
         box-sizing: border-box;
     }
     :focus {outline:none}
@@ -57,11 +57,8 @@
         color:#4c4c4c;
     }
     body{
-        background-color:#292931;
-        background:url(https://i0.imgpile.com/2016/09/14/7861aab59aa07c9499278339f41522c3.jpg)  no-repeat center center fixed;
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
+        background:url({{ asset('img/unnamed.png') }})  no-repeat center center fixed;
+
         background-size: cover;
     }
     form{
@@ -88,8 +85,8 @@
         margin-left:-5px;
         margin-top:3px;
         border-radius:0px 3px 3px 0px;
-        -webkit-border-radius:0px 3px 3px 0px;
-        -moz-border-radius:0px 3px 3px 0px;
+        /*-webkit-border-radius:0px 3px 3px 0px;*/
+        /*-moz-border-radius:0px 3px 3px 0px;*/
     }
     input[type=submit]{
         width: 237px;
@@ -99,8 +96,7 @@
         background-color:#ae6a6a;
         color:#f8f8f8;
         border-radius:2px 2px 12px 12px;
-        -webkit-border-radius:2px 2px 12px 12px;
-        -moz-border-radius:2px 2px 12px 12px;
+
 
     }
     input[type=submit]:hover{
@@ -124,8 +120,8 @@
         border-bottom:solid 1px #cbc9c9;
         border-left:solid 1px #cbc9c9;
         border-radius:3px 0 0 3px;
-        -webkit-border-radius:3px 0 0 3px;
-        -moz-border-radius:3px 0 0 3px;
+        /*-webkit-border-radius:3px 0 0 3px;*/
+        /*-moz-border-radius:3px 0 0 3px;*/
     }
     .wrapper{
         margin:50px auto;

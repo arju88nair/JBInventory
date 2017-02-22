@@ -158,6 +158,9 @@
 
         .t0{width: 662px;margin-left: 46px;margin-top: 23px;font: 11px 'Courier New';}
         .t1{width: 772px;margin-top: 21px;font: 11px 'Courier New';}
+        table, th, td {
+            font-size:10px
+        }
         table {
             font-family: arial, sans-serif;
             border-collapse: collapse;

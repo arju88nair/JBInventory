@@ -30,19 +30,55 @@
         });
 
     </script>
+    <style>
+        .panel-heading{
+            color: #fff;
+            background-color: #2A3F54;
+            border-color: #337ab7;
+        }
+        .navbar-inverse{
+            background-color: #2A3F54;
+        }
+        @font-face {
+            font-family: product;
+            src: url('{{ public_path('fonts/Product sans.ttf') }}');
+        }
+
+        html *{
+            font-family: product;
+
+        }
+        body{
+            background-color: #EDEDED;
+
+        }
+        #dev-table td {text-align:center; vertical-align:middle;}
+        #dev-table th {text-align:center; vertical-align:middle;}
+        #expand-table td {text-align:center; vertical-align:middle;}
+        #expand-table th {text-align:center; vertical-align:middle;}
+
+
+
+    </style>
 </head>
 <script></script>
 <body>
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Just Books</a>
+            <a class="brand" href="#">
+                <!-- UNCOMMENT THE CSS VALUES TO TEST OTHER DIMENTIONS -->
+                <!-- <img src="http://placehold.it/150x80&text=Logo" alt=""> -->
+                <img style= "width: 171px;" src="{{URL::asset('/img/jb.png')}}" alt="">
+            </a>
         </div>
-        <ul class="nav navbar-nav">
+        &nbsp;
+        <ul class="nav navbar-nav" style="margin-left: 3%;">
             <li class="active"><a href="/">Batches</a></li>
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
-        </ul>
+            <li ><a href="scanner">GR</a></li>
+            <li ><a href="reports">Reports</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
@@ -76,7 +112,7 @@
                                     <th>Branch Name</th>
                                     <th>Branch OrderID</th>
                                     <th>Cost</th>
-                                    <th>Edit</th>
+                                    <th>Remove</th>
 
                                 </tr>
                                 </thead>
@@ -97,7 +133,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary">
-                <div class="panel-heading">
+                <div class="panel-heading" style=" background-color: #2A3F54;">
                     <h3 class="panel-title">Total Orders</h3>
                     <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
@@ -169,6 +205,9 @@
         padding-top: 1%;
         padding-bottom: 1%;
         padding-right: 1%;
+    }
+    #ui-tooltip-0{
+        display: none;
     }
 </style>
 <style>

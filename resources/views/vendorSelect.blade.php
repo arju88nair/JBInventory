@@ -15,6 +15,28 @@
     <script type="text/javascript" src="{!! asset('script/vendor.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+        .panel-heading{
+            color: #fff;
+            background-color: #2A3F54;
+            border-color: #337ab7;
+        }
+        .navbar-inverse{
+            background-color: #2A3F54;
+        }
+        @font-face {
+            font-family: product;
+            src: url('{{ public_path('fonts/Product sans.ttf') }}');
+        }
+
+        html *{
+            font-family: product;
+        }
+
+
+
+    </style>
     <style>
         .ui-autocomplete {
             max-height: 100px;
@@ -52,13 +74,19 @@
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Just Books</a>
+            <a class="brand" href="#">
+                <!-- UNCOMMENT THE CSS VALUES TO TEST OTHER DIMENTIONS -->
+                <!-- <img src="http://placehold.it/150x80&text=Logo" alt=""> -->
+                <img style= "width: 171px;" src="{{URL::asset('/img/jb.png')}}" alt="">
+            </a>
         </div>
-        <ul class="nav navbar-nav">
+        &nbsp;
+        <ul class="nav navbar-nav" style="margin-left: 3%;">
             <li ><a href="/">Batches</a></li>
             <li class="active"><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
-        </ul>
+            <li ><a href="scanner">GR</a></li>
+            <li ><a href="reports">Reports</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>

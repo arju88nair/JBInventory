@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\report;
 use View;
 use Auth;
 use Illuminate\Support\Facades\Input;
@@ -187,5 +188,24 @@ class HomeController extends Controller
     {
         Auth::logout(); // log the user out of our application
         return Redirect::to('login'); // redirect the user to the login screen
+    }
+
+
+
+    public function saveGR(Request $request)
+    {
+        return PO::saveGR($request->all());
+    }
+
+
+    public function summaryReport(Request $request)
+    {
+        return report::summaryReport($request->all());
+    }
+
+
+    public function detailedReport(Request $request)
+    {
+        return report::detailedReport($request->all());
     }
 }

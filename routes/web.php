@@ -13,6 +13,7 @@
 //use Barryvdh\DomPDF\PDF;
 use Auth;
 
+
 Route::get('getBatch', 'HomeController@index');
 
 Route::get('/',function(){
@@ -135,3 +136,28 @@ Route::get('login', array('uses' => 'HomeController@showLogin'));
 Route::post('login', array('uses' => 'HomeController@doLogin'));
 
 Route::get('logout', array('uses' => 'HomeController@doLogout'));
+
+Route::post('savegr',array('uses' => 'HomeController@saveGR'));
+
+Route::get('dashboard',function(){
+    return view('blank');
+});
+
+
+Route::get('reports',function()
+{
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+    return view('reports');
+});
+
+
+Route::get('summaryReport','HomeController@summaryReport');
+
+Route::get('detailedReport','HomeController@detailedReport');
+
+

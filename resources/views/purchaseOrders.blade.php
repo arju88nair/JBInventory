@@ -15,6 +15,33 @@
     <script type="text/javascript" src="{!! asset('script/po.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+        .panel-heading{
+            color: #fff;
+            background-color: #2A3F54;
+            border-color: #337ab7;
+        }
+        .navbar-inverse{
+            background-color: #2A3F54;
+        }
+        @font-face {
+            font-family: product;
+            src: url('{{ public_path('fonts/Product sans.ttf') }}');
+        }
+
+        html *{
+            font-family: product;
+
+        }
+
+        body{
+            background-color: #EDEDED;
+
+        }
+
+
+    </style>
     <style>
         .dataTables_filter{
             margin-top: 8px;
@@ -137,6 +164,12 @@
             padding-bottom: 1%;
             padding-right: 1%;
         }
+        #dev-table td {text-align:center; vertical-align:middle;}
+        #dev-table th {text-align:center; vertical-align:middle;}
+        #vendors-table td {text-align:center; vertical-align:middle;}
+        #vendors-table th {text-align:center; vertical-align:middle;}
+        #batch-table td {text-align:center; vertical-align:middle;}
+        #batch-table th {text-align:center; vertical-align:middle;}
 
     </style>
 
@@ -148,18 +181,28 @@
 </script>
 <body>
 <div>
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Just Books</a>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="brand" href="#">
+                    <!-- UNCOMMENT THE CSS VALUES TO TEST OTHER DIMENTIONS -->
+                    <!-- <img src="http://placehold.it/150x80&text=Logo" alt=""> -->
+                    <img style= "width: 171px;" src="{{URL::asset('/img/jb.png')}}" alt="">
+                </a>
+            </div>
+            &nbsp;
+            <ul class="nav navbar-nav" style="margin-left: 3%;">
+                <li ><a href="/">Batches</a></li>
+                <li><a href="vendors">Vendors</a></li>
+                <li class="active"><a href="getPO">Purchase Orders</a></li>
+                <li ><a href="scanner">GR</a></li>
+                <li ><a href="reports">Reports</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
+            </ul>
         </div>
-        <ul class="nav navbar-nav">
-            <li ><a href="/">Batches</a></li>
-            <li><a href="vendors">Vendors</a></li>
-            <li class="active"><a href="getPO" >Purchase Orders</a></li>
-        </ul>
-    </div>
-</nav>
+    </nav>
 
 <div class="container">
     <div class="alert alert-success" style="display: none">
@@ -209,7 +252,7 @@
 <br><br>
         <div class="col-md-12" id ="Batchdivision" >
             <div class="panel panel-primary">
-                <div class="panel-heading">
+                <div class="panel-heading" style="background-color: #2A3F54;">
                     <h3 class="panel-title">Total Batches Available</h3>
                     <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
@@ -253,7 +296,7 @@
     <br><br>
     <div class="col-md-12" id ="Batchdivision" >
         <div class="panel panel-primary">
-            <div class="panel-heading">
+            <div class="panel-heading" style="background-color: #2A3F54;">
                 <h3 class="panel-title">Total Vendors Available</h3>
                 <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
@@ -297,7 +340,7 @@
 <div id="poDivision" style="display: none;">
     <div class="col-md-12"  id ="division" >
         <div class="panel panel-primary">
-            <div class="panel-heading">
+            <div class="panel-heading" style="background-color: #2A3F54;">
                 <h3 class="panel-title">Purchase Order</h3>
                 <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
@@ -321,6 +364,7 @@
                     <th>Price</th>
                     <th>Availability</th>
                     <th class="hideC">Branch ID</th>
+                    <th class="hideC">ISBN</th>
 
                 </tr>
                 </thead>

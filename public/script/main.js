@@ -48,7 +48,10 @@ function populateBatch(jsonVal)
     //var htmlToAppend='';
 
     for(var i=0;i<jsonObj.length;i++){
-        $('#dev-table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].description+'</td><td>'+jsonObj[i].from_date+'</td><td>'+jsonObj[i].to_date+'</td><td>'+jsonObj[i].created_at+'</td><td>'+jsonObj[i].status+'</td><td><span class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+jsonObj[i].id+');\'></span>&nbsp;&nbsp;&nbsp; <a href=\"viewBatch?batch='+jsonObj[i].id+'\"><span class=\"glyphicon glyphicon-circle-arrow-right\"></span></a></span></td></tr>');
+        var from=jsonObj[i].from_date.slice(0,-8);
+        var to=jsonObj[i].to_date.slice(0,-8);
+
+        $('#dev-table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].description+'</td><td>'+from+'</td><td>'+to+'</td><td>'+jsonObj[i].created_at+'</td><td>'+jsonObj[i].status+'</td><td><span style="cursor: pointer; cursor: hand; " class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+jsonObj[i].id+');\'></span>&nbsp;&nbsp;&nbsp; <a href=\"viewBatch?batch='+jsonObj[i].id+'\"><span class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px"></span></a></span></td></tr>');
     }
 
 
@@ -87,5 +90,7 @@ function deleteID(row,id)
 
 
     }
+    $(".spinner").hide();
+
 
 }

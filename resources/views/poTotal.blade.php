@@ -17,6 +17,31 @@
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/getPO.js') !!}"></script>
 
+    <style>
+        .panel-heading{
+            color: #fff;
+            background-color: #2A3F54;
+            border-color: #337ab7;
+        }
+        .navbar-inverse{
+            background-color: #2A3F54;
+        }
+        @font-face {
+            font-family: product;
+            src: url('{{ public_path('fonts/Product sans.ttf') }}');
+        }
+
+        html *{
+            font-family: product;
+        }
+
+        body{
+            background-color: #EDEDED;
+
+        }
+
+
+    </style>
 <style>td
     {
         height: 50px;
@@ -32,7 +57,9 @@
     {
         text-align:center;
         vertical-align:middle;
-    }</style>
+    }
+    #totalPO td {text-align:center; vertical-align:middle;}
+    #totalPO th {text-align:center; vertical-align:middle;}</style>
 </head>
 <script>
 
@@ -42,13 +69,19 @@
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Just Books</a>
+            <a class="brand" href="#">
+                <!-- UNCOMMENT THE CSS VALUES TO TEST OTHER DIMENTIONS -->
+                <!-- <img src="http://placehold.it/150x80&text=Logo" alt=""> -->
+                <img style= "width: 171px;" src="{{URL::asset('/img/jb.png')}}" alt="">
+            </a>
         </div>
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Batches</a></li>
+        &nbsp;
+        <ul class="nav navbar-nav" style="margin-left: 3%;">
+            <li ><a href="/">Batches</a></li>
             <li><a href="vendors">Vendors</a></li>
-            <li><a href="getPO">Purchase Orders</a></li>
-        </ul>
+            <li class="active"><a href="getPO">Purchase Orders</a></li>
+            <li ><a href="scanner">GR</a></li>
+            <li ><a href="reports">Reports</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
@@ -70,7 +103,7 @@
             <br><br>
             <div class="col-md-12" id ="Totaldivision" >
                 <div class="panel panel-primary">
-                    <div class="panel-heading">
+                    <div class="panel-heading" style="">
                         <h3 class="panel-title">Total POs</h3>
                         <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">

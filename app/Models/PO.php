@@ -145,18 +145,21 @@ class PO extends Model
             $quantity= $cell[5];
             $titleid=$cell[1];
             $b_id=$cell[8];
+            $isbn=$cell[9];
             $bid=explode(",",$b_id);
             foreach ($bid as $branch)
             {
-               $query= "update opac.branch_order_batch_map set vendor_id=$vId where batch_id=$bId and branch_order_id=$branch";
-               DB::update($query);
+                $ibtrQUery="update opac.ibtrs set state='InProgress',po_no=$bId where id=(select ibtr_id from opac.branch_orders where id=$branch)";
+                DB::update($ibtrQUery);
+                $query= "update opac.branch_order_batch_map set vendor_id=$vId where batch_id=$bId and branch_order_id=$branch";
+                DB::update($query);
             }
             $po_id=$bId."_".$vId;
-            $query="insert into memp.BATCH_VENDOR_PO (po_id,vendor_id,title_id,ordered_quantity,ordered_date,ORDERID) VALUES ($bId,$vId,$titleid,$quantity,sysdate,'$po_id')";
+            $query="insert into memp.BATCH_VENDOR_PO (po_id,vendor_id,title_id,ordered_quantity,ordered_date,ORDERID,isbn) VALUES ($bId,$vId,$titleid,$quantity,sysdate,'$po_id','$isbn')";
             DB::insert($query);
         }
 
-        return "success";
+        return response(array('code' => '0', "status" => "success", 'statusCode' => 200, 'message' => 'Successfully Saved'))->header('Content-Type', 'application/json');
 
     }
 
@@ -192,8 +195,8 @@ where orderid='$id' ) a";
 
     public static function getPO()
     {
-        $query="select b.name,orderid,sum(ordered_quantity) quantity,vendor_id from opac.batch b join memp.batch_vendor_po bvp
-on b.id=bvp.po_id  group by b.name,orderid,vendor_id  ";
+        $query="select b.name,orderid,sum(ordered_quantity) quantity,vendor_id,po_id from opac.batch b join memp.batch_vendor_po bvp
+on b.id=bvp.po_id  group by b.name,orderid,vendor_id,po_id    ";
         $array=[];
         $response=DB::select($query);
         foreach ($response as $arr)
@@ -205,6 +208,68 @@ on b.id=bvp.po_id  group by b.name,orderid,vendor_id  ";
         return json_encode($array);
     }
 
+
+    public static function saveGR($input)
+    {
+
+        $batch=$_POST['batch'];
+        $order=$_POST['order'];
+        $isbn=$_POST['isbn'];
+        if(count($isbn)==0 || empty($isbn))
+        {
+            return response(array('code' => '1', "status" => "failure", 'statusCode' => 500, 'message' => 'No ISBNs Sent'))->header('Content-Type', 'application/json');
+        }
+        $vendor=$_POST['vendor'];
+        $invoice=$_POST['invoice'];
+        $array=array();
+        foreach ($isbn as $item)
+        {
+            array_push($array,$item[0]);
+        }
+        $vals = array_count_values($array);
+        $isbn_array=array();
+
+        foreach ($vals as $index => $val) {
+            array_push($isbn_array,array("isbn"=>$index,"count"=>$val));
+        }
+        foreach($isbn_array as $item)
+        {
+             $isbn=$item['isbn'];
+             $count=$item['count'];
+             $query="insert into opac.batch_po_invoice_details (batch_id,po_id,invoice,isbn,quantity_recieved,created_at) values ($batch,'$order','$invoice','$isbn',$count,sysdate)";
+            $result= DB::insert($query);
+        }
+
+        if(!$result)
+        {
+            return response(array('code' => '1', "status" => "failure", 'statusCode' => 500, 'message' => 'Please Try Again'))->header('Content-Type', 'application/json');
+
+        }
+
+        $statusQuery=" 
+                    select b.id,b.name,nvl(invoice,'Invoice Not Available') invoice,nvl(isbn,'Not Recieved') isbn,ordered_quantity oq,nvl(quantity_recieved,0) qr,
+                    case when ordered_quantity=nvl(quantity_recieved,0) then 'completed'
+                    when ordered_quantity<nvl(quantity_recieved,0) then 'Recieved More'
+                    when ordered_quantity>nvl(quantity_recieved,0) then 'Not completed'
+                    end as final
+                    from
+                    opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id
+                    left join opac.batch_po_invoice_details bpid on (bvp.orderid=bpid.po_id and bvp.isbn=bpid.isbn)
+                    where b.id=$batch";
+
+        $response=DB::select($statusQuery);
+        $statusArray=[];
+        foreach ($response as $item) {
+            array_push($statusArray,$item);
+            
+        }
+
+        return $statusArray;
+        return response(array('code' => '0', "status" => "success", 'statusCode' => 200, 'message' => 'Successfully Saved'))->header('Content-Type', 'application/json');
+
+
+//        return json_encode($isbn.$batch.$order);
+    }
 
 }
 
