@@ -31,6 +31,8 @@ Route::get('/',function(){
 
 Route::post('createBatch','HomeController@addBatch');
 
+Route::post('createBatchPage','HomeController@createBatchPage');
+
 Route::post('deleteBatch','HomeController@deleteBatch');
 
 Route::post('deleteBobm','HomeController@deleteBobm');
@@ -140,7 +142,8 @@ Route::get('logout', array('uses' => 'HomeController@doLogout'));
 Route::post('savegr',array('uses' => 'HomeController@saveGR'));
 
 Route::get('dashboard',function(){
-    return view('blank');
+    return \Illuminate\Support\Facades\Hash::make('adminUser');
+    return view('pdf');
 });
 
 
@@ -160,4 +163,90 @@ Route::get('summaryReport','HomeController@summaryReport');
 
 Route::get('detailedReport','HomeController@detailedReport');
 
+Route::get('getPoArray','HomeController@getPoArray');
+
+Route::get('invoiceView',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+
+    return view('invoiceReport');
+
+
+});
+
+
+Route::get('getInvoicePOs','HomeController@getInvoicePOs');
+
+
+Route::get('catalogue',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+
+    return view('catalogue');
+
+
+});
+
+
+Route::get('viewPOPDF','HomeController@viewPOPDF');
+
+
+Route::get('catalogueUpdate','HomeController@catalogueUpdate');
+
+Route::get('catalogueNewUpdate','HomeController@catalogueNewUpdate');
+
+Route::get('branchInvoice',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+
+    return view('branchInvoice');
+
+
+});
+
+
+Route::get('catalogueGetBatch','HomeController@catalogueGetBatch');
+
+
+Route::get('catalogueTable','HomeController@catalogueTable');
+
+Route::get('cataloguePDF','HomeController@cataloguePDF');
+
+Route::get('giftCatalogue',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+
+    return view('giftCatalogue');
+
+
+});
+
+
+Route::get("getGiftBranch","HomeController@getGiftBranch");
+
+
+Route::get('getGiftBatch','HomeController@getGiftBatch');
+
+
+Route::post('insertGift','HomeController@insertGift');
 

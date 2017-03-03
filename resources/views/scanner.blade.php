@@ -68,7 +68,7 @@
 
 </script>
 <body>
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="brand" href="#">
@@ -84,15 +84,21 @@
             <li><a href="getPO">Purchase Orders</a></li>
             <li class="active"><a href="scanner">GR</a></li>
             <li ><a href="reports">Reports</a></li>
+            <li ><a href="catalogue">Catalogue</a></li>
+            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li ><a href="branchInvoice">Branch Invoice</a></li>
+
+
+
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
         </ul>
     </div>
 </nav>
-<div class="container">
+<div class="container" style="margin-top: 6%">
 
-    <div class="alert alert-warning" style="display: none;">
+    <div class="alert alert-danger" style="display: none;">
         <strong>Notice!</strong> Scanned book is not present in the selected Purchase Order
     </div>
 
@@ -137,13 +143,31 @@
 
             </div>
         </div>
+        {{--<form class="form-inline">--}}
+
+            {{--<div class="col-xs-3 form-group" id="inputDiv" style="display: none">--}}
+                {{--<label for="usr">Enter Invoice Number:</label>--}}
+                {{--<input type="text" class="form-control"  id="invoiceInput" oninput="changeFunciton()"  required>--}}
+            {{--</div>--}}
+            {{--<div class="col-xs-3 form-group " id="inputDivAmout" style="display: none">--}}
+                {{--<label for="usr">Enter Invoice Total Amount:</label>--}}
+                {{--<input type="text" class="form-control"  id="invoiceInput" oninput="changeFunciton()" required>--}}
+            {{--</div>--}}
+
+
+            {{----}}
+        {{--</form>--}}
+
         <div class="col-xs-3" id="inputDiv" style="display: none">
             <label for="usr">Enter Invoice Number:</label>
-            <input type="text" class="form-control"  id="invoiceInput" oninput="changeFunciton()">
+            <input type="text" class="form-control"  id="invoiceInput" oninput="changeFunciton()"  required>
+        </div>
+        <div class="col-xs-3" id="inputDivAmout" style="display: none">
+            <label for="usr">Enter Invoice Total Amount:</label>
+            <input type="number" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control"  id="invoiceInputAmount" oninput="changeFuncitonInput()" required>
         </div>
         <br>
         <button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Start Scanning</button>
-
 
 
 
@@ -194,6 +218,7 @@
 
     <div id="isbnTable" style="display: none;">
         <h3 style="text-align: center">Start Scanning</h3>
+        <h4 style="text-align: center" id="count"></h4>
         <br><br>
         <div class="col-md-12" id ="Totaldivision" >
             <div class="panel panel-primary">
@@ -231,8 +256,9 @@
         <button type="button" class="btn btn-success btn-lg " id="saveGR" style="float: right;"  onclick="saveisbn()">Submit</button>
 
     </div>
-</div>
 
+</div>
+<br><br><br><br>
 </body>
 
 <style>.row{

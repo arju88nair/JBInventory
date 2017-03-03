@@ -66,7 +66,7 @@
 
 </script>
 <body>
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="brand" href="#">
@@ -82,13 +82,19 @@
             <li class="active"><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
             <li ><a href="reports">Reports</a></li>
+            <li ><a href="catalogue">Catalogue</a></li>
+            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li ><a href="branchInvoice">Branch Invoice</a></li>
+
+
+
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
         </ul>
     </div>
 </nav>
-<div class="container">
+<div class="container" style="margin-top: 6%">
 
 
 
@@ -123,6 +129,7 @@
                             <th align="center">PO Order ID</th>
                             <th align="center">Qauntity</th>
                             <th align="center">Generate PDF</th>
+                            <th align="center">View</th>
 
 
                         </tr>
@@ -138,6 +145,56 @@
 
 
         </div>
+
+
+
+        <div id="viewPO" style="display: none;">
+
+            {{--<button style="border: 2px solid lightblue;background-color: white;float: left;margin-left: 13px;" type="button" class="btn btn-outline-primary" ><span class="glyphicon glyphicon-menu-left" onclick="backView()"></span> &nbsp; Previous</button>--}}
+            <br><br>
+            <br><br>
+
+            <div class="col-md-12" id ="Totaldivision" >
+            <div class="panel panel-primary">
+                <div class="panel-heading" style="">
+                    <h3 class="panel-title">Total POs</h3>
+                    <div class="pull-right">
+                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                        <i class="glyphicon glyphicon-filter"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                </div>
+                <table class="table table-hover table-striped" id="viewPO">
+                    <thead>
+                    <tr>
+
+                        <th align="center">#</th>
+                        <th align="center">Name</th>
+                        <th align="center">ISBN</th>
+                        <th align="center">Ordered Qauntity</th>
+                        <th align="center">Price</th>
+                        <th align="center">Discount</th>
+                        <th align="center">Net Price</th>
+                        <th align="center">Total Price</th>
+
+
+
+                    </tr>
+                    </thead>
+                    <tbody class="populatePOTable">
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+
+
+    </div>
 </div>
 </div>
 </div>

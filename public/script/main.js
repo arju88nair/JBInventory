@@ -51,7 +51,7 @@ function populateBatch(jsonVal)
         var from=jsonObj[i].from_date.slice(0,-8);
         var to=jsonObj[i].to_date.slice(0,-8);
 
-        $('#dev-table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].description+'</td><td>'+from+'</td><td>'+to+'</td><td>'+jsonObj[i].created_at+'</td><td>'+jsonObj[i].status+'</td><td><span style="cursor: pointer; cursor: hand; " class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+jsonObj[i].id+');\'></span>&nbsp;&nbsp;&nbsp; <a href=\"viewBatch?batch='+jsonObj[i].id+'\"><span class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px"></span></a></span></td></tr>');
+        $('#dev-table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].description+'</td><td>'+from+'</td><td>'+to+'</td><td>'+jsonObj[i].created_at+'</td><td>'+jsonObj[i].p_name+'</td><td>'+jsonObj[i].status+'</td><td><span style="cursor: pointer; cursor: hand; " class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+jsonObj[i].id+');\'></span>&nbsp;&nbsp;&nbsp; <a href=\"viewBatch?batch='+jsonObj[i].id+'\"><span class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px"></span></a></span></td></tr>');
     }
 
 
@@ -91,6 +91,28 @@ function deleteID(row,id)
 
     }
     $(".spinner").hide();
+
+
+}
+
+
+function triggered()
+{
+
+    if($("#sel1").val() == "5"|| $("#sel1").val()== 5) {
+        $("#datepicker_start").attr('disabled', 'disabled');
+        $("#datepicker_end").attr('disabled', 'disabled');
+    }
+    else
+        {
+        $("#datepicker_start").removeAttr('disabled');
+        $("#datepicker_end").removeAttr('disabled');
+    }
+    if($("#sel1").val() == "6"|| $("#sel1").val()== 6) {
+        $("#datepicker_start").attr('disabled', 'disabled');
+        $("#datepicker_end").attr('disabled', 'disabled');
+    }
+
 
 
 }

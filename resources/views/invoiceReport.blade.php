@@ -14,10 +14,36 @@
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="{!! asset('script/reports.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('script/invoice.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
 
     <style>
+        #totalPO_length{
+            margin-left: 1%;
+            padding-top: 1%;
+        }
+        #totalPO_info{
+            margin-left: 1%;
+            padding-top: 2%;
+        }
+        #totalPO_paginate{
+            padding-top: 1%;
+            padding-bottom: 1%;
+            padding-right: 1%;
+        }
+        #invoice_length{
+            margin-left: 1%;
+            padding-top: 1%;
+        }
+        #invoice_info{
+            margin-left: 1%;
+            padding-top: 2%;
+        }
+        #invoice_paginate{
+            padding-top: 1%;
+            padding-bottom: 1%;
+            padding-right: 1%;
+        }
         .ui-tooltip-content{
             display: none;
         }
@@ -42,9 +68,17 @@
             background-color: #EDEDED;
 
         }
-        #dev-table td {text-align:center; vertical-align:middle;}
-        #dev-table th {text-align:center; vertical-align:middle;}
-
+        #totalPO td {text-align:center; vertical-align:middle;}
+        #totalPO th {text-align:center; vertical-align:middle;}
+        #invoice td {text-align:center; vertical-align:middle;}
+        #invoice th {text-align:center; vertical-align:middle;}
+        #totalPO tbody tr:hover, tr.selected {
+            background-color: orange;
+            cursor: pointer;
+        }
+        .hideC{
+            display: none;
+        }
 
     </style>
 </head>
@@ -68,14 +102,8 @@
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
-            <li class="active"><a href="reports">Reports</a></li>
-            <li ><a href="catalogue">Catalogue</a></li>
-            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
-            <li ><a href="branchInvoice">Branch Invoice</a></li>
-
-
-
-            {{--<li ><a href="invoiceView">Invoice</a></li>--}}
+            <li ><a href="reports">Reports</a></li>
+            {{--<li class="active"><a href="reports">Invoice</a></li>--}}
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
@@ -97,17 +125,17 @@
     </div>
     <div id="data"></div>
     <div class="row">
-        {{--<div class="col-md-12" id="create" style="padding-bottom: 15px">--}}
-            {{--<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#Batch">Create Batch</button>--}}
-        {{--</div>--}}
+    {{--<div class="col-md-12" id="create" style="padding-bottom: 15px">--}}
+    {{--<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#Batch">Create Batch</button>--}}
+    {{--</div>--}}
 
 
-        <!-- Modal -->
-        <div class="row">
-            <div class="col-md-12">
+        <div id="POTotalTableDiv" style="display: none;">
+            <br><br>
+            <div class="col-md-12" id ="Totaldivision" >
                 <div class="panel panel-primary">
-                    <div class="panel-heading" style="background-color: #2A3F54;">
-                        <h3 class="panel-title">Batch Summary</h3>
+                    <div class="panel-heading" style="">
+                        <h3 class="panel-title">Total POs</h3>
                         <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
@@ -117,25 +145,77 @@
                     <div class="panel-body">
                         <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
                     </div>
-                    <table class="table table-hover" id="dev-table">
+                    <table class="table table-hover table-striped" id="totalPO">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Number of POs</th>
-                            <th>Ordered Quantity</th>
-                            <th>Recieved Quantity</th>
-                            <th>More</th>
+
+                            <th align="center">#</th>
+                            <th align="center">Batch Name</th>
+                            <th align="center">PO Order ID</th>
+                            <th align="center">Qauntity</th>
 
 
                         </tr>
                         </thead>
-                        <tbody class="populate">
+                        <tbody class="populatePOTable">
                         </tbody>
                     </table>
+
                 </div>
             </div>
+
+
+            <button type="button" class="btn btn-success btn-lg disabled" id="search" style="float: right;" >Search</button>
+
+
         </div>
 
+        <div id="invoiceDIv" style="display: none;">
+            <br><br>
+            <div class="col-md-12" id ="Totaldivision" >
+                <div class="panel panel-primary">
+                    <div class="panel-heading" style="">
+                        <h3 class="panel-title">Total POs</h3>
+                        <div class="pull-right">
+                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                        <i class="glyphicon glyphicon-filter"></i>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                    </div>
+                    <table class="table table-hover table-striped" id="invoice">
+                        <thead>
+                        <tr>
+
+                            <th align="center">Batch ID</th>
+                            <th align="center">Invoice NameD</th>
+                            <th align="center">Invoice Amount</th>
+                            <th align="center">Created At</th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody class="populatePOTable">
+                        </tbody>
+                    </table>
+                    <br><br><br><br>
+                    <div class="center-block" style="background-color: whitesmoke">
+                        <p style="float: left"><b>Summary</b></p>
+
+                        <p id="invoiceAmount"></p>
+                        <p id="poAmount"></p>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </div>
 
 
 

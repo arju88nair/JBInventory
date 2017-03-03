@@ -54,7 +54,7 @@
             'oracle' => [
                  'driver' => 'oracle',
                     //'tns' => 'orcl',
-                    'tns' => '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.0.18)(PORT=1521)))',
+                    'tns' => '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=stagingdb.justbooksclc.com)(PORT=1521)))',
                     //'host' => 'myserver ip',
                     //'port' => '1521',
                     'database' => 'opac',

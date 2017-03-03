@@ -164,6 +164,9 @@
             padding-bottom: 1%;
             padding-right: 1%;
         }
+        #dev-table{
+            width: -1px !important;
+        }
         #dev-table td {text-align:center; vertical-align:middle;}
         #dev-table th {text-align:center; vertical-align:middle;}
         #vendors-table td {text-align:center; vertical-align:middle;}
@@ -181,7 +184,7 @@
 </script>
 <body>
 <div>
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="brand" href="#">
@@ -197,6 +200,12 @@
                 <li class="active"><a href="getPO">Purchase Orders</a></li>
                 <li ><a href="scanner">GR</a></li>
                 <li ><a href="reports">Reports</a></li>
+                <li ><a href="catalogue">Catalogue</a></li>
+                <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
+                <li ><a href="branchInvoice">Branch Invoice</a></li>
+
+
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
@@ -204,7 +213,7 @@
         </div>
     </nav>
 
-<div class="container">
+<div class="container" style="margin-top: 6%">
     <div class="alert alert-success" style="display: none">
         <strong>Success!</strong> Successfully updated
     </div>
@@ -273,6 +282,7 @@
                         <th>To date</th>
                         <th>Status</th>
                         <th>Created At</th>
+                        <th></th>
 
 
                     </tr>
@@ -285,7 +295,7 @@
         </div>
 
 
-        <button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Select Vendor</button>
+        {{--<button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Select Vendor</button>--}}
 
 
     </div>
@@ -316,6 +326,8 @@
                     <th>Phone</th>
                     <th>City </th>
                     <th>Discount</th>
+                    <th></th>
+
 
 
 
@@ -330,7 +342,6 @@
 
     <button type="button" class="btn btn-success btn-lg "  style="float: left;" onclick="POStatusBack()">Previous</button>
 
-    <button type="button" class="btn btn-success btn-lg disabled" id="VendorsNext" style="float: right;" >Update PO</button>
 
 
 </div>
@@ -338,7 +349,7 @@
 {{--PO Divisoin--}}
 
 <div id="poDivision" style="display: none;">
-    <div class="col-md-12"  id ="division" >
+    <div class="col-md-12"  id ="division" style="width:112% ;margin-left: -5%">
         <div class="panel panel-primary">
             <div class="panel-heading" style="background-color: #2A3F54;">
                 <h3 class="panel-title">Purchase Order</h3>
@@ -361,7 +372,7 @@
                     <th>Quantity Available</th>
                     <th>Quantity Ordered</th>
                     <th>Total</th>
-                    <th>Price</th>
+                    <th>Price/Unit</th>
                     <th>Availability</th>
                     <th class="hideC">Branch ID</th>
                     <th class="hideC">ISBN</th>

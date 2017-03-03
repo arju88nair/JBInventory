@@ -1,6 +1,11 @@
 $( document ).ready(function() {
 
 
+
+
+
+
+
     $('#batch').on('hidden.bs.modal', function () {
        var total=$("#expand-table >tbody >tr").length;
 
@@ -178,3 +183,28 @@ function populateMain(val) // Populating the main table
 
 
 
+
+function ajaxCall(id)
+
+{
+    $.ajax({
+        type: "POST",
+        url: "createBatchPage",
+        data: {'id': id},
+        async: true,
+        dataType: 'json',
+        enctype: 'multipart/form-data',
+        cache: false,
+        success: function (data) {
+            $(".spinner").hide();
+            console.log(data);
+            populateMain(data);
+
+        },
+        error: function (err) {
+
+            console.log(err.responseText);
+
+        }
+    });
+}

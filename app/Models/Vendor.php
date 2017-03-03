@@ -35,7 +35,7 @@ class Vendor extends Model
         $vendor_id=$response[0]->vendor_id;
 
         $deleteQuery="delete from opac.VENDOR_STOCK_DETAILS where vendor_id= $vendor_id ";
-//        $deleteResponse=DB::delete($deleteQuery);
+        $deleteResponse=DB::delete($deleteQuery);
 
 
         Excel::filter('chunk')->load($_FILES["file"]["tmp_name"])->chunk(1000, function($results) use ($vendor_id,$isbn_header,$currency_header,$price_header,$stock_header)
@@ -63,12 +63,15 @@ class Vendor extends Model
 
 
             }
-            DB::insert($sql. $values);
-            $values="";
+            if($values != ''){
+                DB::insert($sql. $values);
+                $values="";
+            }
+
 
         });
+        return redirect('vendors')->with('status', 'Successfully Saved!');
 
-        return View::make('vendorSelect');
 
     }
 

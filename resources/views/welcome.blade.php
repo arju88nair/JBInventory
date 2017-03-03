@@ -17,6 +17,10 @@
       <script type="text/javascript" src="{!! asset('script/main.js') !!}"></script>
       <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
 <style>
+   .ui-tooltip-content{
+      display: none;
+   }
+
    .panel-heading{
       color: #fff;
       background-color: #2A3F54;
@@ -66,6 +70,9 @@
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
             <li ><a href="reports">Reports</a></li>
+             <li ><a href="catalogue">Catalogue</a></li>
+            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li ><a href="branchInvoice">Branch Invoice</a></li>
          </ul>
          <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
@@ -105,28 +112,32 @@
                         <form role="form" method="post" action="{{ action('HomeController@addBatch') }}"
                               enctype="multipart/form-data"
                               accept-charset="UTF-8">
+                           <div class="form-group">
+                              <label for="sel1">Select Procurement Type:</label>
+                              <select class="form-control" id="sel1" name="select" onchange="triggered()">
+                                 <option value="1">New Arrivals</option>
+                                 <option value="2">New Branch</option>
+                                 <option value="3">IBT</option>
+                                 <option value="4">Warehouse Procurement</option>
+                                 <option value="5">Donation/Gift</option>
+                                 <option value="6">Branch Procuremtn</option>
 
+
+                              </select>
+                           </div>
                            <div class="form-group">
                               <label for="name">Batch Name:</label>
                               <input type="text" class="form-control" id="name" name="name" required maxlength="20">
                            </div>
                            <div class="form-group">
                               <label for="from" >From Date:</label>
-                              <input type="date" class="form-control" id="datepicker_start" name="start" required>
+                              <input type="date" class="form-control" id="datepicker_start" name="start" >
                            </div>
                            <div class="form-group">
                               <label for="from" >End Date:</label>
-                              <input type="date" class="form-control" id="datepicker_end" name="end" required>
+                              <input type="date" class="form-control" id="datepicker_end" name="end" >
                            </div>
-                           <div class="form-group">
-                              <label for="sel1">Select Procurement Type:</label>
-                              <select class="form-control" id="sel1" name="select">
-                                 <option value="1">New Arrivals</option>
-                                 <option value="2">New Branch</option>
-                                 <option value="3">IBT</option>
-                                 <option value="4">Warehouse Procurement</option>
-                              </select>
-                           </div>
+
                             <div class="form-group">
                                 <label for="name">Upload File:</label>
                                 <input id="fileSelect" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
@@ -169,6 +180,7 @@
                            <th>From</th>
                            <th>To</th>
                            <th>Created_at</th>
+                           <th>Procurement_type</th>
                            <th>Status</th>
                            <th></th>
                         </tr>

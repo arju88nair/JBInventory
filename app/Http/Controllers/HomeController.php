@@ -208,4 +208,76 @@ class HomeController extends Controller
     {
         return report::detailedReport($request->all());
     }
+
+    public function createBatchPage(Request $request)
+    {
+        return Batch::createBatchPage($request->all());
+    }
+
+    public  function getPoArray(Request $request)
+    {
+        return report::getPoArray($request->all());
+    }
+
+
+    public function getInvoicePOs(Request $request)
+    {
+        return report::getInvoicePOs($request->all());
+    }
+
+
+    public function viewPOPDF(Request $request)
+    {
+        return report::viewPOPDF($request->all());
+    }
+
+
+    public function catalogueUpdate(Request $request)
+    {
+        return report::catalogueUpdate($request->all());
+    }
+
+
+    public function catalogueNewUpdate(Request $request)
+    {
+        return report::catalogueNewUpdate($request->all());
+    }
+
+
+    public function catalogueGetBatch(Request $request)
+    {
+        return report::catalogueGetBatch($request->all());
+    }
+
+
+    public function catalogueTable(Request $request)
+    {
+        return report::catalogueTable($request->all());
+    }
+
+
+    public function cataloguePDF(Request $request)
+    {
+        return report::cataloguePDF($request->all());
+    }
+
+
+    public function getGiftBatch(Request $request)
+    {
+        return report::getGiftBatch($request->all());
+    }
+
+
+    public function getGiftBranch(Request $request)
+    {
+        return report::getGiftBranch($request->all());
+    }
+
+
+    public function insertGift(Request $request)
+    {
+        return report::insertGift($request->all());
+    }
 }
+
+

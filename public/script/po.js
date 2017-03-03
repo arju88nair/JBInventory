@@ -1,5 +1,5 @@
 $( document ).ready(function() {console.log("Gf")
-
+var table;
 
 
 $(".spinner").show();
@@ -224,19 +224,12 @@ function populateBatch(jsonVal,ti_id,v_name)
 
     $(".spinner").hide();
     for(var i=0;i<jsonObj.length;i++){
-        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\"   onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td></tr>');
+        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td></tr>');
     };
 
 
-    var table=$('#dev-table').DataTable( {
+     table=$('#dev-table').DataTable( {
         destroy: true,
-        //
-        // "columnDefs": [
-        //     {
-        //         "targets": [ 8 ],
-        //         "visible": false,
-        //     }
-        //     ],
 
         "order": [[ 0, "asc" ]]
     } );
@@ -316,30 +309,62 @@ function populateModal(val)
 
 function array_combine()
 {
-    var myTableArray = [];
-    $("#dev-table tr").each(function() {
-        var arrayOfThisRow = [];
-        var tableData = $(this).find('td');
-        if (tableData.length > 0) {
-            tableData.each(function() { arrayOfThisRow.push($(this).text()); });
-            myTableArray.push(arrayOfThisRow);
-        }
-    });
-    console.log(myTableArray);
+
+    $(".spinner").show();
+    var array=[];
+    table.destroy();
+    table=$('#dev-table').DataTable();
+   var data= table.rows().every(function(){
+       console.log(this.data());
+       var cell=[];
+       cell.push(this.data()[1]);
+       cell.push(this.data()[5]);
+       cell.push(this.data()[8]);
+       cell.push(this.data()[9]);
+       cell.push(this.data()[6]);
+       array.push(cell);
+   });
+   console.log(array);
+
+
+    // var myTableArray = [];
+    // // var table=$("#dev-table tr").DataTable();
+    // // table
+    // //     .column( 0 )
+    // //     .data()
+    // //     .each( function ( value, index ) {
+    // //         console.log( 'Data in index: '+index+' is: '+value );
+    // //     } );
+    // //
+    // // alert( 'The table has '+data.length+' records' );=[
+    // // $("#dev-table tr").each(function() {
+    // //     var arrayOfThisRow = [];
+    // //     var tableData = $(this).find('td');
+    // //     if (tableData.length > 0) {
+    // //         tableData.each(function() { arrayOfThisRow.push($(this).text()); });
+    // //         myTableArray.push(arrayOfThisRow);
+    // //     }
+    // // });
+    // // console.log(myTableArray);
     var vId=localStorage.getItem("vID");
     var bId=localStorage.getItem("bId");
 
     $.ajax({
         type: "POST",
         url: "insertPO",
-        data: {'table': myTableArray,'vName':vId,'bId':bId},
+        data: {'vname':vId,'bid':bId,'table':array},
         async: true,
         dataType: 'json',
         enctype: 'multipart/form-data',
         cache: false,
         success: function (data) {
+            $(".spinner").hide();
 
+            $(".scanner").hide();
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $(".alert").show();
             console.log(data);
+            window.location.href = "getPO"
 
         },
         error: function (err) {
@@ -373,7 +398,7 @@ function populateBatchTable(val)
             +getObjectFromJson(val[i],"from_date")+'</td><td>'
             +getObjectFromJson(val[i],"to_date")+'</td><td>'
             +getObjectFromJson(val[i],"status")+'</td><td>'
-            +getObjectFromJson(val[i],"created_at")+'</td></tr>');
+            +getObjectFromJson(val[i],"created_at")+'</td><td><span id="'+getObjectFromJson(val[i],"id")+'" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="batchClick(this.id)"></span></td></tr>');
     }
     var table=$('#batch-table').DataTable( {
 
@@ -384,9 +409,8 @@ function populateBatchTable(val)
     $("#batchTableDiv").show();
     $('body').delegate('#batch-table tbody tr', "click", function (){
         $(this).addClass("selected").siblings().removeClass("selected");
-        var tr =this.closest('tr');
-        var id=$('td.idrow', tr).text();
-        localStorage.setItem("bId",id);
+        // var tr =this.closest('tr');
+        // var id=$('td.idrow', tr).text();
         $("#batchNext").removeClass('disabled');
         // $("#batchNext").onclick=vendorStatus();
         $("#batchNext").click(function() {
@@ -395,15 +419,22 @@ function populateBatchTable(val)
     });
 }
 
-function vendorStatus()
+function batchClick(id)
 {
+    localStorage.setItem("bId",id);
+
     $(".spinner").show();
 
     $("#batchTableDiv").hide();
     vendorAjax()
-
-
 }
+
+// function vendorStatus()
+// {
+//
+//
+//
+// }
 
 
 function populateVendors(val)
@@ -414,7 +445,7 @@ function populateVendors(val)
             +getObjectFromJson(val[i],"name")+'</td><td>'
             +getObjectFromJson(val[i],"phone")+'</td><td>'
             +getObjectFromJson(val[i],"city")+'</td><td>'
-            +getObjectFromJson(val[i],"discount")+'</td></tr>');
+            +getObjectFromJson(val[i],"discount")+'</td><td><span id="'+getObjectFromJson(val[i],"id")+'" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="vendorClick(this.id)"></span></td></tr>');
     }
     var table=$('#vendors-table').DataTable( {
         destroy: true,
@@ -429,16 +460,21 @@ function populateVendors(val)
         console.log(this);
         $(this).addClass("selected").siblings().removeClass("selected");
         var tr =this.closest('tr');
-        var id=$('td.idrow', tr).text();
-        console.log(id);
-        localStorage.setItem("vID",id);
-        $("#VendorsNext").removeClass('disabled');
-        $("#VendorsNext").click(function() {
-            POStatus();
-        });
+        // var id=$('td.idrow', tr).text();
+        // console.log(id);
+        // localStorage.setItem("vID",id);
+        // $("#VendorsNext").removeClass('disabled');
+        // $("#VendorsNext").click(function() {
+        //     POStatus();
+        // });
     });
 }
+function vendorClick(id)
+{
+    localStorage.setItem("vID",id);
+    POStatus();
 
+}
 
 function POStatus()
 {

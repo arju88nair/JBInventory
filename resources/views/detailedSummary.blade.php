@@ -93,7 +93,7 @@
 
 </script>
 <body>
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="brand" href="#">
@@ -108,14 +108,19 @@
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
-            <li class="active"><a href="reports">Reports</a></li>
+            <li class="active"><a href="reports">Reports</a>
+            <li ><a href="catalogue">Catalogue</a></li>
+            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li ><a href="branchInvoice">Branch Invoice</a></li>
+
+
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
         </ul>
     </div>
 </nav>
-<div class="container">
+<div class="container" style="margin-top: 6%">
 
     @if (session('status'))
 
