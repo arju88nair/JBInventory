@@ -23,7 +23,7 @@ class Batch extends Model
 
         $query = "select b.id,b.name,nvl(description,'Not Available') description,
                 from_date,to_date,created_at,procurement_type_id,status,p.name p_name from opac.batch b join opac.procurement_type p on b.procurement_type_id=p.id
-                where active = 1 and procurement_type_id !=5 order by created_at desc";
+                where active = 1 and procurement_type_id !=5 and procurement_type_id != 6 order by created_at desc";
         $response = DB::select($query);
 
         if (empty($response) || count($response) == 0) {
@@ -75,13 +75,13 @@ class Batch extends Model
         $isSaved = $model->save();
 
         if ($_POST['select'] == '5' || $_POST['select'] == 5) {
-            return View::make('giftCatalogue');
+            return Redirect::to('giftCatalogue');
         }
         if ($_POST['select'] == '6' || $_POST['select'] == 6) {
             return Redirect::to('giftCatalogue');
         }
         $id = $model['id'];
-
+        $notAvailableISBN=[];
         if ($_FILES['file']['name']) {
             $min_query = "select max(id)+1 as id from opac.branch_orders";
             $min_row = DB::select($min_query);
@@ -97,20 +97,29 @@ class Batch extends Model
             $loopCounter = 0;
             $sql = 'INSERT INTO "BRANCH_ORDERS" (id,title_id,order_type,quantity,branch_id,created_in,state,ibtr_id)  ';
             $values = '';
+            DB::beginTransaction();
 
             foreach ($excel[0] as $inputItem) {
                 $isbn = $inputItem["title"];
+
                 $isbn_query = "select titleid from jbprod.titles where isbn_10 = '$isbn' or isbn_13 = '$isbn' and rownum<=1";
                 $resu = DB::select($isbn_query);
+
+                if(empty($resu) || $resu==[])
+                {
+                    array_push($notAvailableISBN,$isbn);
+                    continue;
+                }
                 $title_id = $resu[0]->titleid;
+
 
                 $count = $inputItem["count"];
 
                 $added++;
-                $ibtrsQuery = "insert into opac.ibtrs (title_id,member_id,card_id,branch_id,created_at,order_type,state) values ($title_id,'16210','MWAREHOUSE1',901,sysdate,'BranchOrder','new' )";
+                $ibtrsQuery = "insert into opac.ibtrs (title_id,member_id,card_id,branch_id,created_at,order_type,state,created_by,PROCESSING_TEAM_ID) values ($title_id,16210,'MWAREHOUSE1',901,sysdate,'BranchOrder','new',1010,10000  )";
                 DB::insert($ibtrsQuery);
 
-                $selectIbtrs = "select max(id) id from opac.ibtrs where title_id= $title_id and member_id='16210' and card_id='MWAREHOUSE1' and branch_id =901 and order_type ='BranchOrder' and state = 'new'";
+                $selectIbtrs = "select max(id) id from opac.ibtrs where title_id= $title_id and member_id=16210 and card_id='MWAREHOUSE1' and branch_id =901 and order_type ='BranchOrder' and state = 'new'";
                 $resSelect = DB::select($selectIbtrs);
                 $ibId = $resSelect[0]->id;
 
@@ -132,6 +141,15 @@ class Batch extends Model
                 $values = "";
 
 
+            }
+            if(count($notAvailableISBN) > 0)
+            {
+                DB::rollback();
+                $model->delete();
+                return View::make('invalidISBN') ->with('invalidISBN',$notAvailableISBN) ;
+            }
+            else{
+                DB::commit();
             }
             if ($values != "") {
                 DB::raw($sql . $values);

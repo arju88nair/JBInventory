@@ -250,3 +250,62 @@ Route::get('getGiftBatch','HomeController@getGiftBatch');
 
 Route::post('insertGift','HomeController@insertGift');
 
+
+Route::get('invalidISBN',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+
+    return view('invalidISBN');
+
+
+});
+
+
+
+//Route::get('giftInvoice',function(){
+//
+//    if(!Auth::check())
+//    {
+//        return view('login');
+//    }
+//
+//
+//
+//    return view('giftInvoice');
+//
+//
+//});
+
+
+Route::get('getGiftBatches','HomeController@getGiftBatches');
+
+
+Route::get('isbnValidate','HomeController@isbnValidate');
+
+Route::get('invalidISBNGift',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+
+    return view('invalidISBNgift');
+
+
+});
+
+
+Route::post('updateisbn','HomeController@updateisbn');
+
+Route::get('generatecsv','HomeController@generatecsv');
+
+
+
+

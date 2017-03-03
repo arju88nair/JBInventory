@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    localStorage.removeItem("invalidISBN");
     $('table').on('click', 'tr a', function (e) {
         e.preventDefault();
         $(this).parents('tr').remove();
@@ -82,7 +83,7 @@ function populatePO(val) {
         var j = i + 1
         $('#totalPO tbody').append('<tr><td class="batch" >' + getObjectFromJson(val[i], "id") + '</td><td>'
             + getObjectFromJson(val[i], "name") + '</td><td >' + getObjectFromJson(val[i], "description") + '</td><td ">' + getObjectFromJson(val[i], "created_at") + '</td><td ">' + getObjectFromJson(val[i], "pname") + '</td><td>'
-            + getObjectFromJson(val[i], "status") + '</td><td><span id="' + getObjectFromJson(val[i], "id") + '" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="POClick(\'' + val[i].id + '\',\'' + val[i].procurement_type_id + '\')"></span></td></tr>');
+            + getObjectFromJson(val[i], "status") + '</td><td><span id="' + getObjectFromJson(val[i], "id") + '" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="POClick(\'' + val[i].id + '\',\'' + val[i].procurement_type_id + '\')"></span></td><td><button style="border: 2px solid lightblue;background-color: white;" type="button" class="btn btn-outline-primary" onclick="viewISBN(\'' + val[i].id + '\')">Validate</button></td><td><button style="border: 2px solid lightblue;background-color: white;" type="button" class="btn btn-outline-primary" onclick="generatecsv(\'' + val[i].id + '\')">Generate CSV</button></td></tr>');
     }
     table = $('#totalPO').DataTable({
         destroy: true,
@@ -97,6 +98,7 @@ function populatePO(val) {
 }
 
 function POClick(id, pId) {
+
     localStorage.setItem('pID', pId);
     if (pId == 5) {
         $("#price").hide()
@@ -149,7 +151,7 @@ function POClick(id, pId) {
 function appendTable() {
     var isbn = $("#isbn").val();
     var bookNum = $("#num").val();
-    var price=$("#priceIn").val();
+    var price = $("#priceIn").val();
     $("#summaryDiv").show()
     $('#summary tbody').append('<tr><td >' + isbn + '</td><td >' + bookNum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
 
@@ -240,6 +242,7 @@ function updateBranch() {
 
 
 function clean() {
+    alert("hi")
     $("#summary tbody").empty();
     $("#isbn").val('');
     $("#num").val('');
@@ -247,7 +250,48 @@ function clean() {
 
 }
 
+function viewISBN(id) {
+    $(".spinner").show();
+    $.ajax({
 
+        type: "GET",
+        url: "isbnValidate?batch=" + id,
+        dataType: 'json',
+        enctype: 'multipart/form-data',
+        cache: false,
+        success: function (data) {
+            $(".spinner").hide();
+            console.log(data.length);
+            if (data.length >= 1) {
+                alert("There are  ISBN(s) containing no title ids")
+                localStorage.setItem("invalidISBN",data);
+                window.location.href="invalidISBNGift";
+
+            }
+            else {
+
+                alert("Title ids are present for every ISBNs")
+            }
+
+
+        },
+        error: function (err) {
+            $(".spinner").hide();
+
+
+            console.log(err.responseText);
+
+        }
+    });
+
+}
+
+
+
+function generatecsv(id)
+{
+    window.location.href="generatecsv?id="+id;
+}
 
 
 

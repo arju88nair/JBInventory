@@ -14,7 +14,7 @@ class PO extends Model
     public static function getBatches($input)
     {
 
-        $query = "select  id,name,to_char(from_date,'DD-MM-YYYY') from_date,to_char(to_date,'DD-MM-YYYY') to_date,status,to_char(created_at,'DD-MM-YYYY') created_at from opac.batch where active = 1";
+        $query = "select  id,name,to_char(from_date,'DD-MM-YYYY') from_date,to_char(to_date,'DD-MM-YYYY') to_date,status,to_char(created_at,'DD-MM-YYYY') created_at from opac.batch where active = 1 and procurement_type_id !=5 and procurement_type_id != 6";
         $response = DB::select(DB::raw($query));
         $array = [];
         foreach ($response as $row) {
@@ -170,7 +170,7 @@ class PO extends Model
     {
         $id = $_GET['id'];
         $vid = $_GET['vid'];
-        $query = "select distinct isbn,title,ordered_quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+        $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
                     (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,vsd.price,discount,(vsd.price*discount/100) dis from
                     memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
                     left join ams.authors a on t.authorid=a.id

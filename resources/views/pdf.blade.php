@@ -268,7 +268,7 @@
 
         </table>
         <br><br>
-<p style="font-weight: bold"> Total :<?php echo $total; ?></p>
+<p style="font-weight: bold"> Total :<?php echo $total; ?> Ruppees</p>
 
         <P class="p38 ft12">www.justbooksclc.com</P>
         <P class="p39 ft1">Regd. Off. : 28/1, Ground Floor, RNR Complex, Tubarahalli, Varthur Road, Bangalore 560066</P>

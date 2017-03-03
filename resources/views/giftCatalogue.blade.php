@@ -112,8 +112,8 @@
 <div class="container" style="margin-top: 6%">
 
     <h3 style="text-align: center">Donation/Branch Procurement Catalogue</h3>
-
-    <div class="spinner" style='display: none'>
+    <br><br>
+   <div class="spinner" style='display: none'>
         <div class="double-bounce1"></div>
         <div class="double-bounce2"></div>
     </div>
@@ -146,6 +146,10 @@
                         <th align="center">Procurement_type</th>
                         <th align="center">Status</th>
                         <th align="center"></th>
+                        <th align="center"></th>
+                        <th align="center"></th>
+
+
 
 
                     </tr>

@@ -15,9 +15,9 @@ class report extends Model
 
     public static function summaryReport($input)
     {
-        $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0),nvl(rec_qnty,0) from    
+        $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
 (select b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
-                  from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id
+                  from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6
                   
                   group by b.name,b.id) a
 left join
@@ -374,13 +374,16 @@ on a.id=b.batch_id";
                 $num = $value[1];
                 $isbnQuery = "select id from memp.titles where isbn='$isbn' ";
                 $responseISBN = DB::select($isbnQuery);
-                if ($responseISBN == [] || empty($title_id)) {
+                if ($responseISBN == [] || empty($responseISBN)) {
                     $title_id = -1;
                 }
-                $title_id = $responseISBN[0]->id;
+                else{
+                    $title_id = $responseISBN[0]->id;
+
+                }
 
                 $insertQuery = "insert into memp.catalogue_details (isbn,title_id,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) 
-            values ('$isbn',$title_id,$batch,'N/A',-1,'$num',sysdate,$branch) ";
+            values ('$isbn',$title_id,$batch,'-1',-1,'$num',sysdate,$branch) ";
 
                 $response = DB::insert($insertQuery);
 
@@ -399,9 +402,9 @@ on a.id=b.batch_id";
             $invoice = $_POST['invoice'];
 
             $array = array();
-            $invoiceAmount=0;
+            $invoiceAmount = 0;
             foreach ($isbns as $item) {
-                $invoiceAmount+=(int)$item[2];
+                $invoiceAmount += (int)$item[2];
                 array_push($array, $item);
             }
             $countArray = array();
@@ -419,17 +422,20 @@ on a.id=b.batch_id";
             foreach ($array as $value) {
                 $isbn = $value[0];
                 $num = $value[1];
-                $price=$value[2];
+                $price = $value[2];
                 $isbnQuery = "select id from memp.titles where isbn='$isbn' ";
                 $responseISBN = DB::select($isbnQuery);
-                if ($responseISBN == [] || empty($title_id)) {
+                if ($responseISBN == [] || empty($responseISBN)) {
                     $title_id = -1;
                 }
-                $title_id = $responseISBN[0]->id;
+                else{
+                    $title_id = $responseISBN[0]->id;
+
+                }
 
 
                 $insertQuery = "insert into memp.catalogue_details (isbn,title_id,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) 
-                values ('$isbn',$title_id,$batch,'N/A',-1,'$num',sysdate,$branch) ";
+                values ('$isbn',$title_id,$batch,'-1',-1,'$num',sysdate,$branch) ";
 
                 $response = DB::insert($insertQuery);
 
@@ -437,17 +443,14 @@ on a.id=b.batch_id";
             foreach ($isbn_array as $item) {
                 $isbn = $item['isbn'];
                 $count = $item['count'];
-                foreach($array as $value)
-                {
-                    if(in_array($isbn, $value, true))
-                    {
-                        $price= $value[2];
+                foreach ($array as $value) {
+                    if (in_array($isbn, $value, true)) {
+                        $price = $value[2];
+                    } else {
+                        $price = 0;
                     }
-                   else{
-                       $price=0;
-                   }
 
-                   $price=(int)$price*$count;
+                    $price = (int)$price * $count;
 
                 }
                 $poQuery = " insert into memp.batch_vendor_po (po_id,vendor_id,title_id,isbn,ordered_quantity,ordered_date,orderid,recieved_quantity,gr,price) values
@@ -510,6 +513,122 @@ on a.id=b.batch_id";
         return ucfirst($result . "Rupees  " . "only");
     }
 
+
+    public static function getGiftBatches()
+    {
+
+        $query="select b.id,b.name,nvl(description,'Not Available') description,
+                from_date,to_date,created_at,procurement_type_id,status,p.name p_name from opac.batch b join opac.procurement_type p on b.procurement_type_id=p.id
+                where active = 1 and procurement_type_id =5 or procurement_type_id = 6 order by created_at desc";
+
+
+
+        $response = DB::select($query);
+        $array = [];
+        foreach ($response as $item) {
+
+            array_push($array, $item);
+        }
+
+        return $array;
+
+    }
+
+
+
+
+    public static function isbnValidate()
+    {
+
+        $batch=$_GET['batch'];
+        $query="select distinct isbn from memp.catalogue_details cd where cd.batch_id=112 and title_id=-1";
+        $response=DB::select($query);
+        $array = [];
+        foreach ($response as $item) {
+
+            array_push($array, $item->isbn);
+        }
+
+        return $array;
+
+
+
+    }
+
+
+
+    public static function updateisbn()
+    {
+        $isbn=$_POST['isbn'];
+        if (count($isbn) == 0 || empty($isbn)) {
+            return response(array('code' => '1', "status" => "failure", 'statusCode' => 500, 'message' => 'No ISBNs Sent'))->header('Content-Type', 'application/json');
+        }
+
+
+        $array = array();
+        foreach ($isbn as $item) {
+            array_push($array, $item[0]);
+        }
+
+
+        $invalids=[];
+        foreach ($array as $item) {
+
+            $query="select titleid id from memp.jb_titles where isbn_10 ='$item' or isbn_13='$item'";
+            $responseISBN = DB::select($query);
+            if ($responseISBN == [] || empty($responseISBN)) {
+                array_push($invalids,$item);
+            }
+            else{
+                $title_id = $responseISBN[0]->id;
+
+            }
+
+
+            $insertQueryCD="insert into memp.catalogue_details (title_id) values($title_id where isbn='$item')";
+            $cdResponse=DB::insert($insertQueryCD);
+            $insertQuerybvp="insert into memp.batch_vendor_po (title_id) values($title_id where isbn='$item')";
+            $bvpResponse=DB::insert($insertQueryCD);
+
+
+        }
+
+
+        return "success";
+
+    }
+
+
+    public static function generatecsv()
+    {
+        $batch= $_GET['id'];
+        $query="select distinct isbn from memp.catalogue_details cd where cd.batch_id=$batch and title_id=-1";
+        $response=DB::select($query);
+        $array = [];
+        foreach ($response as $item) {
+
+            array_push($array, $item->isbn);
+        }
+
+        if(count($array)!=0||!empty($array)||$array!=[])
+        {
+            return View::make('invalidISBN') ->with('invalidISBN',$array) ;
+
+        }
+
+        $contentQuery="select isbn,title_id,title,count(*) quantity from memp.catalogue_details cd join memp.jb_titles jt on jt.titleid=cd.title_id where cd.batch_id=$batch
+        group by isbn,title,title_id";
+        $contentRes=DB::select($contentQuery);
+        $contArray = [];
+        foreach ($contentRes as $item) {
+
+            array_push($contArray, $item);
+        }
+
+        return view::make('giftInvoice')->with('data',$contArray);
+
+
+    }
 
 }
 

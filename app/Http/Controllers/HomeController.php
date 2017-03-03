@@ -278,6 +278,31 @@ class HomeController extends Controller
     {
         return report::insertGift($request->all());
     }
+
+
+    public function getGiftBatches(Request $request)
+    {
+        return report::getGiftBatches($request->all());
+    }
+
+
+    public function isbnValidate(Request $request)
+    {
+        return report::isbnValidate($request->all());
+    }
+
+    public function updateisbn(Request $request)
+    {
+        return report::updateisbn($request->all());
+    }
+
+    public function generatecsv(Request $request)
+    {
+        return report::generatecsv($request->all());
+    }
+
+
+
 }
 
 
