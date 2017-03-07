@@ -235,6 +235,7 @@
                         <th>#</th>
                         <th>ISBN</th>
                         <th>Title</th>
+                        <th>Author</th>
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>

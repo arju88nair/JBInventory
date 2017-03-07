@@ -96,7 +96,7 @@ function populatePO(val) {
 
         var j = i + 1
         $('#totalPO tbody').append('<tr><td class="batch" >' + getObjectFromJson(val[i], "po_id") + '</td><td>'
-            + getObjectFromJson(val[i], "name") + '</td><td class="vendor">' + getObjectFromJson(val[i], "orderid") + '</td><td class="idrow">' + getObjectFromJson(val[i], "vendor_id") + '</td><td>'
+            + getObjectFromJson(val[i], "name") + '</td><td class="vendor">' + getObjectFromJson(val[i], "orderid") + '</td><td class="idrow">' + getObjectFromJson(val[i], "vendor_id") + '</td><td>' + getObjectFromJson(val[i], "vname") + '</td><td>'
             + getObjectFromJson(val[i], "quantity") + '</td><td><span id="' + getObjectFromJson(val[i], "orderid") + '" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="POClick(\'' + val[i].orderid + '\',\'' + val[i].po_id + '\')"></span></td></tr>');
     }
      table = $('#totalPO').DataTable({
@@ -121,7 +121,7 @@ function POClick(id, batch) {
 }
 function appendTable() {
 
-$("#summary tbody").empty();
+    $("#summary tbody").empty();
     $(".spinner").show();
 
     var batch = localStorage.getItem('batch');
@@ -140,17 +140,20 @@ $("#summary tbody").empty();
         cache: false,
         success: function (data) {
             console.log(data);
+            $(".spinner").hide();
             if (data['code'] == 200) {
                 populateReponse(data);
             }
             else {
+                $(".spinner").hide();
+
                 alert(data['message']);
             }
 
 
         },
         error: function (err) {
-
+            $(".spinner").hide();
             console.log(err.responseText);
 
         }
@@ -162,7 +165,8 @@ function populateReponse(val) {
 
 
     localStorage.setItem('branch_order',val['branch_order'])
-    var branch_id = val['branch_id'];
+    var branch_id = val['branch_id']
+        var branch_name=val['branch_name'];
     $("#title").text(val['title']);
     $("#isbnId").text(val['isbn']);
     $("#batch").text(val['batch']);
@@ -171,10 +175,10 @@ function populateReponse(val) {
 
     var option = '';
     for (var i = 0; i < branch_id.length; i++) {
-        option += '<option value="' + branch_id[i] + '">' + branch_id[i] + '</option>';
+        option += '<option value="' + branch_id[i] + '">' + branch_name[i] + '</option>';
     }
     console.log(option)
-    $('#summary tbody').append('<tr> <td >' + val['title'] + '</td><td>' + val['isbn'] + '</td><td class="vendor">' + val['batch'] + '</td><td class="idrow">' + val['branch_order'] + '</td><td>'+ val['selectedBranch'] + '</td><td><select id="branchId" onchange="triggered(this)">'+option+'</select></td></tr>');
+    $('#summary tbody').append('<tr> <td >' + val['title'] + '</td><td>' + val['isbn'] + '</td><td class="vendor">' + val['batch'] + '</td><td class="idrow">' + val['branch_order'] + '</td><td>'+ val['selectedBranch'] + ' , ' +val['selectedBranchName']+'</td><td><select id="branchId" onchange="triggered(this)">'+option+'</select></td></tr>');
 
     // $(' #summary tbody #branchId').append(option);
     $("#summaryDiv").show();
@@ -187,13 +191,14 @@ function populateReponse(val) {
 
 
 function updateBranch() {
+    $(".spinner").show();
     var new_branch = localStorage.getItem("newBranch");
     var order = localStorage.getItem('vendor');
     var isbn = localStorage.getItem('isbn');
     var batch = localStorage.getItem('batch');
     var branch_order=localStorage.getItem('branch_order');
     var bookNum=localStorage.getItem('bookNum');
-    $(".spinner").show();
+
     $.ajax({
 
         type: "GET",
@@ -205,16 +210,18 @@ function updateBranch() {
             console.log(data);
             $(".spinner").hide();
             if (data['code'] == 200) {
+                alert("Successfully Assigned")
                 populateReponse(data);
             }
             else {
+                $(".spinner").hide();
+
                 alert(data['message']);
             }
 
 
         },
         error: function (err) {
-            $(".spinner").hide();
 
             console.log(err.responseText);
             $(".spinner").hide();
@@ -222,7 +229,6 @@ function updateBranch() {
 
         }
     });
-    $(".spinner").hide();
 
 }
 

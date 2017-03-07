@@ -141,7 +141,7 @@ function populatePO(val)
 
         var j=i+1
         $('#totalPO tbody').append('<tr><td class="batch" >' +getObjectFromJson(val[i],"po_id")+'</td><td>'
-            +getObjectFromJson(val[i],"name")+'</td><td class="vendor">' +getObjectFromJson(val[i],"orderid")+'</td><td class="idrow">' +getObjectFromJson(val[i],"vendor_id")+'</td><td>'
+            +getObjectFromJson(val[i],"name")+'</td><td class="vendor">' +getObjectFromJson(val[i],"orderid")+'</td><td class="idrow">' +getObjectFromJson(val[i],"vendor_id")+'</td><td class="idrow">' +getObjectFromJson(val[i],"vname")+'</td><td>'
             +getObjectFromJson(val[i],"quantity")+'</td></tr>');
     }
     var table=$('#totalPO').DataTable({

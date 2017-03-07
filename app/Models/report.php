@@ -18,7 +18,6 @@ class report extends Model
         $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
 (select b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
                   from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6
-                  
                   group by b.name,b.id) a
 left join
 (select batch_id,sum(quantity_recieved)rec_qnty from opac.batch_po_invoice_details group by batch_id) b
@@ -38,8 +37,8 @@ on a.id=b.batch_id";
     public static function detailedReport()
     {
         $id = $_GET['id'];
-        $query = "select b.id,b.name,nvl(invoice,'Not Available') invoice,nvl(isbn,'Not Available') isbn,nvl(quantity_recieved,0) quantity_recieved from
-                    opac.batch b left join opac.batch_po_invoice_details bpid on b.id=bpid.batch_id
+        $query = "select b.id,b.name,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available') isbn,nvl(quantity_recieved,0) quantity_recieved,mt.title title,mt.author_name author from
+                    opac.batch b left join opac.batch_po_invoice_details bpid on b.id=bpid.batch_id join memp.titles mt on bpid.isbn=mt.isbn
                     where b.id=$id";
 
 
@@ -95,14 +94,14 @@ on a.id=b.batch_id";
     public static function viewPOPDF()
     {
         $id = $_GET['id'];
-        $query = "select distinct isbn,title,ordered_quantity,nvl(author,'N/A'),nvl(publisher,'N/A'),nvl(price,0),discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
-                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,vsd.price,discount,(vsd.price*discount/100) dis from
-                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
-                    left join ams.authors a on t.authorid=a.id
-                    left join ams.publishers p on t.publisherid=p.id
-                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
-                    left join ams.suppliers s on s.id=bvp.vendor_id
-                    where orderid='$id' ) a";
+        $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+                   (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
+                   memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
+                   left join ams.authors a on t.authorid=a.id
+                   left join ams.publishers p on t.publisherid=p.id
+                   left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
+                   left join ams.suppliers s on s.id=bvp.vendor_id
+                   where orderid='$id' ) a";
         $data = DB::select($query);
         $array = [];
         foreach ($data as $row) {
@@ -120,15 +119,16 @@ on a.id=b.batch_id";
         $isbn = $_GET['isbn'];
         $bookNum = $_GET['bookNum'];
         $batch = $_GET['batch'];
-        $updateSelectQuery = "select branch_id,branch_order_id from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
-            join memp.jb_titles jt on bo.title_id=jt.titleid
+        $updateSelectQuery = "select branch_id,branch_order_id,branchname from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
+            join memp.jb_titles jt on bo.title_id=jt.titleid join memp.jb_branches jb on branch_id=jb.id
             where isbn_13='$isbn' and bobm.batch_id=$batch and remaining_quantity!=0 order by branch_order_id asc";
         $updateSelectResponse = DB::select($updateSelectQuery);
         if (count($updateSelectResponse) == 0 || empty($updateSelectResponse)) {
-            return array("message" => "Already Added", 'code' => 400);
+            return array("message" => "ISBN NOT PRESENT", 'code' => 400);
         }
         $branch_order_id = $updateSelectResponse[0]->branch_order_id;
         $branch_idSelec = $updateSelectResponse[0]->branch_id;
+        $branch_nameSelec= $updateSelectResponse[0]->branchname;
 
 
         $updateQuery = "update opac.branch_order_batch_map set remaining_quantity=REMAINING_QUANTITY-1 where BRANCH_ORDER_ID in($branch_order_id)";
@@ -138,7 +138,7 @@ on a.id=b.batch_id";
             join memp.jb_titles jt on bo.title_id=jt.titleid
             where isbn_13='$isbn' and bobm.batch_id=$batch  order by branch_order_id asc");
         if (count($isbnResponse) == 0 || empty($isbnResponse)) {
-            return array("message" => "Already Added", 'code' => 500);
+            return array("message" => "ISBN NOT PRESENT", 'code' => 500);
         }
         $title_id = $isbnResponse[0]->title_id;
         $ttile_name = $isbnResponse[0]->title;
@@ -159,7 +159,7 @@ on a.id=b.batch_id";
         }
 
 
-        return array("message" => "Successfully Added", 'code' => 200, 'isbn' => $isbn, 'batch' => $batch, 'branch_order' => $branch_order_id, 'branch_id' => $branch_id, 'branch_name' => $branch_name, 'title' => $ttile_name, 'selectedBranch' => $branch_idSelec);
+        return array("message" => "Successfully Added", 'code' => 200, 'isbn' => $isbn, 'batch' => $batch, 'branch_order' => $branch_order_id, 'branch_id' => $branch_id, 'branch_name' => $branch_name, 'title' => $ttile_name, 'selectedBranch' => $branch_idSelec,"selectedBranchName"=>$branch_nameSelec);
 
 
     }
@@ -205,12 +205,12 @@ on a.id=b.batch_id";
         $updateResponse = DB::update($updateQuery);
 
 
+        $deleteQuery = "delete from memp.catalogue_details where isbn = '$isbn' and title_id= $title_id and po_id='$vendor' and branch_order_id = $branchOrder";
+        DB::delete($deleteQuery);
+
         $insertQuery = "insert into memp.catalogue_details (isbn,title_id,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) values('$isbn',$title_id,$batch,'$vendor',$branch_order_id,'$bookNum',sysdate,$newBranch)";
         DB::insert($insertQuery);
 
-
-        $deleteQuery = "delete from memp.catalogue_details where isbn = '$isbn' and title_id= $title_id and po_id='$vendor' and branch_order_id = $branchOrder";
-        DB::delete($deleteQuery);
 
         return "success";
     }
@@ -220,11 +220,11 @@ on a.id=b.batch_id";
     {
 
         $id = $_GET['id'];
-        $query = "select distinct branch_id from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id where bobm.batch_id=$id";
+        $query = "select distinct branch_id,branchname from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id join memp.jb_branches jb on branch_id=jb.id where bobm.batch_id=$id";
         $response = DB::select($query);
         $array = [];
         foreach ($response as $item) {
-            array_push($array, $item->branch_id);
+            array_push($array, $item);
         }
 
         return $array;
@@ -239,11 +239,11 @@ on a.id=b.batch_id";
         $id = $_GET['batch'];
         $branch = $_GET['branch'];
 
-        $query = "select cd.isbn,title,price,count(*) quantity,branchname,branchaddress,(price*count(*)) total from
+        $query = "select cd.isbn,title,price,count(*) quantity,branchname,branchaddress,(price*count(*)) total,author_name from
             memp.catalogue_details cd join memp.jb_branches jb on cd.branch_id=jb.id
             join memp.titles t on cd.title_id=t.id
             join memp.batch_vendor_po bvp on (cd.po_id=bvp.orderid and cd.isbn=bvp.isbn) where cd.batch_id=$id and cd.branch_id =$branch
-            group by cd.isbn,title,price ,branchname,branchaddress ";
+            group by cd.isbn,title,price ,branchname,branchaddress,author_name ";
 
 
         $response = DB::select($query);
@@ -273,7 +273,10 @@ on a.id=b.batch_id";
 
 
         $response = DB::select($query);
-
+if($response==[]||empty($response))
+{
+    return "No Items available";
+}
         $array = [];
         foreach ($response as $item) {
             array_push($array, $item);
@@ -376,8 +379,7 @@ on a.id=b.batch_id";
                 $responseISBN = DB::select($isbnQuery);
                 if ($responseISBN == [] || empty($responseISBN)) {
                     $title_id = -1;
-                }
-                else{
+                } else {
                     $title_id = $responseISBN[0]->id;
 
                 }
@@ -427,8 +429,7 @@ on a.id=b.batch_id";
                 $responseISBN = DB::select($isbnQuery);
                 if ($responseISBN == [] || empty($responseISBN)) {
                     $title_id = -1;
-                }
-                else{
+                } else {
                     $title_id = $responseISBN[0]->id;
 
                 }
@@ -517,10 +518,9 @@ on a.id=b.batch_id";
     public static function getGiftBatches()
     {
 
-        $query="select b.id,b.name,nvl(description,'Not Available') description,
+        $query = "select b.id,b.name,nvl(description,'Not Available') description,
                 from_date,to_date,created_at,procurement_type_id,status,p.name p_name from opac.batch b join opac.procurement_type p on b.procurement_type_id=p.id
                 where active = 1 and procurement_type_id =5 or procurement_type_id = 6 order by created_at desc";
-
 
 
         $response = DB::select($query);
@@ -535,14 +535,12 @@ on a.id=b.batch_id";
     }
 
 
-
-
     public static function isbnValidate()
     {
 
-        $batch=$_GET['batch'];
-        $query="select distinct isbn from memp.catalogue_details cd where cd.batch_id=112 and title_id=-1";
-        $response=DB::select($query);
+        $batch = $_GET['batch'];
+        $query = "select distinct isbn from memp.catalogue_details cd where cd.batch_id=112 and title_id=-1";
+        $response = DB::select($query);
         $array = [];
         foreach ($response as $item) {
 
@@ -552,14 +550,12 @@ on a.id=b.batch_id";
         return $array;
 
 
-
     }
-
 
 
     public static function updateisbn()
     {
-        $isbn=$_POST['isbn'];
+        $isbn = $_POST['isbn'];
         if (count($isbn) == 0 || empty($isbn)) {
             return response(array('code' => '1', "status" => "failure", 'statusCode' => 500, 'message' => 'No ISBNs Sent'))->header('Content-Type', 'application/json');
         }
@@ -571,24 +567,23 @@ on a.id=b.batch_id";
         }
 
 
-        $invalids=[];
+        $invalids = [];
         foreach ($array as $item) {
 
-            $query="select titleid id from memp.jb_titles where isbn_10 ='$item' or isbn_13='$item'";
+            $query = "select titleid id from memp.jb_titles where isbn_10 ='$item' or isbn_13='$item'";
             $responseISBN = DB::select($query);
             if ($responseISBN == [] || empty($responseISBN)) {
-                array_push($invalids,$item);
-            }
-            else{
+                array_push($invalids, $item);
+            } else {
                 $title_id = $responseISBN[0]->id;
 
             }
 
 
-            $insertQueryCD="insert into memp.catalogue_details (title_id) values($title_id where isbn='$item')";
-            $cdResponse=DB::insert($insertQueryCD);
-            $insertQuerybvp="insert into memp.batch_vendor_po (title_id) values($title_id where isbn='$item')";
-            $bvpResponse=DB::insert($insertQueryCD);
+            $insertQueryCD = "insert into memp.catalogue_details (title_id) values($title_id where isbn='$item')";
+            $cdResponse = DB::insert($insertQueryCD);
+            $insertQuerybvp = "insert into memp.batch_vendor_po (title_id) values($title_id where isbn='$item')";
+            $bvpResponse = DB::insert($insertQueryCD);
 
 
         }
@@ -601,31 +596,31 @@ on a.id=b.batch_id";
 
     public static function generatecsv()
     {
-        $batch= $_GET['id'];
-        $query="select distinct isbn from memp.catalogue_details cd where cd.batch_id=$batch and title_id=-1";
-        $response=DB::select($query);
+        $batch = $_GET['id'];
+        $query = "select distinct isbn from memp.catalogue_details cd where cd.batch_id=$batch and title_id=-1";
+        $response = DB::select($query);
         $array = [];
         foreach ($response as $item) {
 
             array_push($array, $item->isbn);
         }
 
-        if(count($array)!=0||!empty($array)||$array!=[])
-        {
-            return View::make('invalidISBN') ->with('invalidISBN',$array) ;
+        if (count($array) != 0 || !empty($array) || $array != []) {
+            return View::make('invalidISBN')->with('invalidISBN', $array);
 
         }
 
-        $contentQuery="select isbn,title_id,title,count(*) quantity from memp.catalogue_details cd join memp.jb_titles jt on jt.titleid=cd.title_id where cd.batch_id=$batch
-        group by isbn,title,title_id";
-        $contentRes=DB::select($contentQuery);
+        $contentQuery = "select isbn,title_id,title,count(*) quantity ,book_num,branchname from memp.catalogue_details cd join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd.branch_id=jb.id where cd.batch_id=$batch
+
+        group by isbn,title,title_id,book_num,branchname";
+        $contentRes = DB::select($contentQuery);
         $contArray = [];
         foreach ($contentRes as $item) {
 
             array_push($contArray, $item);
         }
 
-        return view::make('giftInvoice')->with('data',$contArray);
+        return view::make('giftInvoice')->with('data', $contArray);
 
 
     }

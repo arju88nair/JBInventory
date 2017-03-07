@@ -151,12 +151,12 @@
                     <table class="table table-hover table-striped" id="main_table">
                         <thead>
                         <tr>
-
                             <th>Title Name</th>
                             <th>ISBN</th>
                             <th>Title ID</th>
                             <th>Quantity</th>
-
+                            <th>Book Number</th>
+                            <th>Branch Name</th>
                         </tr>
                         </thead>
                         <tbody class="populate">
@@ -165,6 +165,8 @@
                             <td><?php echo $brand->isbn?></td>
                             <td><?php echo $brand->title_id?></td>
                             <td><?php echo $brand->quantity?></td>
+                            <td><?php echo $brand->book_num?></td>
+                            <td><?php echo $brand->branchname?></td>
                         </tr>
                         <?php endforeach ?>
                         </tbody>

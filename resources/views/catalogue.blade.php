@@ -143,6 +143,7 @@
                         <th align="center">Name</th>
                         <th align="center">PO Order ID</th>
                         <th align="center">Vendor ID</th>
+                        <th align="center">Vendor Name</th>
                         <th align="center">Qauntity</th>
                         <th align="center"></th>
 

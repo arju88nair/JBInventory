@@ -132,6 +132,8 @@
                         <th align="center">Name</th>
                         <th align="center">PO Order ID</th>
                         <th align="center">Vendor ID</th>
+                        <th align="center">Vendor Name</th>
+
                         <th align="center">Qauntity</th>
 
 
@@ -216,7 +218,7 @@
 
 
 
-    <div id="isbnTable" style="display: none;">
+    <div id="isbnTable" style="display: none;margin-top: -4%">
         <h3 style="text-align: center">Start Scanning</h3>
         <h4 style="text-align: center" id="count"></h4>
         <br><br>

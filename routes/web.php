@@ -306,6 +306,17 @@ Route::post('updateisbn','HomeController@updateisbn');
 
 Route::get('generatecsv','HomeController@generatecsv');
 
+Route::get('purchaseOrdersView',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
 
 
+
+    return view('purchaseOrdersView');
+
+
+});
 

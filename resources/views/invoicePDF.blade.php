@@ -135,19 +135,19 @@
                 <TD class="tr1 td7"><P class="p2 ft2">&nbsp;</P></TD>
             </TR>
             <TR>
-                <TD colspan=2 class="tr0 td4"><P class="p1 ft3"><?php echo $myArray[1]?>,</P></TD>
+                <TD colspan=2 class="tr0 td4"><P class="p1 ft3"></P></TD>
                 <TD class="tr0 td2"><P class="p2 ft2">&nbsp;</P></TD>
                 <TD class="tr0 td5"><P class="p2 ft3">TIN</P></TD>
                 <TD class="tr0 td6"><P class="p3 ft3">:</P></TD>
                 <TD class="tr0 td7"><P class="p2 ft2">&nbsp;</P></TD>
             </TR>
             <TR>
-                <TD colspan=2 class="tr0 td4"><P class="p1 ft4"><?php echo $myArray[2]?>,</P></TD>
+                <TD colspan=2 class="tr0 td4"><P class="p1 ft4"></P></TD>
                 <TD class="tr0 td2"><P class="p2 ft2">&nbsp;</P></TD>
                 <TD colspan=3 class="tr0 td3"><P class="p2 ft4">ST No. : AADCJ8009LSD001</P></TD>
             </TR>
             <TR>
-                <TD colspan=2 class="tr1 td4"><P class="p1 ft3"><?php echo $myArray[3]?>,<?php echo $myArray[4]?></P></TD>
+                <TD colspan=2 class="tr1 td4"><P class="p1 ft3"></P></TD>
                 <TD class="tr1 td2"><P class="p2 ft2">&nbsp;</P></TD>
                 <TD class="tr1 td5"><P class="p2 ft3">CIN</P></TD>
                 <TD colspan=2 class="tr1 td8"><P class="p3 ft5">: U74999KA2016PTC096776</P></TD>
@@ -201,7 +201,7 @@
                 <TD class="tr4 td1"><P class="p2 ft2">&nbsp;</P></TD>
                 <TD class="tr4 td2"><P class="p5 ft3">Processing Cost</P></TD>
                 <TD class="tr4 td5"><P class="p2 ft2">&nbsp;</P></TD>
-                <TD class="tr4 td6"><P class="p2 ft2">&nbsp;</P></TD>
+                <TD class="tr4 td6"><P class="p2 ft2">&nbsp;</P><?php echo $totalQuantity?></TD>
                 <TD class="tr4 td7"><P class="p12 ft3"><?php echo $processing?></P></TD>
             </TR>
             <TR>
@@ -217,7 +217,7 @@
                 <TD class="tr6 td1"><P class="p2 ft2">&nbsp;</P></TD>
                 <TD class="tr6 td2"><P class="p2 ft2">&nbsp;</P></TD>
                 <TD class="tr6 td5"><P class="p2 ft2">&nbsp;</P></TD>
-                <TD class="tr6 td6"><P class="p13 ft8"><?php echo $totalQuantity?></P></TD>
+                <TD class="tr6 td6"><P class="p13 ft8"></P></TD>
                 <TD class="tr6 td7"><P class="p14 ft8"><?php echo $finalProce?></P></TD>
             </TR>
         </TABLE>

@@ -12,7 +12,7 @@
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="{!! asset('script/po.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('script/poview.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
@@ -51,7 +51,7 @@
             display:none;
         }
         /*#dev-table td {text-align:center; vertical-align:middle;table-layout:fixed;*/
-            /*width:100%;}*/
+        /*width:100%;}*/
         /*th {width: 50px;}*/
         row{
             margin-top:40px;
@@ -213,231 +213,189 @@
         </div>
     </nav>
 
-<div class="container" style="margin-top: 6%">
-    <div class="alert alert-success" style="display: none">
-        <strong>Success!</strong> Successfully updated
-    </div>
-    <div class="spinner"  style='display: none'>
-        <div class="double-bounce1"></div>
-        <div class="double-bounce2"></div>
-    </div>
-    <div id="vendors" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"></h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="table-responsive">
-                        <table class="table" id="expand-table">
-                            <thead>
-                            <tr>
-                                <th>Book Name</th>
-                                <th>Quantity</th>
-                                <th>Vendor Name</th>
+    <div class="container" style="margin-top: 6%">
+        <div class="alert alert-success" style="display: none">
+            <strong>Success!</strong> Successfully updated
+        </div>
+        <div class="spinner"  style='display: none'>
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+        <div id="vendors" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table class="table" id="expand-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Book Name</th>
+                                        <th>Quantity</th>
+                                        <th>Vendor Name</th>
 
-                            </tr>
-                            </thead>
-                            <tbody class="populateExpand">
+                                    </tr>
+                                    </thead>
+                                    <tbody class="populateExpand">
 
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
         </div>
-    </div>
-</div>
 
-    {{--First Branch--}}
+        {{--First Branch--}}
 
 
-<div id="batchTableDiv" style="display: none;">
-        <h3 style="text-align: center">SELECT A BATCH</h3>
-<br><br>
-        <div class="col-md-12" id ="Batchdivision" >
-            <div class="panel panel-primary">
-                <div class="panel-heading" style="background-color: #2A3F54;">
-                    <h3 class="panel-title">Total Batches Available</h3>
-                    <div class="pull-right">
+
+
+
+        <div id="vendorDivision" style="display: none;">
+            <h3 style="text-align: center">SELECT A VENDOR</h3>
+            <br><br>
+            <div class="col-md-12" id ="Batchdivision" >
+                <div class="panel panel-primary">
+                    <div class="panel-heading" style="background-color: #2A3F54;">
+                        <h3 class="panel-title">Total Vendors Available</h3>
+                        <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
                         </span>
+                        </div>
                     </div>
+                    <div class="panel-body">
+                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                    </div>
+                    <table class="table table-hover table-striped" id="vendors-table">
+                        <thead>
+                        <tr>
+
+                            <th>Vendor ID</th>
+                            <th>Vendor Name</th>
+                            <th>Phone</th>
+                            <th>City </th>
+                            <th>Discount</th>
+                            <th></th>
+
+
+
+
+                        </tr>
+                        </thead>
+                        <tbody class="populateVendorTable">
+                        </tbody>
+                    </table>
+
                 </div>
-                <div class="panel-body">
-                    <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
-                </div>
-                <table class="table table-hover table-striped" id="batch-table">
-                    <thead>
-                    <tr>
-
-                        <th>Batch ID</th>
-                        <th>Batch Name</th>
-                        <th>From Date</th>
-                        <th>To date</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                        <th></th>
-
-
-                    </tr>
-                    </thead>
-                    <tbody class="populateBatchTable">
-                    </tbody>
-                </table>
-
             </div>
+
+            <button type="button" class="btn btn-success btn-lg "  style="float: left;" onclick="POStatusBack()">Previous</button>
+
+
+
         </div>
 
+        {{--PO Divisoin--}}
 
-        {{--<button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Select Vendor</button>--}}
-
-
-    </div>
-
-
-<div id="vendorDivision" style="display: none;">
-    <h3 style="text-align: center">SELECT A VENDOR</h3>
-    <br><br>
-    <div class="col-md-12" id ="Batchdivision" >
-        <div class="panel panel-primary">
-            <div class="panel-heading" style="background-color: #2A3F54;">
-                <h3 class="panel-title">Total Vendors Available</h3>
-                <div class="pull-right">
+        <div id="poDivision" style="display: none;">
+            <div class="col-md-12"  id ="division" style="width:112% ;margin-left: -5%">
+                <div class="panel panel-primary">
+                    <div class="panel-heading" style="background-color: #2A3F54;">
+                        <h3 class="panel-title">Purchase Order</h3>
+                        <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
                         </span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                    </div>
+                    <table class="table table-hover table-striped" id="dev-table">
+                        <thead>
+                        <tr>
+
+                            <th>Book Name</th>
+                            <th>Title Id</th>
+                            <th>Quantity Required</th>
+                            <th>Quantity Available</th>
+                            <th>Quantity Ordered</th>
+                            <th>Total</th>
+                            <th>Price/Unit</th>
+                            <th>Availability</th>
+                            <th class="hideC">Branch ID</th>
+                            <th class="hideC">ISBN</th>
+
+                        </tr>
+                        </thead>
+                        <tbody id="populate">
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
-            <div class="panel-body">
-                <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
-            </div>
-            <table class="table table-hover table-striped" id="vendors-table">
-                <thead>
-                <tr>
+            <button class="btn btn-lg btn-success" onclick="poInsertBack()" style="float: left">Previous</button>
 
-                    <th>Vendor ID</th>
-                    <th>Vendor Name</th>
-                    <th>Phone</th>
-                    <th>City </th>
-                    <th>Discount</th>
-                    <th></th>
+            <button class="btn btn-lg btn-success" onclick="array_combine()" style="float: right">Update</button>
 
 
 
-
-                </tr>
-                </thead>
-                <tbody class="populateVendorTable">
-                </tbody>
-            </table>
 
         </div>
-    </div>
-
-    <button type="button" class="btn btn-success btn-lg "  style="float: left;" onclick="POStatusBack()">Previous</button>
 
 
-
-</div>
-
-{{--PO Divisoin--}}
-
-<div id="poDivision" style="display: none;">
-    <div class="col-md-12"  id ="division" style="width:112% ;margin-left: -5%">
-        <div class="panel panel-primary">
-            <div class="panel-heading" style="background-color: #2A3F54;">
-                <h3 class="panel-title">Purchase Order</h3>
-                <div class="pull-right">
-                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
-                        <i class="glyphicon glyphicon-filter"></i>
-                        </span>
-                </div>
-            </div>
-            <div class="panel-body">
-                <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
-            </div>
-            <table class="table table-hover table-striped" id="dev-table">
-                <thead>
-                <tr>
-
-                    <th>Book Name</th>
-                    <th>Title Id</th>
-                    <th>Quantity Required</th>
-                    <th>Quantity Available</th>
-                    <th>Quantity Ordered</th>
-                    <th>Total</th>
-                    <th>Price/Unit</th>
-                    <th>Availability</th>
-                    <th class="hideC">Branch ID</th>
-                    <th class="hideC">ISBN</th>
-
-                </tr>
-                </thead>
-                <tbody id="populate">
-                </tbody>
-            </table>
-
-        </div>
-    </div>
-    <button class="btn btn-lg btn-success" onclick="poInsertBack()" style="float: left">Previous</button>
-
-    <button class="btn btn-lg btn-success" onclick="array_combine()" style="float: right">Update</button>
-
-
-
-
-</div>
-
-
-    {{--<div class="container container-table">--}}
+        {{--<div class="container container-table">--}}
         {{--<div class="row vertical-center-row">--}}
-            {{--<div class="text-center col-md-4 col-md-offset-4" >--}}
+        {{--<div class="text-center col-md-4 col-md-offset-4" >--}}
 
 
 
 
-                {{--<p><b>Select a Batch</b></p>--}}
+        {{--<p><b>Select a Batch</b></p>--}}
 
-                {{--<input class="form-control tags" id="inputdefault" type="text" >--}}
-                {{--<br>--}}
-                {{--<div class="well well-lg" style="display:none">--}}
-                    {{--<table id="main_table">--}}
-                        {{--<tr>--}}
-                            {{--<td class="tab"><b>Total Books </b></td>--}}
-                            {{--<td class="tab"><b>Total PO Created </b></td>--}}
-                            {{--<td class="tab"><b>Total PO Pending </b></td>--}}
-                        {{--</tr>--}}
-                        {{--<tr>--}}
-                            {{--<td class="tab" id="Totalbooks"></td>--}}
-                            {{--<td class="tab"  id="created">0</td>--}}
-                            {{--<td class="tab" id="pending"></td>--}}
-                        {{--</tr>--}}
-                    {{--</table>--}}
+        {{--<input class="form-control tags" id="inputdefault" type="text" >--}}
+        {{--<br>--}}
+        {{--<div class="well well-lg" style="display:none">--}}
+        {{--<table id="main_table">--}}
+        {{--<tr>--}}
+        {{--<td class="tab"><b>Total Books </b></td>--}}
+        {{--<td class="tab"><b>Total PO Created </b></td>--}}
+        {{--<td class="tab"><b>Total PO Pending </b></td>--}}
+        {{--</tr>--}}
+        {{--<tr>--}}
+        {{--<td class="tab" id="Totalbooks"></td>--}}
+        {{--<td class="tab"  id="created">0</td>--}}
+        {{--<td class="tab" id="pending"></td>--}}
+        {{--</tr>--}}
+        {{--</table>--}}
 
 
-                {{--</div>--}}
-
-            {{--</div>--}}
         {{--</div>--}}
-    {{--</div>--}}
-    {{--<div class="text-center col-md-4 col-md-offset-4" >--}}
-    {{--<label for="tags">Vendors: </label>--}}
-    {{--<input id="tags" name="vendors">--}}
-    {{--</div>--}}
+
+        {{--</div>--}}
+        {{--</div>--}}
+        {{--</div>--}}
+        {{--<div class="text-center col-md-4 col-md-offset-4" >--}}
+        {{--<label for="tags">Vendors: </label>--}}
+        {{--<input id="tags" name="vendors">--}}
+        {{--</div>--}}
 
 
-    <br><br>
+        <br><br>
 
 
-</div>
+    </div>
 
 
 </div>

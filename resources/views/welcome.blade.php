@@ -114,13 +114,13 @@
                               accept-charset="UTF-8">
                            <div class="form-group">
                               <label for="sel1">Select Procurement Type:</label>
-                              <select class="form-control" id="sel1" name="select" onchange="triggered()">
+                              <select style="background-color: lightgrey" class="form-control" id="sel1" name="select" onchange="triggered()">
                                  <option value="1">New Arrivals</option>
                                  <option value="2">New Branch</option>
                                  <option value="3">IBT</option>
                                  <option value="4">Warehouse Procurement</option>
                                  <option value="5">Donation/Gift</option>
-                                 <option value="6">Branch Procuremtn</option>
+                                 <option value="6">Branch Procurement</option>
 
 
                               </select>

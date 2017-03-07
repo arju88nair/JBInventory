@@ -82,23 +82,25 @@ class PO extends Model
         $id = $_POST['id'];
 //        $getVID="select id from ams.suppliers where  name= '$vendor_name'";
 //        $vId=DB::select($getVID)[0]->id;
-        $query = " select  distinct title_id,a.isbn,quantity_required,title,branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) quantity,nvl(currency,'N/A') currency,nvl(price,'N/A') price from
-                (select z.title_id,isbn,quantity_required,title,branch_order_id from
-                (select a.title_id,quantity_required-nvl(ordered_qnty,0) as quantity_required,branch_order_id from
-                (select title_id,count(*) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) as branch_order_id
-                from opac.branch_order_batch_map bobm left join opac.branch_orders bo
-                on bobm.branch_order_id=bo.id join opac.branchorder obo on bobm.branch_order_id=obo.branch_order_id
-                where batch_id=$id and active=1
-                group by title_id) a
-                left join
-                (select title_id,sum(ORDERED_QUANTITY) ordered_qnty from memp.batch_vendor_po where po_id=$id group by title_id) b
-                on a.title_id=b.title_id) z
-                join memp.titles t on z.title_id=t.id ) a
-                left join
-                (select vendor_id,s.name,isbn,quantity,nvl(currency,'N/A') currency,nvl(price,'N/A') price from ams.suppliers s join opac.vendor_stock_details vsd
-                on s.id=vsd.vendor_id where vsd.vendor_id=$vId) b
-                on a.isbn=b.isbn
-                    ";
+        $query = " select title_id,z.isbn,quantity_required,z.title,z.branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) quantity,nvl(currency,'INR') currency,nvl(nvl(price,mrp),'N/A') price from (
+              select distinct title_id,a.isbn,quantity_required,title,branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) quantity, currency, price from
+             (select z.title_id,isbn,quantity_required,title,branch_order_id from
+             (select a.title_id,quantity_required-nvl(ordered_qnty,0) as quantity_required,branch_order_id from
+             (select title_id,count(*) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) as branch_order_id
+             from opac.branch_order_batch_map bobm left join opac.branch_orders bo
+             on bobm.branch_order_id=bo.id join opac.branchorder obo on bobm.branch_order_id=obo.branch_order_id
+             where batch_id=$id and active=1
+             group by title_id) a
+             left join
+             (select title_id,sum(ORDERED_QUANTITY) ordered_qnty from memp.batch_vendor_po where po_id=$id group by title_id) b
+             on a.title_id=b.title_id) z
+             join memp.titles t on z.title_id=t.id ) a
+             left join
+             (select vendor_id,s.name,vsd.isbn,quantity,currency,price
+             from ams.suppliers s join opac.vendor_stock_details vsd
+             on s.id=vsd.vendor_id
+             where vsd.vendor_id=$vId) b
+             on a.isbn=b.isbn) z join memp.titles ti on z.title_id=ti.id";
 
         return json_encode(DB::select($query));
 
@@ -114,7 +116,7 @@ class PO extends Model
         if($isbn == '' or empty($isbn)){
             $isbn=0;
         }
-        $query = "select vendor_id,ISBN,currency,price,quantity,title from   opac.vendor_stock_details vsd   join   jbprod.titles jt on jt.isbn_13 = vsd.isbn where  titleid= $title or  isbn_13 = $isbn";
+        $query = "select vendor_id,ISBN,currency,price,quantity,title,name from   opac.vendor_stock_details vsd   join   jbprod.titles jt on jt.isbn_13 = vsd.isbn join ams.suppliers ass on vendor_id=ass.id where  titleid= $title or  isbn_13 = '$isbn'";
         $response = DB::select($query);
         return json_encode($response);
 
@@ -144,6 +146,7 @@ class PO extends Model
             $b_id = $cell[2];
             $isbn = $cell[3];
             $price = $cell[4]*$quantity;
+
             $bid = explode(",", $b_id);
             foreach ($bid as $branch) {
                 $ibtrQUery = "update opac.ibtrs set state='InProgress',po_no=$bId where id=(select ibtr_id from opac.branch_orders where id=$branch)";
@@ -171,13 +174,13 @@ class PO extends Model
         $id = $_GET['id'];
         $vid = $_GET['vid'];
         $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
-                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,vsd.price,discount,(vsd.price*discount/100) dis from
-                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
-                    left join ams.authors a on t.authorid=a.id
-                    left join ams.publishers p on t.publisherid=p.id
-                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
-                    left join ams.suppliers s on s.id=bvp.vendor_id
-                    where orderid='$id' ) a";
+                   (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
+                   memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
+                   left join ams.authors a on t.authorid=a.id
+                   left join ams.publishers p on t.publisherid=p.id
+                   left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
+                   left join ams.suppliers s on s.id=bvp.vendor_id
+                   where orderid='$id' ) a";
         $data = DB::select($query);
         $array = [];
         foreach ($data as $row) {
@@ -189,14 +192,14 @@ class PO extends Model
         $vendor = DB::select($idQuery);
         $vendor = $vendor[0]->name;
 
-        $totalQuery="select sum(total) total from (select distinct isbn,title,ordered_quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
-                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,vsd.price,discount,(vsd.price*discount/100) dis from
-                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
-                    left join ams.authors a on t.authorid=a.id
-                    left join ams.publishers p on t.publisherid=p.id
-                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
-                    left join ams.suppliers s on s.id=bvp.vendor_id
-                    where orderid='$id' ) a)";
+        $totalQuery="select sum(total) total from (select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+                   (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
+                   memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
+                   left join ams.authors a on t.authorid=a.id
+                   left join ams.publishers p on t.publisherid=p.id
+                   left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
+                   left join ams.suppliers s on s.id=bvp.vendor_id
+                   where orderid='$id' ) a)";
         $totalRes=DB::select($totalQuery);
         $total=$totalRes[0]->total;
 
@@ -208,8 +211,8 @@ class PO extends Model
 
     public static function getPO()
     {
-        $query = "select b.name,orderid,sum(ordered_quantity) quantity,vendor_id,po_id from opac.batch b join memp.batch_vendor_po bvp
-    on b.id=bvp.po_id where orderid != '-1'  group by b.name,orderid,vendor_id,po_id     ";
+        $query = "select ass.name vname,b.name,orderid,sum(ordered_quantity) quantity,vendor_id,po_id from opac.batch b join memp.batch_vendor_po bvp
+    on b.id=bvp.po_id join ams.suppliers ass on vendor_id=ass.id where orderid != '-1'  group by ass.name,b.name,orderid,vendor_id,po_id     ";
         $array = [];
         $response = DB::select($query);
         foreach ($response as $arr) {

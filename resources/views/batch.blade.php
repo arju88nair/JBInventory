@@ -78,7 +78,10 @@
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
             <li ><a href="reports">Reports</a></li>
+            <li ><a href="catalogue">Catalogue</a></li>
             <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li ><a href="branchInvoice">Branch Invoice</a></li>
+
 
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -132,6 +135,8 @@
     </div>
     <div id="data"></div>
     <div class="row">
+        <a href="purchaseOrdersView" class="btn btn-primary btn-lg btn-block" role="button" style="float: right;right: 0;position: fixed;z-index: 1;top: 7%;">Go To PO Generation</a>
+<br><br><br>
         <div class="col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-heading" style=" background-color: #2A3F54;">
@@ -151,6 +156,7 @@
                         <th>Title</th>
                         <th>ISBN</th>
                         <th>Quantity</th>
+                        <th>Publisher</th>
                         <th>Price/unit(Rupees)</th>
                         <th>Total amount</th>
                         <th>Edit</th>
@@ -164,7 +170,6 @@
         </div>
     </div>
 </div>
-<a href="purchaseOrders" class="btn btn-primary btn-lg" role="button" style="float: right;margin-right: 6.5%">Go To PO Generation</a>
 </body>
 <script>
 

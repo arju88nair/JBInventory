@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <title>Just Books</title>
+    <title>Just Books</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -11,9 +12,18 @@
             src="https://code.jquery.com/jquery-3.1.1.js"
     ></script>  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css" />
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/getPO.js') !!}"></script>
 
@@ -59,7 +69,9 @@
         vertical-align:middle;
     }
     #totalPO td {text-align:center; vertical-align:middle;}
-    #totalPO th {text-align:center; vertical-align:middle;}</style>
+    #totalPO th {text-align:center; vertical-align:middle;}
+    #viewPO td {text-align:center; vertical-align:middle;}
+    #viewPO th {text-align:center; vertical-align:middle;}</style>
 </head>
 <script>
 
@@ -127,6 +139,7 @@
                             <th align="center">#</th>
                             <th align="center">Name</th>
                             <th align="center">PO Order ID</th>
+                            <th align="center">Vendor</th>
                             <th align="center">Qauntity</th>
                             <th align="center">Generate PDF</th>
                             <th align="center">View</th>
@@ -148,7 +161,7 @@
 
 
 
-        <div id="viewPO" style="display: none;">
+        <div id="viewPODiv" style="display: none;">
 
             {{--<button style="border: 2px solid lightblue;background-color: white;float: left;margin-left: 13px;" type="button" class="btn btn-outline-primary" ><span class="glyphicon glyphicon-menu-left" onclick="backView()"></span> &nbsp; Previous</button>--}}
             <br><br>
@@ -175,8 +188,11 @@
                         <th align="center">Name</th>
                         <th align="center">ISBN</th>
                         <th align="center">Ordered Qauntity</th>
+                        <th align="center">Author</th>
+                        <th align="center">Publisher</th>
+
                         <th align="center">Price</th>
-                        <th align="center">Discount</th>
+                        <th align="center">Discount(%)</th>
                         <th align="center">Net Price</th>
                         <th align="center">Total Price</th>
 

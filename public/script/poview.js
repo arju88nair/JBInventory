@@ -1,30 +1,32 @@
 $( document ).ready(function() {console.log("Gf")
-var table;
+    var table;
 
+var batch=localStorage.getItem("linkBatch");
+vendorAjax(batch);
 
-$(".spinner").show();
-    $.ajax({
-        type: "GET",
-        url: "getBatches",
-        dataType: 'json',
-        enctype: 'multipart/form-data',
-        cache: false,
-        success: function (data) {
-            $(".spinner").hide();
-            console.log(data);
-            //     test(data);
-            // autocompleted(data);
-            populateBatchTable(data);
-
-
-
-        },
-        error: function (err) {
-
-            console.log(err.responseText);
-
-        }
-    });
+    $(".spinner").show();
+    // $.ajax({
+    //     type: "GET",
+    //     url: "getBatches",
+    //     dataType: 'json',
+    //     enctype: 'multipart/form-data',
+    //     cache: false,
+    //     success: function (data) {
+    //         $(".spinner").hide();
+    //         console.log(data);
+    //         //     test(data);
+    //         // autocompleted(data);
+    //         populateBatchTable(data);
+    //
+    //
+    //
+    //     },
+    //     error: function (err) {
+    //
+    //         console.log(err.responseText);
+    //
+    //     }
+    // });
 
     $.ajax({
 
@@ -73,11 +75,6 @@ $(".spinner").show();
 
                 $(".spinner").hide();
                 console.log(data);
-                if(data.length==0)
-                {
-                    alert("No match found");
-
-                }
                 var modal = $(this);
                 $('.modal-title').text(data[0].title);
                 $('#expand-table tbody').empty();
@@ -196,8 +193,8 @@ function vendorAjax(id)
 
 function vendorDetailsAJax()
 {
-var id=localStorage.getItem("bId");
-var data=localStorage.getItem("vID");
+    var id=localStorage.getItem("linkBatch");
+    var data=localStorage.getItem("vID");
 
     $.ajax({
         type: "POST",
@@ -237,7 +234,7 @@ function populateBatch(jsonVal,ti_id,v_name)
     };
 
 
-     table=$('#dev-table').DataTable( {
+    table=$('#dev-table').DataTable( {
         destroy: true,
 
         "order": [[ 0, "asc" ]]
@@ -268,7 +265,7 @@ function populateBatch(jsonVal,ti_id,v_name)
 //
 // }
 $('#vendors').on('hidden', function () {
-  ;
+    ;
     // do something…
     $(".spinner").hide();
 
@@ -291,7 +288,6 @@ function getObjectFromJson(jsonObject,key,defaultVal) // Validating the existenc
         return (defaultVal==null ?"":defaultVal);
     }
 }
-
 
 
 
@@ -324,17 +320,17 @@ function array_combine()
     var array=[];
     table.destroy();
     table=$('#dev-table').DataTable();
-   var data= table.rows().every(function(){
-       console.log(this.data());
-       var cell=[];
-       cell.push(this.data()[1]);
-       cell.push(this.data()[5]);
-       cell.push(this.data()[8]);
-       cell.push(this.data()[9]);
-       cell.push(this.data()[6]);
-       array.push(cell);
-   });
-   console.log(array);
+    var data= table.rows().every(function(){
+        console.log(this.data());
+        var cell=[];
+        cell.push(this.data()[1]);
+        cell.push(this.data()[5]);
+        cell.push(this.data()[8]);
+        cell.push(this.data()[9]);
+        cell.push(this.data()[6]);
+        array.push(cell);
+    });
+    console.log(array);
 
 
     // var myTableArray = [];
@@ -357,7 +353,7 @@ function array_combine()
     // // });
     // // console.log(myTableArray);
     var vId=localStorage.getItem("vID");
-    var bId=localStorage.getItem("bId");
+    var bId=localStorage.getItem("linkBatch");
 
     $.ajax({
         type: "POST",
@@ -429,15 +425,7 @@ function populateBatchTable(val)
     });
 }
 
-function batchClick(id)
-{
-    localStorage.setItem("bId",id);
 
-    $(".spinner").show();
-
-    $("#batchTableDiv").hide();
-    vendorAjax()
-}
 
 // function vendorStatus()
 // {

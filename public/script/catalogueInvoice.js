@@ -103,7 +103,7 @@ function populateSelect(data){
 
     var option = '';
     for (var i = 0; i < data.length; i++) {
-        option += '<option value="' + data[i] + '">' + data[i] + '</option>';
+        option += '<option value="' + data[i].branch_id + '">' + data[i].branchname + '</option>';
     }
     $("#sel1").append(option)
 
@@ -155,7 +155,7 @@ function populateMain(jsonObj)
 
 
 
-        $('#invoice tbody').append('<tr><td>'+i+'</td><td>'+jsonObj[i].isbn+'</td><td>'+jsonObj[i].title+'</td><td>'+jsonObj[i].price+'</td><td>'+jsonObj[i].quantity+'</td><td>'+jsonObj[i].total+'</td></tr>');
+        $('#invoice tbody').append('<tr><td>'+i+'</td><td>'+jsonObj[i].isbn+'</td><td>'+jsonObj[i].title+'</td><td>'+jsonObj[i].author_name+'</td><td>'+jsonObj[i].price+'</td><td>'+jsonObj[i].quantity+'</td><td>'+jsonObj[i].total+'</td></tr>');
     }
 
     $('#invoice').DataTable( {

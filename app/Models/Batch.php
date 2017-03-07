@@ -48,16 +48,13 @@ class Batch extends Model
         $model = new self();
         $name = $_POST['name'];
 
-        if ($_POST['select'] == 5) {
-            $startDate = date('Y-m-d');
-            $endDate = date('Y-m-d');;
-        }
-        if ($_POST['select'] == '6' || $_POST['select'] == 6) {
+        if ($_POST['select'] == 5 || $_POST['select'] == 6) {
             $startDate = date('Y-m-d');
             $endDate = date('Y-m-d');;
         }
 
-        if($_POST['select'] != 5 ||$_POST['select'] != 5){
+
+        else {
             $startDate = $_POST['start'];
             $endDate = $_POST['end'];
         }
@@ -267,10 +264,11 @@ class Batch extends Model
     {
         $id = $_GET['batch'];
 
-        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount from
+        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount,ap.name  from
                         opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
-                        join jbprod.titles t on bo.title_id=t.titleid where bobm.batch_id=$id and bobm.active=1
-                        group by title_id,amount,isbn_13,title,batch_id";
+                        join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
+                        where bobm.batch_id=$id and bobm.active=1 
+                        group by title_id,amount,isbn_13,title,batch_id,ap.name";
 
 
         $batchResult = DB::select($batchQuery);
@@ -289,10 +287,11 @@ class Batch extends Model
     {
 
         $id = $_POST['id'];
-        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,amount*sum(quantity) total_amount from
+        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount,ap.name  from
                         opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
-                        join jbprod.titles t on bo.title_id=t.titleid where bobm.batch_id=$id and bobm.active=1
-                        group by title_id,amount,isbn_13,title,batch_id";
+                        join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
+                        where bobm.batch_id=$id and bobm.active=1 
+                        group by title_id,amount,isbn_13,title,batch_id,ap.name";
 
         $batchResult = DB::select($batchQuery);
         $array = [];

@@ -1,9 +1,10 @@
 $( document ).ready(function() {
 
+    var url = window.location.href
+    var arr = url.split("=");
+    localStorage.setItem("linkBatch",arr[1]);
 
-
-
-
+    
 
 
     $('#batch').on('hidden.bs.modal', function () {
@@ -172,11 +173,15 @@ function populateMain(val) // Populating the main table
         $('#dev-table tbody').append('<tr><td>'+getObjectFromJson(val[i],"title")+'</td><td>'
             +getObjectFromJson(val[i],"isbn_13")+'</td><td>'
             +getObjectFromJson(val[i],"copies")+'</td><td>'
+            +getObjectFromJson(val[i],"name")+'</td><td>'
             +getObjectFromJson(val[i],"amount")+'</td><td>'+getObjectFromJson(val[i],"total_amount")+'</td><td><span  class=\'glyphicon glyphicon-pencil\' style="cursor: pointer; cursor: hand; " data-toggle=\"modal\" id='+i+'  data-target=\"#batch\" data-batch='+val[i].batch_id+' data-title='+val[i].title_id+' data-row='+i+' ></span></td><td><span style="cursor: pointer; cursor: hand; " class=\'glyphicon glyphicon-trash\' onclick=\'deleteID(this,'+val[i].batch_id+','+val[i].title_id+');\'></span></td></tr>');
     }
     $(".spinner").hide();
     $('#dev-table').DataTable( {
-        "order": [[ 5, "desc" ]]
+        "order": [[ 5, "desc" ]],
+        "pageLength": 50
+
+
     } );
     $(".dataTables_filter").hide();
 }

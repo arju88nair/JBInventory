@@ -280,7 +280,7 @@
 
 
         <button type="button" class="btn btn-primary btn-lg" id="subBut" onclick="updateBranch()"
-                style=";float: right;margin-right: 2%;">Update
+                style="display:none;float: right;margin-right: 2%;">Update
         </button>
     </div>
 

@@ -152,6 +152,7 @@ function appendTable() {
     var isbn = $("#isbn").val();
     var bookNum = $("#num").val();
     var price = $("#priceIn").val();
+    $("#subBut").show();
     $("#summaryDiv").show()
     $('#summary tbody').append('<tr><td >' + isbn + '</td><td >' + bookNum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
 
@@ -200,6 +201,7 @@ function updateBranch() {
 
             },
             error: function (err) {
+                clean();
                 $(".spinner").hide();
 
                 console.log(err.responseText);
@@ -230,6 +232,8 @@ function updateBranch() {
 
             },
             error: function (err) {
+                clean();
+
                 $(".spinner").hide();
 
                 console.log(err.responseText);
@@ -242,9 +246,9 @@ function updateBranch() {
 
 
 function clean() {
-    alert("hi")
     $("#summary tbody").empty();
     $("#isbn").val('');
+    $("#subBut").hide();
     $("#num").val('');
 
 
