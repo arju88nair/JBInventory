@@ -11,7 +11,7 @@
 |
 */
 //use Barryvdh\DomPDF\PDF;
-use Auth;
+//use Auth;
 
 
 Route::get('getBatch', 'HomeController@index');
@@ -320,3 +320,7 @@ Route::get('purchaseOrdersView',function(){
 
 });
 
+
+Route::get('indISBNVal','HomeController@indISBNVal');
+
+Route::post('processDateReport','HomeController@processDateReport');

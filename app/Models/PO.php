@@ -4,9 +4,9 @@ namespace App\Models;
 
 use DB;
 use View;
-use PDF;
+use PDFS;
 use Illuminate\Database\Eloquent\Model;
-
+ini_set('max_execution_time', 300); //300 seconds = 5 minutes
 class PO extends Model
 {
     //
@@ -140,12 +140,16 @@ class PO extends Model
 
         $table = $_POST['table'];
 
+
         foreach ($table as $cell) {
             $quantity = $cell[1];
             $titleid = $cell[0];
             $b_id = $cell[2];
             $isbn = $cell[3];
             $price = $cell[4]*$quantity;
+
+
+
 
             $bid = explode(",", $b_id);
             foreach ($bid as $branch) {
@@ -173,7 +177,7 @@ class PO extends Model
     {
         $id = $_GET['id'];
         $vid = $_GET['vid'];
-        $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+        $query = "select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
                    left join ams.authors a on t.authorid=a.id
@@ -192,7 +196,7 @@ class PO extends Model
         $vendor = DB::select($idQuery);
         $vendor = $vendor[0]->name;
 
-        $totalQuery="select sum(total) total from (select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+        $totalQuery="select sum(total) total from (select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
                    left join ams.authors a on t.authorid=a.id
@@ -204,7 +208,7 @@ class PO extends Model
         $total=$totalRes[0]->total;
 
 //        $data1=json_encode($data);
-        $pdf = PDF::loadView('pdf', compact('array', 'vendor', 'id','date','total'));
+        $pdf = PDFS::loadView('pdf', compact('array', 'vendor', 'id','date','total'));
         return $pdf->download('invoice.pdf');
     }
 

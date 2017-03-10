@@ -6,6 +6,7 @@ use DB;
 use Illuminate\Database\Eloquent\Model;
 use View;
 use PDF;
+use PDFS;
 
 
 class report extends Model
@@ -128,7 +129,7 @@ on a.id=b.batch_id";
         }
         $branch_order_id = $updateSelectResponse[0]->branch_order_id;
         $branch_idSelec = $updateSelectResponse[0]->branch_id;
-        $branch_nameSelec= $updateSelectResponse[0]->branchname;
+        $branch_nameSelec = $updateSelectResponse[0]->branchname;
 
 
         $updateQuery = "update opac.branch_order_batch_map set remaining_quantity=REMAINING_QUANTITY-1 where BRANCH_ORDER_ID in($branch_order_id)";
@@ -159,7 +160,7 @@ on a.id=b.batch_id";
         }
 
 
-        return array("message" => "Successfully Added", 'code' => 200, 'isbn' => $isbn, 'batch' => $batch, 'branch_order' => $branch_order_id, 'branch_id' => $branch_id, 'branch_name' => $branch_name, 'title' => $ttile_name, 'selectedBranch' => $branch_idSelec,"selectedBranchName"=>$branch_nameSelec);
+        return array("message" => "Successfully Added", 'code' => 200, 'isbn' => $isbn, 'batch' => $batch, 'branch_order' => $branch_order_id, 'branch_id' => $branch_id, 'branch_name' => $branch_name, 'title' => $ttile_name, 'selectedBranch' => $branch_idSelec, "selectedBranchName" => $branch_nameSelec);
 
 
     }
@@ -273,10 +274,9 @@ on a.id=b.batch_id";
 
 
         $response = DB::select($query);
-if($response==[]||empty($response))
-{
-    return "No Items available";
-}
+        if ($response == [] || empty($response)) {
+            return "No Items available";
+        }
         $array = [];
         foreach ($response as $item) {
             array_push($array, $item);
@@ -309,7 +309,7 @@ if($response==[]||empty($response))
         $inWords = self::toWords((int)$finalProce);
 
 //        return View::make('invoicePDF')->with('array',$array)->with('branch_name',$branch_name)->with('myArray',$myArray)->with('date',$date)->with('sumres1',$sumres1)->with('final',$final)->with('discounted',$discounted)->with('totalQuantity',$totalQuantity)->with('processing',$processing)->with('finalProce',$finalProce)->with('inWords',$inWords);
-        $pdf = PDF::loadView('invoicePDF', compact('array', 'branch_name', 'myArray', 'date', 'sumres1', 'final', 'discounted', 'totalQuantity', 'processing', 'finalProce', 'inWords'));
+        $pdf = PDFS::loadView('invoicePDF', compact('array', 'branch_name', 'myArray', 'date', 'sumres1', 'final', 'discounted', 'totalQuantity', 'processing', 'finalProce', 'inWords'));
         return $pdf->download('invoicePDF.pdf');
 
     }
@@ -539,7 +539,7 @@ if($response==[]||empty($response))
     {
 
         $batch = $_GET['batch'];
-        $query = "select distinct isbn from memp.catalogue_details cd where cd.batch_id=112 and title_id=-1";
+        $query = "select distinct isbn from memp.catalogue_details cd where cd.batch_id=$batch and title_id=-1";
         $response = DB::select($query);
         $array = [];
         foreach ($response as $item) {
@@ -610,9 +610,9 @@ if($response==[]||empty($response))
 
         }
 
-        $contentQuery = "select isbn,title_id,title,count(*) quantity ,book_num,branchname from memp.catalogue_details cd join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd.branch_id=jb.id where cd.batch_id=$batch
-
-        group by isbn,title,title_id,book_num,branchname";
+        $contentQuery = "select jb.id,isbn,title_id,title,count(*) quantity ,book_num,branchname,to_char(created_at,'DD-MM-YYYY') created_at from memp.catalogue_details cd 
+join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd.branch_id=jb.id where cd.batch_id=$batch
+        group by jb.id,isbn,title,title_id,book_num,branchname,created_at";
         $contentRes = DB::select($contentQuery);
         $contArray = [];
         foreach ($contentRes as $item) {
@@ -621,6 +621,58 @@ if($response==[]||empty($response))
         }
 
         return view::make('giftInvoice')->with('data', $contArray);
+
+
+    }
+
+
+    public static function indISBNVal()
+    {
+        $isbn = $_GET['isbn'];
+        $query = "select * from jbprod.titles where isbn_10='$isbn' or isbn_13 = '$isbn'";
+        $response = DB::select($query);
+        if (empty($response) || $response == []) {
+            return "ISBN not found ! ";
+
+        } else {
+            return "Proceed with cataloging!";
+
+        }
+
+    }
+
+
+    public static function processDateReport()
+    {
+
+        $proce = $_POST['proc'];
+        $branch = $_POST['branch'];
+        $start = $_POST['start'];
+        $end = $_POST['end'];
+        if ($branch != 0) {
+            $branchAppend="and branch_id=$branch";
+        }
+        else{
+            $branchAppend="";
+        }
+
+        $queryFirst = "select isbn,title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname
+from memp.catalogue_details cd join opac.batch b on b.id=cd.batch_id join memp.jb_titles jt on jt.titleid=cd.title_id
+join memp.jb_branches jb  on cd.branch_id=jb.id
+where to_char(cd.created_at,'YYYY-MM-DD') 
+between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
+
+        $response=DB::select($queryFirst);
+
+        $contArray = [];
+        foreach ($response as $item) {
+
+            array_push($contArray, $item);
+        }
+
+        return view::make('giftInvoice2')->with('data', $contArray);
+
+
 
 
     }

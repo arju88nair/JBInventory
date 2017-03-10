@@ -1,12 +1,15 @@
 $(document).ready(function () {
+
+
     localStorage.removeItem("invalidISBN");
     $('table').on('click', 'tr a', function (e) {
         e.preventDefault();
         $(this).parents('tr').remove();
     });
+    branchCall();
     var table;
     var new_branch_id = "";
-    $('form').submit(false);
+    $('#secondForm').submit(false);
     $(".spinner").show();
     $.ajax({
 
@@ -20,6 +23,7 @@ $(document).ready(function () {
             //     test(data);
             // autocompleted(data);
             populatePO(data);
+
 
 
         },
@@ -91,7 +95,6 @@ function populatePO(val) {
     });
 
     // $(".dataTables_filter").hide();
-    $(".spinner").hide();
     $('#POTotalTableDiv').show();
     $('#navig').show();
 
@@ -127,7 +130,7 @@ function POClick(id, pId) {
             // autocompleted(data);
             var option = '';
             for (var i = 0; i < data.length; i++) {
-                option += '<option value="' + data[i].id + '">' + data[i].branchname + '</option>';
+                option += '<option value="' + data[i].id + '">' + data[i].branchname + '  -  ' + data[i].id + '</option>';
             }
             $("#selectDrop").append(option);
 
@@ -156,6 +159,7 @@ function appendTable() {
     $("#summaryDiv").show()
     $('#summary tbody').append('<tr><td >' + isbn + '</td><td >' + bookNum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
 
+    validateISBN(isbn);
 
 }
 
@@ -298,4 +302,87 @@ function generatecsv(id)
 }
 
 
+function validateISBN(id)
+{
 
+    $(".spinner").show();
+    $.ajax({
+
+        type: "GET",
+        url: "indISBNVal?isbn=" + id,
+        dataType: 'json',
+        enctype: 'multipart/form-data',
+        cache: false,
+        success: function (data) {
+            $(".spinner").hide();
+            alert(data);
+            $("#isbn").val("");
+             $("#num").val("");
+
+
+        },
+        error: function (err) {
+            $(".spinner").hide();
+
+
+            alert(err.responseText);
+            $("#isbn").val("");
+            $("#num").val("");
+
+
+
+        }
+    });
+
+}
+
+
+function branchCall()
+{
+    $.ajax({
+
+        type: "GET",
+        url: "getGiftBranch",
+        dataType: 'json',
+        enctype: 'multipart/form-data',
+        cache: false,
+        success: function (data) {
+            console.log(data);
+            //     test(data);
+            // autocompleted(data);
+            var option = '';
+            for (var i = 0; i < data.length; i++) {
+                option += '<option  value="' + data[i].id + '">' + data[i].branchname + '  -  ' + data[i].id + '</option>';
+            }
+            $("#selBran").append(option);
+            $("#formField").show();
+
+            $(".spinner").hide();
+
+
+
+        },
+        error: function (err) {
+
+            console.log(err.responseText);
+
+        }
+    });
+
+}
+$(document).ready(
+
+    function () {
+        $(".spinner").show();
+        $( "#datepicker_start" ).datepicker({
+            changeMonth: true,//this option for allowing user to select month
+            changeYear: true,//this option for allowing user to select from year range
+            dateFormat: 'yy-mm-dd'
+        });
+        $( "#datepicker_end" ).datepicker({
+            changeMonth: true,//this option for allowing user to select month
+            changeYear: true,//this option for allowing user to select from year range
+            dateFormat: 'yy-mm-dd'
+        });
+    }
+);

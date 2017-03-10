@@ -262,6 +262,12 @@ class HomeController extends Controller
     }
 
 
+    public function indISBNVal(Request $request)
+    {
+        return report::indISBNVal($request->all());
+    }
+
+
     public function getGiftBatch(Request $request)
     {
         return report::getGiftBatch($request->all());
@@ -299,6 +305,11 @@ class HomeController extends Controller
     public function generatecsv(Request $request)
     {
         return report::generatecsv($request->all());
+    }
+
+    public function processDateReport(Request $request)
+    {
+        return report::processDateReport($request->all());
     }
 
 

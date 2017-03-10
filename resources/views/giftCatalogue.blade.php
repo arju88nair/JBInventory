@@ -5,9 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script
-            src="https://code.jquery.com/jquery-3.1.1.js"
-    ></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.js" ></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -97,10 +95,9 @@
             <li><a href="getPO">Purchase Orders</a></li>
             <li><a href="scanner">GR</a></li>
             <li><a href="reports">Reports</a></li>
-            <li ><a href="catalogue">Catalogue</a></li>
-            <li class="active" ><a href="giftCatalogue">Dontaion/Gift</a></li>
-            <li ><a href="branchInvoice">Branch Invoice</a></li>
-
+            <li><a href="catalogue">Catalogue</a></li>
+            <li class="active"><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li><a href="branchInvoice">Branch Invoice</a></li>
 
 
         </ul>
@@ -113,11 +110,50 @@
 
     <h3 style="text-align: center">Donation/Branch Procurement Catalogue</h3>
     <br><br>
-   <div class="spinner" style='display: none'>
+
+    <div class="container" id="formField" style="display: none;">
+
+        <form role="form" class="form-inline" method="post" action="{{ action('HomeController@processDateReport') }}" enctype="multipart/form-data"
+              accept-charset="UTF-8">
+            <div class="form-group">
+                <label for="sel1">Select Procurement:</label>
+                <select class="form-control" id="selProc" name="proc">
+                    <option value="5">Donation/Gift</option>
+                    <option value="5">Branch Procurement</option>
+
+                </select>
+            </div>
+            &nbsp;&nbsp;
+            <div class="form-group">
+                <label for="sel1">Select Branch:</label>
+                <select class="form-control" id="selBran" style="width: 32%;" name="branch">
+                    <option value="0">Any</option>
+
+                </select>
+            </div>
+            &nbsp;&nbsp;
+            <div class="form-group" style="margin-left: -22%;">
+                <label for="from">From Date:</label>
+                <input type="date" class="form-control" id="datepicker_start" name="start" required>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="form-group" style="margin-top: 2%;margin-left: 64%;">
+                <label for="from">To Date:</label>
+                <input type="date" class="form-control" id="datepicker_end" name="end" required>
+            </div>
+
+            <button type="submit" class="btn btn-default" style="margin-top: 2%;margin-left: 2%;">Submit</button>
+        </form>
+
+
+    </div>
+    <br><br>
+
+    <div class="spinner" style='display: none'>
         <div class="double-bounce1"></div>
         <div class="double-bounce2"></div>
     </div>
-    <div id="POTotalTableDiv" style="display: none;">
+    <div id="POTotalTableDiv" style="display: none;margin-top: -4%;">
         <h2 style="text-align: center">Select a Batch</h2>
         <br><br>
         <div class="col-md-12" id="Totaldivision">
@@ -150,8 +186,6 @@
                         <th align="center"></th>
 
 
-
-
                     </tr>
                     </thead>
                     <tbody class="populatePOTable">
@@ -166,7 +200,7 @@
 
     </div>
     <br><br><br>
-    <div class="catalogueDiv" style="display:none;margin-left: 18%">
+    <div class="catalogueDiv" style="display:none;margin-left: 18%;margin-top: -6%;">
 
         <div class="container">
             <div class="col-xs-3" id="selectDiv" style="margin-left: 19%;">
@@ -179,24 +213,23 @@
             <br><br>
 
 
-
-            <div class="col-xs-3" id="inputDiv" style="margin-left: 19%;">
+            <div class="col-xs-3" id="inputDiv" style="margin-left: 19%;margin-top: -8%;">
                 <label for="sel1" style="margin-left: 17%;">Enter Invoice:</label>
                 <input type="text" class="form-control" id="invoiceIn">
             </div>
         </div>
         <br><br><br>
-        <form class="form-inline" style="margin-left: -21%;">
+        <form id= "secondForm" class="form-inline" style="margin-left: -21%;margin-top: -8%;">
             <div class="form-group">
                 <label for="email">ISBN:</label>
-                <input type="text" class="form-control" id="isbn" name="isbn" autofocus>
+                <input type="text" class="form-control" id="isbn" name="isbn" autofocus required>
             </div>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <div class="form-group">
                 <label for="pwd">Book Number:</label>
-                <input type="text" class="form-control" id="num" name="bookNum">
+                <input type="text" class="form-control" id="num" name="bookNum" required>
             </div>
-&nbsp;
+            &nbsp;
             <div class="form-group" style="display:none;" id="price">
                 <label for="pwd"> Price:</label>
                 <input type="text" class="form-control" id="priceIn" name="bookNum" value="0">
@@ -207,7 +240,7 @@
         </form>
 
         <br><br><br>
-        <div id="summaryDiv" style="display: none;margin-left: -18%">
+        <div id="summaryDiv" style="display: none;margin-left: -18%;margin-top: -4%">
             <h3 style="text-align: center;">Summary</h3>
 
             <br><br>

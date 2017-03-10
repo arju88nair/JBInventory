@@ -138,7 +138,7 @@
             <div class="col-md-12">
                 <div class="panel panel-primary">
                     <div class="panel-heading" style="background-color: #2A3F54;">
-                        <h3 class="panel-title">Invalid ISBNS</h3>
+                        <h3 class="panel-title">Report</h3>
                         <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
@@ -157,6 +157,9 @@
                             <th>Quantity</th>
                             <th>Book Number</th>
                             <th>Branch Name</th>
+                            <th>Branch Code</th>
+                            <th>Created At</th>
+
                         </tr>
                         </thead>
                         <tbody class="populate">
@@ -167,6 +170,8 @@
                             <td><?php echo $brand->quantity?></td>
                             <td><?php echo $brand->book_num?></td>
                             <td><?php echo $brand->branchname?></td>
+                            <td><?php echo $brand->id?></td>
+                            <td><?php echo $brand->created_at?></td>
                         </tr>
                         <?php endforeach ?>
                         </tbody>
