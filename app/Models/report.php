@@ -310,7 +310,7 @@ on a.id=b.batch_id";
 
 //        return View::make('invoicePDF')->with('array',$array)->with('branch_name',$branch_name)->with('myArray',$myArray)->with('date',$date)->with('sumres1',$sumres1)->with('final',$final)->with('discounted',$discounted)->with('totalQuantity',$totalQuantity)->with('processing',$processing)->with('finalProce',$finalProce)->with('inWords',$inWords);
         $pdf = PDFS::loadView('invoicePDF', compact('array', 'branch_name', 'myArray', 'date', 'sumres1', 'final', 'discounted', 'totalQuantity', 'processing', 'finalProce', 'inWords'));
-        return $pdf->download('invoicePDF.pdf');
+        return $pdf->download('branchInvoice.pdf');
 
     }
 
@@ -632,10 +632,10 @@ join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd
         $query = "select * from jbprod.titles where isbn_10='$isbn' or isbn_13 = '$isbn'";
         $response = DB::select($query);
         if (empty($response) || $response == []) {
-            return "ISBN not found ! ";
+            return 201;
 
         } else {
-            return "Proceed with cataloging!";
+            return 200;
 
         }
 
@@ -656,7 +656,7 @@ join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd
             $branchAppend="";
         }
 
-        $queryFirst = "select isbn,title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname
+        $queryFirst = "select isbn,title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname,b.procurement_type_id
 from memp.catalogue_details cd join opac.batch b on b.id=cd.batch_id join memp.jb_titles jt on jt.titleid=cd.title_id
 join memp.jb_branches jb  on cd.branch_id=jb.id
 where to_char(cd.created_at,'YYYY-MM-DD') 

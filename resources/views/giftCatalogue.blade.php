@@ -142,7 +142,7 @@
                 <input type="date" class="form-control" id="datepicker_end" name="end" required>
             </div>
 
-            <button type="submit" class="btn btn-default" style="margin-top: 2%;margin-left: 2%;">Submit</button>
+            <button type="submit" class="btn btn-info" style="margin-top: 2%;margin-left: 2%;">Submit</button>
         </form>
 
 

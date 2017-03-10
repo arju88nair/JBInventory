@@ -209,7 +209,7 @@ class PO extends Model
 
 //        $data1=json_encode($data);
         $pdf = PDFS::loadView('pdf', compact('array', 'vendor', 'id','date','total'));
-        return $pdf->download('invoice.pdf');
+        return $pdf->download('POreport.pdf');
     }
 
 

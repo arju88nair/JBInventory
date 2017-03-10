@@ -136,6 +136,8 @@ function POClick(id, pId) {
 
             $(".spinner").hide();
             $("#POTotalTableDiv").hide();
+            $("#formField").hide();
+
             $(".catalogueDiv").show();
 
 
@@ -157,9 +159,8 @@ function appendTable() {
     var price = $("#priceIn").val();
     $("#subBut").show();
     $("#summaryDiv").show()
-    $('#summary tbody').append('<tr><td >' + isbn + '</td><td >' + bookNum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
 
-    validateISBN(isbn);
+    validateISBN(isbn,bookNum,price);
 
 }
 
@@ -302,7 +303,7 @@ function generatecsv(id)
 }
 
 
-function validateISBN(id)
+function validateISBN(id,booknum,price)
 {
 
     $(".spinner").show();
@@ -315,17 +316,28 @@ function validateISBN(id)
         cache: false,
         success: function (data) {
             $(".spinner").hide();
-            alert(data);
+            if(data == 200 || data == '200') {
+                $('#summary tbody').append('<tr><td >' + id + '</td><td >' + booknum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
+
+            }
+            else{
+                alert("ISBN not found!")
+            }
             $("#isbn").val("");
              $("#num").val("");
+
 
 
         },
         error: function (err) {
             $(".spinner").hide();
+            if(err.responseText == 200 || err.responseText == '200') {
+                $('#summary tbody').append('<tr><td >' + id + '</td><td >' + booknum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
 
-
-            alert(err.responseText);
+            }
+            else{
+                alert("ISBN not found!")
+            }
             $("#isbn").val("");
             $("#num").val("");
 
