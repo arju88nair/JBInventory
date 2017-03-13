@@ -151,26 +151,28 @@
                     <table class="table table-hover table-striped" id="main_table">
                         <thead>
                         <tr>
-                            <th>Title Name</th>
-                            <th>ISBN</th>
-                            <th>Title ID</th>
-                            <th>Quantity</th>
-                            <th>Book Number</th>
-                            <th>Branch Name</th>
+                            <th>Sl.No</th>
+                            <th>Material Code</th>
+                            <th>Material Description</th>
+                            <th>Book Serial Number</th>
                             <th>Branch Code</th>
-                            <th>Created At</th>
+                            <th>Branch Name</th>
+                            <th>STO Number</th>
+                            <th>Production Date</th>
 
                         </tr>
                         </thead>
                         <tbody class="populate">
+                        <?php $i=1;?>
                         <?php foreach($data as $brand): ?>
-                        <tr><td><?php echo $brand->title?></td>
-                            <td><?php echo $brand->isbn?></td>
-                            <td><?php echo $brand->title_id?></td>
-                            <td><?php echo $brand->quantity?></td>
+                        <tr>
+                            <td><?php echo $i ++; ?></td>
+                            <td>F<?php echo $brand->isbn?></td>
+                            <td><?php echo $brand->title?></td>
                             <td><?php echo $brand->book_num?></td>
+                            <td>F<?php echo $brand->id?></td>
                             <td><?php echo $brand->branchname?></td>
-                            <td><?php echo $brand->id?></td>
+                            <td><?php echo $brand->procurement_type_id?></td>
                             <td><?php echo $brand->created_at?></td>
                         </tr>
                         <?php endforeach ?>

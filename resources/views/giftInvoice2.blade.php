@@ -167,10 +167,10 @@
                         <?php foreach($data as $brand): ?>
                         <tr>
                             <td><?php echo $i ++; ?></td>
-                            <td><?php echo $brand->isbn?></td>
+                            <td>F<?php echo $brand->isbn?></td>
                             <td><?php echo $brand->title?></td>
                             <td><?php echo $brand->book_num?></td>
-                            <td><?php echo $brand->id?></td>
+                            <td>F<?php echo $brand->id?></td>
                             <td><?php echo $brand->branchname?></td>
                             <td><?php echo $brand->procurement_type_id?></td>
                             <td><?php echo $brand->created_at?></td>

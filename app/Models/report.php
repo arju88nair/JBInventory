@@ -610,9 +610,9 @@ on a.id=b.batch_id";
 
         }
 
-        $contentQuery = "select jb.id,isbn,title_id,title,count(*) quantity ,book_num,branchname,to_char(created_at,'DD-MM-YYYY') created_at from memp.catalogue_details cd 
-join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd.branch_id=jb.id where cd.batch_id=$batch
-        group by jb.id,isbn,title,title_id,book_num,branchname,created_at";
+        $contentQuery = "select jb.id,cd.isbn,cd.title_id,jt.title,count(*) quantity ,cd.book_num,jb.branchname,to_char(cd.created_at,'DD-MM-YYYY') created_at ,b.procurement_type_id from memp.catalogue_details cd
+join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd.branch_id=jb.id join opac.batch b on b.id=cd.batch_id   where cd.batch_id=$batch
+      group by jb.id,cd.isbn,jt.title,cd.title_id,cd.book_num,jb.branchname,cd.created_at,b.procurement_type_id";
         $contentRes = DB::select($contentQuery);
         $contArray = [];
         foreach ($contentRes as $item) {

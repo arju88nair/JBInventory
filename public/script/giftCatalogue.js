@@ -43,7 +43,19 @@ $(document).ready(function () {
 
     var pressed = false;
     var chars = [];
+
     $(window).keypress(function (e) {
+        var code = e.keyCode || e.which;
+        if(code == 13) { //Enter keycode
+       $("#num").focus();
+       var islength=$("#isbn").val();
+       var numlength=$("#num").val()
+       if(islength.length === 0 || numlength.length === 0)
+       {
+           return false;
+
+       }
+        }
 
         //if (e.which >= 48 && e.which <= 57) {
         chars.push(String.fromCharCode(e.which));
@@ -90,6 +102,7 @@ function populatePO(val) {
             + getObjectFromJson(val[i], "status") + '</td><td><span id="' + getObjectFromJson(val[i], "id") + '" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="POClick(\'' + val[i].id + '\',\'' + val[i].procurement_type_id + '\')"></span></td><td><button style="border: 2px solid lightblue;background-color: white;" type="button" class="btn btn-outline-primary" onclick="viewISBN(\'' + val[i].id + '\')">Validate</button></td><td><button style="border: 2px solid lightblue;background-color: white;" type="button" class="btn btn-outline-primary" onclick="generatecsv(\'' + val[i].id + '\')">Generate CSV</button></td></tr>');
     }
     table = $('#totalPO').DataTable({
+        "order": [[ 0, "desc" ]],
         destroy: true,
         clear: true
     });
@@ -158,7 +171,8 @@ function appendTable() {
     var bookNum = $("#num").val();
     var price = $("#priceIn").val();
     $("#subBut").show();
-    $("#summaryDiv").show()
+    $("#summaryDiv").show();
+    $("#isbn").focus();
 
     validateISBN(isbn,bookNum,price);
 
@@ -166,6 +180,11 @@ function appendTable() {
 
 
 function updateBranch() {
+    if($("#selectDrop").val() == 0 || $("#selectDrop").val() == "0")
+    {
+        alert("Please select a branch");
+        return false;
+    }
     $(".spinner").show();
 
     var myTableArray = [];
@@ -180,6 +199,12 @@ function updateBranch() {
         }
     });
     console.log(myTableArray);
+    if(myTableArray.length === 0)
+    {
+        alert("Table is empty");
+        $(".spinner").hide();
+        return false;
+    }
     var pID = localStorage.getItem("pID");
     if (pID == 6) {
         var invoice = $("#invoiceIn").val();
@@ -318,10 +343,10 @@ function validateISBN(id,booknum,price)
             $(".spinner").hide();
             if(data == 200 || data == '200') {
                 $('#summary tbody').append('<tr><td >' + id + '</td><td >' + booknum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
-
+                $("#alertDiv").hide();
             }
             else{
-                alert("ISBN not found!")
+                $("#alertDiv").show();
             }
             $("#isbn").val("");
              $("#num").val("");
@@ -333,10 +358,10 @@ function validateISBN(id,booknum,price)
             $(".spinner").hide();
             if(err.responseText == 200 || err.responseText == '200') {
                 $('#summary tbody').append('<tr><td >' + id + '</td><td >' + booknum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
-
+                $("#alertDiv").hide();
             }
             else{
-                alert("ISBN not found!")
+                $("#alertDiv").show();
             }
             $("#isbn").val("");
             $("#num").val("");

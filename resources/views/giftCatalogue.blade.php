@@ -107,6 +107,10 @@
     </div>
 </nav>
 <div class="container" style="margin-top: 6%">
+    <div class="alert alert-danger alert-dismissable" id="alertDiv" style="display: none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Alert!</strong> ISBN Not Present.
+    </div>
 
     <h3 style="text-align: center">Donation/Branch Procurement Catalogue</h3>
     <br><br>
@@ -159,7 +163,7 @@
         <div class="col-md-12" id="Totaldivision">
             <div class="panel panel-primary">
                 <div class="panel-heading" style="background-color: #2A3F54;">
-                    <h3 class="panel-title">Total POs</h3>
+                    <h3 class="panel-title">Total Batches</h3>
                     <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter"
                               data-container="body">
@@ -206,6 +210,7 @@
             <div class="col-xs-3" id="selectDiv" style="margin-left: 19%;">
                 <label for="sel1" style="margin-left: 17%;">Select Branch:</label>
                 <select class="form-control" id="selectDrop">
+                    <option value=0></option>
                 </select>
             </div>
             <br><br>
