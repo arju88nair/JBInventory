@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,8 +7,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script
             src="https://code.jquery.com/jquery-3.1.1.js"
-    ></script>  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    ></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
@@ -18,32 +17,45 @@
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
 
     <style>
-        .ui-tooltip-content{
+
+        .ui-tooltip-content {
             display: none;
         }
-        .panel-heading{
+
+        .panel-heading {
             color: #fff;
             background-color: #2A3F54;
             border-color: #337ab7;
         }
-        .navbar-inverse{
+
+        .navbar-inverse {
             background-color: #2A3F54;
         }
+
         @font-face {
             font-family: product;
             src: url('{{ public_path('fonts/Product sans.ttf') }}');
         }
 
-        html *{
+        html * {
             font-family: product;
 
         }
-        body{
+
+        body {
             background-color: #EDEDED;
 
         }
-        #dev-table td {text-align:center; vertical-align:middle;}
-        #dev-table th {text-align:center; vertical-align:middle;}
+
+        #dev-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        #dev-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
 
 
     </style>
@@ -59,20 +71,19 @@
             <a class="brand" href="#">
                 <!-- UNCOMMENT THE CSS VALUES TO TEST OTHER DIMENTIONS -->
                 <!-- <img src="http://placehold.it/150x80&text=Logo" alt=""> -->
-                <img style= "width: 171px;" src="{{URL::asset('/img/jb.png')}}" alt="">
+                <img style="width: 171px;" src="{{URL::asset('/img/jb.png')}}" alt="">
             </a>
         </div>
         &nbsp;
         <ul class="nav navbar-nav" style="margin-left: 3%;">
-            <li ><a href="/">Batches</a></li>
+            <li><a href="/">Batches</a></li>
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
-            <li ><a href="scanner">GR</a></li>
+            <li><a href="scanner">GR</a></li>
             <li class="active"><a href="reports">Reports</a></li>
-            <li ><a href="catalogue">Catalogue</a></li>
-            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
-            <li ><a href="branchInvoice">Branch Invoice</a></li>
-
+            <li><a href="catalogue">Catalogue</a></li>
+            <li><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li><a href="branchInvoice">Branch Invoice</a></li>
 
 
             {{--<li ><a href="invoiceView">Invoice</a></li>--}}
@@ -87,35 +98,77 @@
     @if (session('status'))
 
         <div class="alert alert-success">
-            <strong>Success!</strong>  {{ session('status') }}
+            <strong>Success!</strong> {{ session('status') }}
         </div>
     @endif
 
-    <div class="spinner"  style='display: none'>
+    <div class="spinner" style='display: none'>
         <div class="double-bounce1"></div>
         <div class="double-bounce2"></div>
     </div>
+
+    <div id="wrapper" style="text-align: center;background-color: lightgray;">
+        <div id="yourdiv" style="display: inline-block;">
+            <h3>Reports for the current month</h3>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="from">From Date:</label>
+                    <input type="date" class="form-control" id="datepicker_start" name="start" required>
+                </div>
+                &nbsp;&nbsp;&nbsp;
+                <div class="form-group">
+                    <label for="from">End Date:</label>
+                    <input type="date" class="form-control" id="datepicker_end" name="end" required>
+                </div>
+
+            </form>
+            <br>
+            <button class="btn btn-info" id="repSub" onclick="subRepo()">Submit</button>
+
+            <div class="row">
+                <div class="col-sm-4"><b>Total POs : </b><span id="pos"></span></div>
+                <div class="col-sm-4"><b>Total batches : </b><span id="batches"></span></div>
+                <div class="col-sm-4"><b>Completed batches : </b><span id="completed"></span></div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-4"><b>Ordered Books : </b><span id="ordered"></span></div>
+                <div class="col-sm-4"><b>Received Books : </b><span id="received"></span></div>
+                <div class="col-sm-4"><b>Remaining Books : </b><span id="processed"></span></div>
+            </div>
+
+        </div>
+        <br><br>
+    </div>
+
+    <br>
+    <hr style="border-color: grey">
+    <br>
+
     <div id="data"></div>
     <div class="row">
-        {{--<div class="col-md-12" id="create" style="padding-bottom: 15px">--}}
-            {{--<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#Batch">Create Batch</button>--}}
-        {{--</div>--}}
+    {{--<div class="col-md-12" id="create" style="padding-bottom: 15px">--}}
+    {{--<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#Batch">Create Batch</button>--}}
+    {{--</div>--}}
 
 
-        <!-- Modal -->
-        <div class="row">
+    <!-- Modal -->
+        <div class="row" style="margin-top: -5%;">
             <div class="col-md-12">
+                <h3>Batch Report</h3>
                 <div class="panel panel-primary">
                     <div class="panel-heading" style="background-color: #2A3F54;">
                         <h3 class="panel-title">Batch Summary</h3>
                         <div class="pull-right">
-                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter"
+                              data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
                         </span>
                         </div>
                     </div>
                     <div class="panel-body">
-                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter"
+                               data-filters="#dev-table" placeholder="Filter Batches"/>
                     </div>
                     <table class="table table-hover" id="dev-table">
                         <thead>
@@ -134,9 +187,8 @@
                     </table>
                 </div>
             </div>
+            <br><br><br><br>
         </div>
-
-
 
 
     </div>
@@ -144,33 +196,39 @@
 
 </body>
 
-<style>.row{
-        margin-top:40px;
+<style>.row {
+        margin-top: 40px;
         padding: 0 10px;
     }
-    .clickable{
+
+    .clickable {
         cursor: pointer;
     }
+
     .panel-heading div {
         margin-top: -18px;
         font-size: 15px;
     }
-    .panel-heading div span{
-        margin-left:5px;
+
+    .panel-heading div span {
+        margin-left: 5px;
     }
-    .panel-body{
+
+    .panel-body {
         display: none;
     }
 
-    #dev-table_length{
+    #dev-table_length {
         margin-left: 1%;
         padding-top: 1%;
     }
-    #dev-table_info{
+
+    #dev-table_info {
         margin-left: 1%;
         padding-top: 2%;
     }
-    #dev-table_paginate{
+
+    #dev-table_paginate {
         padding-top: 1%;
         padding-bottom: 1%;
         padding-right: 1%;
@@ -194,6 +252,7 @@
         bottom: 0;
         right: 0;
     }
+
     .spinner:before {
         content: '';
         display: block;
@@ -202,7 +261,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.3);
+        background-color: rgba(0, 0, 0, 0.3);
     }
 
     .double-bounce1, .double-bounce2 {
@@ -225,18 +284,23 @@
     }
 
     @-webkit-keyframes sk-bounce {
-        0%, 100% { -webkit-transform: scale(0.0) }
-        50% { -webkit-transform: scale(1.0) }
+        0%, 100% {
+            -webkit-transform: scale(0.0)
+        }
+        50% {
+            -webkit-transform: scale(1.0)
+        }
     }
 
     @keyframes sk-bounce {
         0%, 100% {
             transform: scale(0.0);
             -webkit-transform: scale(0.0);
-        } 50% {
-              transform: scale(1.0);
-              -webkit-transform: scale(1.0);
-          }
+        }
+        50% {
+            transform: scale(1.0);
+            -webkit-transform: scale(1.0);
+        }
     }
 </style>
 </html>

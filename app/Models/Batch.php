@@ -22,7 +22,7 @@ class Batch extends Model
 
 
         $query = "select b.id,b.name,nvl(description,'Not Available') description,
-                from_date,to_date,created_at,procurement_type_id,status,p.name p_name from opac.batch b join opac.procurement_type p on b.procurement_type_id=p.id
+                nvl(to_char(from_date, 'DD-MM-YYYY'), '00-00-0000') from_date,nvl(to_char(to_date, 'DD-MM-YYYY'), '00-00-0000') to_date,created_at,procurement_type_id,status,p.name p_name from opac.batch b join opac.procurement_type p on b.procurement_type_id=p.id
                 where active = 1 and procurement_type_id !=5 and procurement_type_id != 6 order by created_at desc";
         $response = DB::select($query);
 
@@ -196,6 +196,7 @@ class Batch extends Model
 
     public static function deleteBatch($input)
     {
+
         $id = $_POST['id'];
         $entry = self::where('id', '=', $id)->first();
         $entry->active = 0;

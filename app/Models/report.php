@@ -650,10 +650,9 @@ join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd
         $start = $_POST['start'];
         $end = $_POST['end'];
         if ($branch != 0) {
-            $branchAppend="and branch_id=$branch";
-        }
-        else{
-            $branchAppend="";
+            $branchAppend = "and branch_id=$branch";
+        } else {
+            $branchAppend = "";
         }
 
         $queryFirst = "select isbn,title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname,b.procurement_type_id
@@ -662,7 +661,7 @@ join memp.jb_branches jb  on cd.branch_id=jb.id
 where to_char(cd.created_at,'YYYY-MM-DD') 
 between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
 
-        $response=DB::select($queryFirst);
+        $response = DB::select($queryFirst);
 
         $contArray = [];
         foreach ($response as $item) {
@@ -673,10 +672,101 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
         return view::make('giftInvoice2')->with('data', $contArray);
 
 
+    }
 
+
+    public static function getDefaultReports()
+    {
+        $startD=date('m-y');
+        $start= "01-".$startD;
+        $end='30-'.$startD;
+
+
+        $poc = "select count(*) count  from (select distinct bvp.orderid  from memp.batch_vendor_po bvp  left join OPAC.BATCH_PO_INVOICE_DETAILS  bpid on bvp.orderid= bpid.po_id where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        between '$start'  and 'end' and bvp.isbn=bpid.ISBN)";
+        $pocres = DB::select($poc);
+        $completed_pos= $pocres[0]->count;
+
+        $totalPOQuery="select  count(*) count from (select distinct orderid from memp.batch_vendor_po BVP where to_char(BVP.ordered_date,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $totalPORes=DB::select($totalPOQuery);
+        $totalPO=$totalPORes[0]->count;
+
+
+        $totalBatchQuery="select  count(*) count from (select id from opac.batch b where to_char(b.created_at,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $totalBatchRes=DB::select($totalBatchQuery);
+        $totalBatches=$totalBatchRes[0]->count;
+
+        $totalBooksQuery="select sum(ordered_quantity) sum from memp.batch_vendor_po bvp where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        between '$start'  and '$end' ";
+        $totalBooksRes=DB::select($totalBooksQuery);
+        $totalBooks=$totalBooksRes[0]->sum;
+
+        $receivedQuery="select  count(*) count from (select  isbn from opac.batch_po_invoice_details bpvd where to_char(bpvd.created_at,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $receivedRes=DB::select($receivedQuery);
+        $recievdedBooks=$receivedRes[0]->count;
+
+
+        $remainigQuery="select sum(ordered_quantity)-sum(quantity_recieved) sum from (select to_number(ordered_quantity) ordered_quantity,quantity_recieved from memp.BATCH_VENDOR_PO bvp left 
+        join OPAC.BATCH_PO_INVOICE_DETAILS  bpvd on  bvp.isbn  = BPVD.ISBN where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $remanigRes=DB::select($remainigQuery);
+        $remainigBooks=$remanigRes[0]->sum;
+
+        return array('completed'=>$completed_pos,'totalPo'=>$totalPO,'totalBatches'=>$totalBatches,'totalBooks'=>$totalBooks,'receivedBooks'=>$recievdedBooks,'remainingBooks'=>$remainigBooks);
 
     }
 
+
+
+
+    public static function getDateReports()
+    {
+
+        $start=$_GET['start'];
+        $end= $_GET['end'];
+
+        $poc = "select count(*) count  from (select distinct bvp.orderid  from memp.batch_vendor_po bvp  left join OPAC.BATCH_PO_INVOICE_DETAILS  bpid on bvp.orderid= bpid.po_id where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        between '$start'  and 'end' and bvp.isbn=bpid.ISBN)";
+        $pocres = DB::select($poc);
+        $completed_pos= $pocres[0]->count;
+
+        $totalPOQuery="select  count(*) count from (select distinct orderid from memp.batch_vendor_po BVP where to_char(BVP.ordered_date,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $totalPORes=DB::select($totalPOQuery);
+        $totalPO=$totalPORes[0]->count;
+
+
+        $totalBatchQuery="select  count(*) count from (select id from opac.batch b where to_char(b.created_at,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $totalBatchRes=DB::select($totalBatchQuery);
+        $totalBatches=$totalBatchRes[0]->count;
+
+        $totalBooksQuery="select sum(ordered_quantity) sum from memp.batch_vendor_po bvp where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        between '$start'  and '$end' ";
+        $totalBooksRes=DB::select($totalBooksQuery);
+        $totalBooks=$totalBooksRes[0]->sum;
+
+        $receivedQuery="select  count(*) count from (select  isbn from opac.batch_po_invoice_details bpvd where to_char(bpvd.created_at,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $receivedRes=DB::select($receivedQuery);
+        $recievdedBooks=$receivedRes[0]->count;
+
+
+        $remainigQuery="select sum(ordered_quantity)-sum(quantity_recieved) sum from (select to_number(ordered_quantity) ordered_quantity,quantity_recieved from memp.BATCH_VENDOR_PO bvp left 
+        join OPAC.BATCH_PO_INVOICE_DETAILS  bpvd on  bvp.isbn  = BPVD.ISBN where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        between '$start'  and '$end')";
+        $remanigRes=DB::select($remainigQuery);
+        $remainigBooks=$remanigRes[0]->sum;
+
+        return array('completed'=>$completed_pos,'totalPo'=>$totalPO,'totalBatches'=>$totalBatches,'totalBooks'=>$totalBooks,'receivedBooks'=>$recievdedBooks,'remainingBooks'=>$remainigBooks);
+
+    }
+
+
 }
+
 
 

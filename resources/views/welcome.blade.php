@@ -131,11 +131,11 @@
                            </div>
                            <div class="form-group">
                               <label for="from" >From Date:</label>
-                              <input type="date" class="form-control" id="datepicker_start" name="start" >
+                              <input type="date" class="form-control" id="datepicker_start" name="start" required >
                            </div>
                            <div class="form-group">
                               <label for="from" >End Date:</label>
-                              <input type="date" class="form-control" id="datepicker_end" name="end" >
+                              <input type="date" class="form-control" id="datepicker_end" name="end" required >
                            </div>
 
                             <div class="form-group">

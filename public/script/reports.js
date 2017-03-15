@@ -1,4 +1,24 @@
+
+$(document).ready(
+    function () {
+        $(".spinner").show();
+        $("#datepicker_start").datepicker({
+            changeMonth: true,//this option for allowing user to select month
+            changeYear: true,//this option for allowing user to select from year range
+            dateFormat: 'yy-mm-dd'
+        });
+        $("#datepicker_end").datepicker({
+            changeMonth: true,//this option for allowing user to select month
+            changeYear: true,//this option for allowing user to select from year range
+            dateFormat: 'yy-mm-dd'
+        });
+    }
+);
+
+
 $(document).ready(function () {
+    $("#repSub").submit(false);
+    $("#wrapper").hide();
     $(".spinner").show();
 
     $.ajax({
@@ -21,7 +41,37 @@ $(document).ready(function () {
             console.log(err.responseText);
         }
     });
+
+
+
+    $.ajax({
+        type: 'GET',
+        url: 'getDefaultReports',
+        data: { get_param: 'value' },
+        success: function (data) {
+            $(".spinner").hide();
+            $("#completed").text(data['completed']);
+            $("#pos").text(data['totalPo']);
+            $("#batches").text(data['totalBatches']);
+            $("#ordered").text(data['totalBooks']);
+            $("#received").text(data['receivedBooks']);
+            $("#processed").text(data['remainingBooks']);
+            $("#wrapper").show();
+
+
+
+
+        },
+        error:function(err)
+        {
+            console.log(err.responseText);
+        }
+    });
+
 });
+
+
+
 
 
 function populateBatch(jsonObj)
@@ -53,4 +103,47 @@ function populateMain(jsonObj) {
     ]
     } );
     $(".dataTables_filter").hide();
+}
+
+
+function subRepo()
+{
+    $(".spinner").show();
+
+    var start=$("#datepicker_start").val();
+    var end=$("#datepicker_end").val();
+
+    if(start === '' || end=== ''){
+        alert("Please select a date range");
+        $(".spinner").hide();
+        return false;
+
+    }
+
+
+
+    $.ajax({
+        type: 'GET',
+        url: 'getDateReports?start='+start+"&end="+end,
+        data: { get_param: 'value' },
+        success: function (data) {
+            $(".spinner").hide();
+            console.log(data);
+            $("#completed").text(data['completed']);
+            $("#pos").text(data['totalPo']);
+            $("#batches").text(data['totalBatches']);
+            $("#ordered").text(data['totalBooks']);
+            $("#received").text(data['receivedBooks']);
+            $("#processed").text(data['remainingBooks']);
+            $("#wrapper").show();
+
+        },
+        error:function(err)
+        {
+            $(".spinner").hide();
+            console.log(err.responseText);
+        }
+    });
+
+
 }

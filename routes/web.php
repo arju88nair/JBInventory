@@ -324,3 +324,7 @@ Route::get('purchaseOrdersView',function(){
 Route::get('indISBNVal','HomeController@indISBNVal');
 
 Route::post('processDateReport','HomeController@processDateReport');
+
+Route::get('getDefaultReports','HomeController@getDefaultReports');
+
+Route::get('getDateReports','HomeController@getDateReports');

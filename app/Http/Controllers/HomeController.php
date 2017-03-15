@@ -312,6 +312,16 @@ class HomeController extends Controller
         return report::processDateReport($request->all());
     }
 
+    public function getDefaultReports(Request $request)
+    {
+        return report::getDefaultReports($request->all());
+    }
+
+
+    public function getDateReports(Request $request)
+    {
+        return report::getDateReports($request->all());
+    }
 
 
 }

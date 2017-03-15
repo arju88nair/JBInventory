@@ -21,6 +21,8 @@
         $( document ).ready(function() {
             $(".spinner").show();
             var val = "<?php echo $batchID ?>";
+            localStorage.setItem("linkBatch",val);
+
             console.log(val);
             ajaxCall(val);
 
