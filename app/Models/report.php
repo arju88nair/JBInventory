@@ -95,7 +95,7 @@ on a.id=b.batch_id";
     public static function viewPOPDF()
     {
         $id = $_GET['id'];
-        $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+       /* $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
                    left join ams.authors a on t.authorid=a.id
@@ -103,24 +103,33 @@ on a.id=b.batch_id";
                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
                    left join ams.suppliers s on s.id=bvp.vendor_id
                    where orderid='$id' ) a";
-        $data = DB::select($query);
-        $array = [];
-        foreach ($data as $row) {
-            array_push($array, $row);
-        }
-        return $array;
+*/
+                $query="select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl(price-dis,0) total from
+            (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,bvp.discount,(bvp.price*bvp.discount/100) dis from
+            memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
+            left join ams.authors a on t.authorid=a.id
+            left join ams.publishers p on t.publisherid=p.id
+            left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
+            left join ams.suppliers s on s.id=bvp.vendor_id
+            where orderid='$id' ) a";
+            $data = DB::select($query);
+                    $array = [];
+                    foreach ($data as $row) {
+                        array_push($array, $row);
+                    }
+                    return $array;
 
-    }
+                }
 
 
-    public static function catalogueUpdate()
-    {
+                public static function catalogueUpdate()
+                {
 
-        $vendor = $_GET['vendor'];
-        $isbn = $_GET['isbn'];
-        $bookNum = $_GET['bookNum'];
-        $batch = $_GET['batch'];
-        $updateSelectQuery = "select branch_id,branch_order_id,branchname from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
+                    $vendor = $_GET['vendor'];
+                    $isbn = $_GET['isbn'];
+                    $bookNum = $_GET['bookNum'];
+                    $batch = $_GET['batch'];
+                    $updateSelectQuery = "select branch_id,branch_order_id,branchname from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
             join memp.jb_titles jt on bo.title_id=jt.titleid join memp.jb_branches jb on branch_id=jb.id
             where isbn_13='$isbn' and bobm.batch_id=$batch and remaining_quantity!=0 order by branch_order_id asc";
         $updateSelectResponse = DB::select($updateSelectQuery);
@@ -373,19 +382,13 @@ on a.id=b.batch_id";
             }
 
             foreach ($array as $value) {
-                $isbn = $value[0];
-                $num = $value[1];
-                $isbnQuery = "select id from memp.titles where isbn='$isbn' ";
-                $responseISBN = DB::select($isbnQuery);
-                if ($responseISBN == [] || empty($responseISBN)) {
-                    $title_id = -1;
-                } else {
-                    $title_id = $responseISBN[0]->id;
+                $title_id=$value[0];
+                $isbn = $value[1];
+                $num = $value[2];
 
-                }
 
-                $insertQuery = "insert into memp.catalogue_details (isbn,title_id,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) 
-            values ('$isbn',$title_id,$batch,'-1',-1,'$num',sysdate,$branch) ";
+                $insertQuery = "insert into memp.catalogue_details (isbn,title_id,vendor,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) 
+            values ('$isbn',$title_id,-1,$batch,'-1',-1,'$num',sysdate,$branch) ";
 
                 $response = DB::insert($insertQuery);
 
@@ -420,37 +423,27 @@ on a.id=b.batch_id";
             foreach ($vals as $index => $val) {
                 array_push($isbn_array, array("isbn" => $index, "count" => $val));
             }
-
             foreach ($array as $value) {
-                $isbn = $value[0];
-                $num = $value[1];
-                $price = $value[2];
-                $isbnQuery = "select id from memp.titles where isbn='$isbn' ";
-                $responseISBN = DB::select($isbnQuery);
-                if ($responseISBN == [] || empty($responseISBN)) {
-                    $title_id = -1;
-                } else {
-                    $title_id = $responseISBN[0]->id;
-
-                }
+                $title_id=$value[0];
+                $isbn = $value[1];
+                $num = $value[2];
+                $vendor=$value[4];
 
 
-                $insertQuery = "insert into memp.catalogue_details (isbn,title_id,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) 
-                values ('$isbn',$title_id,$batch,'-1',-1,'$num',sysdate,$branch) ";
-
+                $insertQuery = "insert into memp.catalogue_details (isbn,title_id,vendor,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) 
+                values ('$isbn',$title_id,$vendor,$batch,'-1',-1,'$num',sysdate,$branch) ";
                 $response = DB::insert($insertQuery);
 
             }
             foreach ($isbn_array as $item) {
                 $isbn = $item['isbn'];
                 $count = $item['count'];
-                foreach ($array as $value) {
-                    if (in_array($isbn, $value, true)) {
-                        $price = $value[2];
-                    } else {
-                        $price = 0;
-                    }
+                $price = 0;
 
+                foreach ($array as $value) {
+                    if (in_array((string)$isbn, $value)) {
+                        $price = $value[3];
+                    }
                     $price = (int)$price * $count;
 
                 }
@@ -610,9 +603,13 @@ on a.id=b.batch_id";
 
         }
 
-        $contentQuery = "select jb.id,cd.isbn,cd.title_id,jt.title,count(*) quantity ,cd.book_num,jb.branchname,to_char(cd.created_at,'DD-MM-YYYY') created_at ,b.procurement_type_id from memp.catalogue_details cd
-join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd.branch_id=jb.id join opac.batch b on b.id=cd.batch_id   where cd.batch_id=$batch
-      group by jb.id,cd.isbn,jt.title,cd.title_id,cd.book_num,jb.branchname,cd.created_at,b.procurement_type_id";
+        $contentQuery = "select jb.id,s.name vname,cd.isbn,cd.title_id,jt.title,count(*) quantity ,cd.book_num,jb.branchname,to_char(cd.created_at,'DD-MM-YYYY') created_at
+,pt.name procurement_type_id from memp.catalogue_details cd
+join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd.branch_id=jb.id
+join opac.batch b on b.id=cd.batch_id join opac.procurement_type pt on b.procurement_type_id=pt.id 
+left join ams.suppliers s on s.id=cd.vendor
+  where cd.batch_id=$batch
+     group by jb.id,cd.isbn,jt.title,cd.title_id,cd.book_num,jb.branchname,cd.created_at,pt.name,s.name ";
         $contentRes = DB::select($contentQuery);
         $contArray = [];
         foreach ($contentRes as $item) {
@@ -629,13 +626,17 @@ join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd
     public static function indISBNVal()
     {
         $isbn = $_GET['isbn'];
-        $query = "select * from jbprod.titles where isbn_10='$isbn' or isbn_13 = '$isbn'";
+        $hi=(int)$isbn;
+        $query = "select titleid,nvl(isbn_13,'N/A') isbn_13 from jbprod.titles where isbn_10='$isbn' or isbn_13 = '$isbn' or titleid=$hi";
         $response = DB::select($query);
         if (empty($response) || $response == []) {
             return 201;
 
         } else {
-            return 200;
+//            $end=array();
+//            array_push($end,$response[0]->titleid);
+//            array_push($end,$response[0]->titleid);
+            return json_encode(array('id'=>$response[0]->titleid,'isbn'=>$response[0]->isbn_13)) ;
 
         }
 
@@ -655,8 +656,9 @@ join memp.jb_titles jt on jt.titleid=cd.title_id join memp.jb_branches jb  on cd
             $branchAppend = "";
         }
 
-        $queryFirst = "select isbn,title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname,b.procurement_type_id
-from memp.catalogue_details cd join opac.batch b on b.id=cd.batch_id join memp.jb_titles jt on jt.titleid=cd.title_id
+        $queryFirst = "select case when isbn='NOISBN' then to_char(title_id) else isbn end isbn,
+title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname,
+b.procurement_type_id from memp.catalogue_details cd join opac.batch b on b.id=cd.batch_id join memp.jb_titles jt on jt.titleid=cd.title_id
 join memp.jb_branches jb  on cd.branch_id=jb.id
 where to_char(cd.created_at,'YYYY-MM-DD') 
 between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
@@ -665,6 +667,7 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
 
         $contArray = [];
         foreach ($response as $item) {
+
 
             array_push($contArray, $item);
         }

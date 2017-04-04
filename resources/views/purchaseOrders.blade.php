@@ -351,10 +351,18 @@
 {{--PO Divisoin--}}
 
 <div id="poDivision" style="display: none;">
+    <br>
+    <div class="col-xs-3 col-lg-3">
+        <label for="dis">Discount:</label>
+        <input type="text" class="form-control" id="dis" name="dis">
+    </div>
+    <br>
+    <br><hr>
     <div class="col-md-12"  id ="division" style="width:112% ;margin-left: -5%">
         <div class="panel panel-primary">
             <div class="panel-heading" style="background-color: #2A3F54;">
                 <h3 class="panel-title">Purchase Order</h3>
+
                 <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
@@ -378,6 +386,9 @@
                     <th>Availability</th>
                     <th class="hideC">Branch ID</th>
                     <th class="hideC">ISBN</th>
+                    <th>Discount</th>
+                    <th class="hideC">Hidden</th>
+
 
                 </tr>
                 </thead>

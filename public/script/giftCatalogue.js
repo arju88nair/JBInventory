@@ -119,12 +119,32 @@ function POClick(id, pId) {
     if (pId == 5) {
         $("#price").hide()
         $("#inputDiv").hide();
+        $("#inputDivVendor").hide();
 
     }
     else {
         $("#price").show()
-
+        $("#inputDivVendor").show();
         $("#inputDiv").show();
+        $.ajax({
+            type: "GET",
+            url: "getPOVendors",
+            dataType: 'json',
+            enctype: 'multipart/form-data',
+            cache: false,
+            success: function (data) {
+
+                console.log(data)
+
+                populateVendors(data);
+            },
+            error: function (err) {
+
+                console.log(err.responseText);
+
+            }
+        });
+
     }
 
     localStorage.setItem('giftBatch', id)
@@ -170,11 +190,13 @@ function appendTable() {
     var isbn = $("#isbn").val();
     var bookNum = $("#num").val();
     var price = $("#priceIn").val();
+    var vendroID=$("#selectDropVendor").val();
+    var vendorName=$("#selectDropVendor option:selected").text();
     $("#subBut").show();
     $("#summaryDiv").show();
     $("#isbn").focus();
 
-    validateISBN(isbn,bookNum,price);
+    validateISBN(isbn,bookNum,price,vendroID,vendorName);
 
 }
 
@@ -183,6 +205,12 @@ function updateBranch() {
     if($("#selectDrop").val() == 0 || $("#selectDrop").val() == "0")
     {
         alert("Please select a branch");
+
+        return false;
+    }
+    if($("#selectDropVendor").val() == 0 || $("#selectDropVendor").val() == "0")
+    {
+        alert("Please select a vendor");
         return false;
     }
     $(".spinner").show();
@@ -207,6 +235,7 @@ function updateBranch() {
     }
     var pID = localStorage.getItem("pID");
     if (pID == 6) {
+        var vendor=$("#selectDropVendor").val();
         var invoice = $("#invoiceIn").val();
         var batch = localStorage.getItem('giftBatch');
         var isbn = $("#isbn").val();
@@ -328,7 +357,7 @@ function generatecsv(id)
 }
 
 
-function validateISBN(id,booknum,price)
+function validateISBN(id,booknum,price,vendor,vendorName)
 {
 
     $(".spinner").show();
@@ -340,13 +369,16 @@ function validateISBN(id,booknum,price)
         enctype: 'multipart/form-data',
         cache: false,
         success: function (data) {
+            console.log(data);
             $(".spinner").hide();
-            if(data == 200 || data == '200') {
-                $('#summary tbody').append('<tr><td >' + id + '</td><td >' + booknum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
-                $("#alertDiv").hide();
+            if(data == 201 || data == '201') {
+                $("#alertDiv").show();
+
             }
             else{
-                $("#alertDiv").show();
+                $("#isbn").val(data[isbn]);
+                $('#summary tbody').append('<tr><td >' + data['id'] + '</td><td >' + data['isbn'] + '</td><td >' + booknum + '</td><td >' + price + '</td><td >' + vendor + '</td><td >' + vendorName + '</td><td><a  href="#">Remove</a></td></tr>');
+                $("#alertDiv").hide();
             }
             $("#isbn").val("");
              $("#num").val("");
@@ -355,13 +387,17 @@ function validateISBN(id,booknum,price)
 
         },
         error: function (err) {
+            console.log(err.responseText)
             $(".spinner").hide();
-            if(err.responseText == 200 || err.responseText == '200') {
-                $('#summary tbody').append('<tr><td >' + id + '</td><td >' + booknum + '</td><td >' + price + '</td><td><a  href="#">Remove</a></td></tr>');
-                $("#alertDiv").hide();
+            if(err.responseText == 201 || err.responseText == '201') {
+                $("#alertDiv").show();
             }
             else{
-                $("#alertDiv").show();
+                $("#isbn").val(err.responseText);
+                $('#summary tbody').append('<tr><td >' + err.responseText['id'] + '</td><td >' + err.responseText['isbn'] + '</td><td >' + booknum + '</td><td >' + price + '</td><td >' + vendor + '</td><td >' + vendorName + '</td><td><a  href="#">Remove</a></td></tr>');
+                $("#alertDiv").hide();
+
+
             }
             $("#isbn").val("");
             $("#num").val("");
@@ -423,3 +459,14 @@ $(document).ready(
         });
     }
 );
+
+
+function populateVendors(data) {
+    var option="";
+    for (var i = 0; i < data.length; i++) {
+
+        option += '<option  value="' + data[i].id + '">' + data[i].name + '  -  ' + data[i].id + '</option>';
+
+     }
+    $("#selectDropVendor").append(option);
+}

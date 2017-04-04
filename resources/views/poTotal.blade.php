@@ -193,7 +193,7 @@
 
                         <th align="center">Price</th>
                         <th align="center">Discount(%)</th>
-                        <th align="center">Net Price</th>
+                        <th align="center">Discount Amount</th>
                         <th align="center">Total Price</th>
 
 

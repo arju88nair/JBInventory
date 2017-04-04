@@ -159,6 +159,8 @@
                             <th>Branch Name</th>
                             <th>STO Number</th>
                             <th>Production Date</th>
+                            <th>Vendor</th>
+
 
                         </tr>
                         </thead>
@@ -174,6 +176,8 @@
                             <td><?php echo $brand->branchname?></td>
                             <td><?php echo $brand->procurement_type_id?></td>
                             <td><?php echo $brand->created_at?></td>
+                            <td><?php echo $brand->vname?></td>
+
                         </tr>
                         <?php endforeach ?>
                         </tbody>

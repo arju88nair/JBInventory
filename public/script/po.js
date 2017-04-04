@@ -229,11 +229,12 @@ function populateBatch(jsonVal,ti_id,v_name)
 
     var jsonObj=jsonVal;
     //var htmlToAppend='';
-
+    var dis=localStorage.getItem("discount")
+    $("#dis").val(dis)
 
     $(".spinner").hide();
     for(var i=0;i<jsonObj.length;i++){
-        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td></tr>');
+        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td><td><input type=\"number\"  class="tdInputDis" value='+dis+' oninput="inputDis(this)" min=\"0\"   onkeydown=\"return false\"></input></td><td class="disClass hideC">'+dis+'</td></tr>');
     };
 
 
@@ -319,6 +320,7 @@ function populateModal(val)
 
 function array_combine()
 {
+    var discount=$("#dis").val()
 
     $(".spinner").show();
     var array=[];
@@ -332,6 +334,7 @@ function array_combine()
        cell.push(this.data()[8]);
        cell.push(this.data()[9]);
        cell.push(this.data()[6]);
+       cell.push(this.data()[11]);
        array.push(cell);
    });
    console.log(array);
@@ -362,7 +365,7 @@ function array_combine()
     $.ajax({
         type: "POST",
         url: "insertPO",
-        data: {'vname':vId,'bid':bId,'table':array},
+        data: {'vname':vId,'bid':bId,'table':array,'dis':discount},
         async: true,
         dataType: 'json',
         enctype: 'multipart/form-data',
@@ -398,6 +401,16 @@ function input(thisID)
 
 
 }
+
+
+function inputDis(thisID){
+    var tr =thisID.closest('tr');
+    var input=$('td input.tdInputDis', tr).val();
+    // var req=$('td.reqClass', tr).text();
+
+    $('td.disClass',tr).text(parseInt(input));
+}
+
 
 function populateBatchTable(val)
 {
@@ -455,7 +468,7 @@ function populateVendors(val)
             +getObjectFromJson(val[i],"name")+'</td><td>'
             +getObjectFromJson(val[i],"phone")+'</td><td>'
             +getObjectFromJson(val[i],"city")+'</td><td>'
-            +getObjectFromJson(val[i],"discount")+'</td><td><span id="'+getObjectFromJson(val[i],"id")+'" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="vendorClick(this.id)"></span></td></tr>');
+            +getObjectFromJson(val[i],"discount")+'</td><td><span id="'+getObjectFromJson(val[i],"id")+'" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="vendorClick(this.id,\'' + val[i].discount + '\')"></span></td></tr>');
     }
     var table=$('#vendors-table').DataTable( {
         destroy: true,
@@ -479,8 +492,11 @@ function populateVendors(val)
         // });
     });
 }
-function vendorClick(id)
+function vendorClick(id,dis)
 {
+
+    localStorage.setItem("discount",dis);
+
     localStorage.setItem("vID",id);
     POStatus();
 
@@ -500,7 +516,6 @@ function POStatus()
 
 function POStatusBack()
 {
-
 
     $("#vendorDivision").hide();
     $("#batchTableDiv").show();

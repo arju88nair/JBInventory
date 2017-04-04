@@ -328,3 +328,21 @@ Route::post('processDateReport','HomeController@processDateReport');
 Route::get('getDefaultReports','HomeController@getDefaultReports');
 
 Route::get('getDateReports','HomeController@getDateReports');
+
+Route::get('accessory',function(){
+
+    if(!Auth::check())
+    {
+        return view('login');
+    }
+
+
+
+    return view('accessory');
+
+
+});
+
+
+
+Route::get("getVendorAcc",'HomeController@getVendorAcc');

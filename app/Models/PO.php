@@ -86,7 +86,7 @@ class PO extends Model
               select distinct title_id,a.isbn,quantity_required,title,branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) quantity, currency, price from
              (select z.title_id,isbn,quantity_required,title,branch_order_id from
              (select a.title_id,quantity_required-nvl(ordered_qnty,0) as quantity_required,branch_order_id from
-             (select title_id,count(*) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) as branch_order_id
+             (select title_id,sum(quantity) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) as branch_order_id
              from opac.branch_order_batch_map bobm left join opac.branch_orders bo
              on bobm.branch_order_id=bo.id join opac.branchorder obo on bobm.branch_order_id=obo.branch_order_id
              where batch_id=$id and active=1
@@ -133,6 +133,8 @@ class PO extends Model
     public static function insertPO($input)
     {
         $vId = $_POST['vname'];
+        $discount=$_POST['dis'];
+        $discount=(int)$discount;
 
 //        $getVID="select id from ams.suppliers where  name= '$vName'";
 //        $vId=DB::select($getVID)[0]->id;
@@ -147,6 +149,8 @@ class PO extends Model
             $b_id = $cell[2];
             $isbn = $cell[3];
             $price = $cell[4]*$quantity;
+            $discount = $cell[5];
+
 
 
 
@@ -162,7 +166,7 @@ class PO extends Model
             if($quantity != 0)
             {
 
-                $query = "insert into memp.BATCH_VENDOR_PO (po_id,vendor_id,title_id,ordered_quantity,ordered_date,ORDERID,isbn,price) VALUES ($bId,$vId,$titleid,$quantity,sysdate,'$po_id','$isbn',$price)";
+                $query = "insert into memp.BATCH_VENDOR_PO (po_id,vendor_id,title_id,ordered_quantity,ordered_date,ORDERID,isbn,price,discount) VALUES ($bId,$vId,$titleid,$quantity,sysdate,'$po_id','$isbn',$price,$discount)";
                 DB::insert($query);
             }
 
@@ -177,6 +181,15 @@ class PO extends Model
     {
         $id = $_GET['id'];
         $vid = $_GET['vid'];
+	$query="select  isbn,title,address,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl(price-dis,0) total from
+(select t.isbn,title,s.address,ordered_quantity,a.name author,p.name publisher,bvp.price,bvp.discount,(bvp.price*bvp.discount/100) dis from
+memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
+left join ams.authors a on t.authorid=a.id
+left join ams.publishers p on t.publisherid=p.id
+left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
+left join ams.suppliers s on s.id=bvp.vendor_id
+where orderid='$id' ) a";
+/*
         $query = "select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
@@ -185,7 +198,8 @@ class PO extends Model
                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
                    left join ams.suppliers s on s.id=bvp.vendor_id
                    where orderid='$id' ) a";
-        $data = DB::select($query);
+*/  
+      $data = DB::select($query);
         $array = [];
         foreach ($data as $row) {
             array_push($array, $row);
@@ -196,15 +210,17 @@ class PO extends Model
         $vendor = DB::select($idQuery);
         $vendor = $vendor[0]->name;
 
-        $totalQuery="select sum(total) total from (select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+        /*$totalQuery="select sum(total) total from (select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
                    left join ams.authors a on t.authorid=a.id
                    left join ams.publishers p on t.publisherid=p.id
                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
                    left join ams.suppliers s on s.id=bvp.vendor_id
-                   where orderid='$id' ) a)";
-        $totalRes=DB::select($totalQuery);
+                   where orderid='$id' ) a)";*/
+	$totalQuery="select sum(total) total from ( $query ) "; 
+       
+$totalRes=DB::select($totalQuery);
         $total=$totalRes[0]->total;
 
 //        $data1=json_encode($data);
@@ -216,7 +232,7 @@ class PO extends Model
     public static function getPO()
     {
         $query = "select ass.name vname,b.name,orderid,sum(ordered_quantity) quantity,vendor_id,po_id from opac.batch b join memp.batch_vendor_po bvp
-    on b.id=bvp.po_id join ams.suppliers ass on vendor_id=ass.id where orderid != '-1'  group by ass.name,b.name,orderid,vendor_id,po_id     ";
+    on b.id=bvp.po_id join ams.suppliers ass on vendor_id=ass.id where orderid != '-1' and b.active=1  group by ass.name,b.name,orderid,vendor_id,po_id     ";
         $array = [];
         $response = DB::select($query);
         foreach ($response as $arr) {

@@ -206,43 +206,60 @@
     <br><br><br>
     <div class="catalogueDiv" style="display:none;margin-left: 18%;margin-top: -6%;">
 
-        <div class="container">
-            <div class="col-xs-3" id="selectDiv" style="margin-left: 19%;">
-                <label for="sel1" style="margin-left: 17%;">Select Branch:</label>
+        {{--<div class="row" style="margin-left: 10px;float: none; margin-left: auto;margin-right: auto;">--}}
+            {{--<form id="form" action="/invoiceView/" role="form" method="POST" class="form-horizontal">--}}
+                {{--<label for="from">From :&nbsp;&nbsp;</label>--}}
+                {{--<input type="text" id="from" readonly required="required" name="from">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--}}
+                {{--<label for="to">To :&nbsp;&nbsp;</label>--}}
+                {{--<input type="text" id="to" readonly required="required" name="to">--}}
+                {{--&nbsp;&nbsp;--}}
+                {{--<input type="submit" class="btn btn-primary" value="submit" name="submit"/>--}}
+            {{--</form>--}}
+        {{--</div>--}}
+        <div class="row" style="width: 103%;margin-left: 13%">
+            <div class="col-xs-3" id="selectDiv" style="">
+                <label for="sel1">Select Branch:</label>
                 <select class="form-control" id="selectDrop">
                     <option value=0></option>
                 </select>
             </div>
-            <br><br>
-            <br><br>
-            <br><br>
 
-
-            <div class="col-xs-3" id="inputDiv" style="margin-left: 19%;margin-top: -8%;">
+            <br><br>
+            <br><br>
+            <div class="col-xs-3" id="inputDiv" style="margin-left: 32%;margin-top: -8%;">
                 <label for="sel1" style="margin-left: 17%;">Enter Invoice:</label>
                 <input type="text" class="form-control" id="invoiceIn">
             </div>
         </div>
         <br><br><br>
-        <form id= "secondForm" class="form-inline" style="margin-left: -21%;margin-top: -8%;">
+<div class="row">
+        <form id= "secondForm" class="form-inline " style="margin-left: -21%;margin-top: -8%;">
+            <div class="form-group">
+                <label for="sel1" style=>Select Vendor:</label>
+                <select class="form-control" id="selectDropVendor" style="width: 132px">
+                </select>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
             <div class="form-group">
                 <label for="email">ISBN:</label>
-                <input type="text" class="form-control" id="isbn" name="isbn" autofocus required>
+                <input type="text"style="width: 132px" class="form-control" id="isbn" name="isbn" autofocus required>
             </div>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <div class="form-group">
                 <label for="pwd">Book Number:</label>
-                <input type="text" class="form-control" id="num" name="bookNum" required>
+                <input type="text" style="width: 132px"class="form-control" id="num" name="bookNum" required>
             </div>
             &nbsp;
             <div class="form-group" style="display:none;" id="price">
                 <label for="pwd"> Price:</label>
-                <input type="text" class="form-control" id="priceIn" name="bookNum" value="0">
+                <input type="text" style="width: 132px"class="form-control" id="priceIn" name="bookNum" value="0">
             </div>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
             <button type="submit" class="btn btn-default" onclick="appendTable()">Submit</button>
         </form>
+</div>
 
         <br><br><br>
         <div id="summaryDiv" style="display: none;margin-left: -18%;margin-top: -4%">
@@ -268,9 +285,12 @@
                         <thead>
                         <tr>
 
+                            <th align="center">Title ID</th>
                             <th align="center">ISBN</th>
                             <th align="center">Book Name</th>
                             <th align="center">Price</th>
+                            <th align="center">Vendor ID</th>
+                            <th align="center">Vendor </th>
                             <th align="center">Remove</th>
                             {{--<th align="center">Change Branch</th>--}}
                             {{--<th align="center"></th>--}}

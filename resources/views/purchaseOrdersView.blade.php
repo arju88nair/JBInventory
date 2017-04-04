@@ -309,6 +309,10 @@
         {{--PO Divisoin--}}
 
         <div id="poDivision" style="display: none;">
+            <div class="col-xs-3 col-lg-3">
+                <label for="dis">Discount:</label>
+                <input type="text" class="form-control" id="dis" name="dis">
+            </div>
             <div class="col-md-12"  id ="division" style="width:112% ;margin-left: -5%">
                 <div class="panel panel-primary">
                     <div class="panel-heading" style="background-color: #2A3F54;">
@@ -336,6 +340,8 @@
                             <th>Availability</th>
                             <th class="hideC">Branch ID</th>
                             <th class="hideC">ISBN</th>
+                            <th>Discount</th>
+                            <th class="hideC">Hidden</th>
 
                         </tr>
                         </thead>

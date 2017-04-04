@@ -29,12 +29,6 @@ $(document).ready(function () {
             $(".spinner").hide();
             console.log(data);
             populateBatch(data);
-            // $('#dev-table').DataTable( {
-            //     "order": [[ 5, "desc" ]]
-            // } );
-            // $(".dataTables_filter").hide();
-
-
         },
         error:function(err)
         {
@@ -85,6 +79,7 @@ function populateBatch(jsonObj)
         "order": [[ 0, "desc" ]]
     } );
     $(".dataTables_filter").hide();
+
 }
 
 function populateMain(jsonObj) {
