@@ -234,7 +234,7 @@ function populateBatch(jsonVal,ti_id,v_name)
 
     $(".spinner").hide();
     for(var i=0;i<jsonObj.length;i++){
-        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td><td><input type=\"number\"  class="tdInputDis" value='+dis+' oninput="inputDis(this)" min=\"0\"   onkeydown=\"return false\"></input></td><td class="disClass hideC">'+dis+'</td></tr>');
+        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td></tr>');
     };
 
 
@@ -334,7 +334,6 @@ function array_combine()
        cell.push(this.data()[8]);
        cell.push(this.data()[9]);
        cell.push(this.data()[6]);
-       cell.push(this.data()[11]);
        array.push(cell);
    });
    console.log(array);
@@ -401,16 +400,6 @@ function input(thisID)
 
 
 }
-
-
-function inputDis(thisID){
-    var tr =thisID.closest('tr');
-    var input=$('td input.tdInputDis', tr).val();
-    // var req=$('td.reqClass', tr).text();
-
-    $('td.disClass',tr).text(parseInt(input));
-}
-
 
 function populateBatchTable(val)
 {

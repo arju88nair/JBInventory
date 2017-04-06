@@ -232,11 +232,9 @@
             <TR>
                 <TH>ISBN</TH>
                 <TH>Title</TH>
-                <TH>Title Id</TH>
-
+		<TH>Title ID</TH>
                 <TH>Price</TH>
                 <TH>Quantity</TH>
-                <TH>Discount</TH>
                 <TH>Net Discount Amount </TH>
                 <TH>Total Amount</TH>
 
@@ -245,11 +243,9 @@
             <TR>
                 <TD><?php echo $brand->isbn; ?></TD>
                 <TD><?php echo $brand->title; ?></TD>
-                <TD><?php echo $brand->title_id; ?></TD>
-
+		<TD><?php echo $brand->title_id; ?></TD>
                 <TD><?php echo $brand->price; ?></TD>
                 <TD><?php echo $brand->quantity; ?></TD>
-                <TD><?php echo $brand->discount; ?>%</TD>
                 <TD><?php echo $brand->net_price; ?></TD>
                 <TD><?php echo $brand->total; ?></TD>
 

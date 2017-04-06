@@ -17,7 +17,6 @@
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/scanner.js') !!}"></script>
 
-
     <style>
         .panel-heading{
             color: #fff;
@@ -171,8 +170,6 @@
         </div>
         <br>
         <button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Start Scanning</button>
-
-
 
     </div>
     <div id="statusDiv" style="display: none;">

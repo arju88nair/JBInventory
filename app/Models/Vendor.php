@@ -20,11 +20,11 @@ class Vendor extends Model
     {
 
         $vendor= $_POST['vendors'];
-        $query="Select vendor_id, column_isbn,column_cur,column_price,column_quantity from opac.vendor_parsing where UPPER(vendor)='".strtoupper($vendor)."' ";
+        $query="Select vendor_id, column_isbn,column_cur,column_price,column_quantity from opac.vendor_parsing where UPPER(vendor)='".trim(strtoupper($vendor))."' ";
         $response=DB::select($query);
         if(count($response)==0)
         {
-            return response(array("message"=>"No entries found","code"=>201));
+            return response(array("message"=>"No entries found".strtoupper($vendor),"code"=>201));
         }
 
 

@@ -200,7 +200,7 @@ function saveisbn(){
     var isbnTable=myTableArray;
     $.ajax({
         type: "POST",
-        url: "savegrsavegr",
+        url: "savegr",
         data: {'batch': batch,'order':order,'isbn':isbnTable,'invoice':invoice,'vendor':vendor,'amount':amount},
         async: true,
         dataType: 'json',
@@ -256,9 +256,6 @@ function populateStatus(val){
             +getObjectFromJson(val[i],"invoice")+'</td><td >' +getObjectFromJson(val[i],"isbn")+'</td><td >' +getObjectFromJson(val[i],"oq")+'</td><td>'
             +getObjectFromJson(val[i],"qr")+'</td><td >' +getObjectFromJson(val[i],"final")+'</td></tr>');
     }
-
-
-
 }
 
 function getisbn(order)

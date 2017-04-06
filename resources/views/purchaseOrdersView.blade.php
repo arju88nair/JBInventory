@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -340,8 +338,6 @@
                             <th>Availability</th>
                             <th class="hideC">Branch ID</th>
                             <th class="hideC">ISBN</th>
-                            <th>Discount</th>
-                            <th class="hideC">Hidden</th>
 
                         </tr>
                         </thead>
@@ -471,4 +467,5 @@
     }
 </style>
 </html>
+
 

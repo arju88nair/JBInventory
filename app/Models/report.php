@@ -4,9 +4,9 @@ namespace App\Models;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
-use View;
 use PDF;
 use PDFS;
+use View;
 
 
 class report extends Model
@@ -18,7 +18,7 @@ class report extends Model
     {
         $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
 (select b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
-                  from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6 
+                  from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6 and active = 1
                   group by b.name,b.id) a
 left join
 (select batch_id,sum(quantity_recieved)rec_qnty from opac.batch_po_invoice_details group by batch_id) b
@@ -38,10 +38,17 @@ on a.id=b.batch_id";
     public static function detailedReport()
     {
         $id = $_GET['id'];
-        $query = "select b.id,b.name,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available') isbn,nvl(quantity_recieved,0) quantity_recieved,mt.title title,mt.author_name author from
-                    opac.batch b left join opac.batch_po_invoice_details bpid on b.id=bpid.batch_id join memp.titles mt on bpid.isbn=mt.isbn
-                    where b.id=$id";
-
+//        $query = "select b.id,b.name,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available') isbn,nvl(quantity_recieved,0) quantity_recieved,mt.title title,mt.author_name author from
+        //                  opac.batch b left join opac.batch_po_invoice_details bpid on b.id=bpid.batch_id join memp.titles mt on bpid.isbn=mt.isbn
+        //                where b.id=$id";
+        $query = "select a.id,a.name,invoice,a.isbn,quantity_recieved,title_id,regexp_replace(title, '(^[[:space:]]+)|([[:space:]]+$)',null) title,price from
+(select b.id as id,b.name ,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available')
+isbn,nvl(quantity_recieved,0) quantity_recieved,title_id,price from
+                   opac.batch b left join opac.batch_po_invoice_details bpid 
+                   on b.id=bpid.batch_id  join memp.batch_vendor_po bvp on ((bvp.isbn=bpid.isbn or bvp.title_id=bpid.isbn) 
+                   and bvp.orderid=bpid.po_id)
+                   where b.id=$id) a
+join memp.titles t on (a.isbn=t.isbn and a.title_id=t.id) or (a.isbn=t.id)";
 
         $response = DB::select($query);
         $array = [];
@@ -59,7 +66,7 @@ on a.id=b.batch_id";
     public static function getPoArray()
     {
         $id = $_GET['id'];
-        $query = "select isbn from memp.batch_vendor_po where orderid='$id'";
+        $query = "select case when isbn='NOISBN' then to_char(title_id) else isbn end isbn from memp.batch_vendor_po where orderid='$id'";
 
 
         $response = DB::select($query);
@@ -95,16 +102,16 @@ on a.id=b.batch_id";
     public static function viewPOPDF()
     {
         $id = $_GET['id'];
-       /* $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
-                   (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
-                   memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
-                   left join ams.authors a on t.authorid=a.id
-                   left join ams.publishers p on t.publisherid=p.id
-                   left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
-                   left join ams.suppliers s on s.id=bvp.vendor_id
-                   where orderid='$id' ) a";
-*/
-                $query="select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl(price-dis,0) total from
+        /* $query = "select distinct isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price-dis,0) net_price,nvl(ordered_quantity*(price-dis),0) total from
+                    (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,discount,(bvp.price*discount/100) dis from
+                    memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
+                    left join ams.authors a on t.authorid=a.id
+                    left join ams.publishers p on t.publisherid=p.id
+                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
+                    left join ams.suppliers s on s.id=bvp.vendor_id
+                    where orderid='$id' ) a";
+ */
+        $query = "select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl(price-dis,0) total from
             (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,bvp.discount,(bvp.price*bvp.discount/100) dis from
             memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
             left join ams.authors a on t.authorid=a.id
@@ -112,26 +119,27 @@ on a.id=b.batch_id";
             left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
             left join ams.suppliers s on s.id=bvp.vendor_id
             where orderid='$id' ) a";
-            $data = DB::select($query);
-                    $array = [];
-                    foreach ($data as $row) {
-                        array_push($array, $row);
-                    }
-                    return $array;
+        $data = DB::select($query);
+        $array = [];
+        foreach ($data as $row) {
+            array_push($array, $row);
+        }
+        return $array;
 
-                }
+    }
 
 
-                public static function catalogueUpdate()
-                {
+    public static function catalogueUpdate()
+    {
 
-                    $vendor = $_GET['vendor'];
-                    $isbn = $_GET['isbn'];
-                    $bookNum = $_GET['bookNum'];
-                    $batch = $_GET['batch'];
-                    $updateSelectQuery = "select branch_id,branch_order_id,branchname from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
+        $vendor = $_GET['vendor'];
+        $isbn = $_GET['isbn'];
+        $bookNum = $_GET['bookNum'];
+        $batch = $_GET['batch'];
+        $updateSelectQuery = "select branch_id,branch_order_id,branchname from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
             join memp.jb_titles jt on bo.title_id=jt.titleid join memp.jb_branches jb on branch_id=jb.id
-            where isbn_13='$isbn' and bobm.batch_id=$batch and remaining_quantity!=0 order by branch_order_id asc";
+            where (isbn_13='$isbn' or jt.titleid= '$isbn')  and bobm.batch_id=$batch and (remaining_quantity!=0  or remaining_quantity is null) order by branch_order_id asc";
+
         $updateSelectResponse = DB::select($updateSelectQuery);
         if (count($updateSelectResponse) == 0 || empty($updateSelectResponse)) {
             return array("message" => "ISBN NOT PRESENT", 'code' => 400);
@@ -146,7 +154,7 @@ on a.id=b.batch_id";
 
         $isbnResponse = DB::select("select  title_id,title from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
             join memp.jb_titles jt on bo.title_id=jt.titleid
-            where isbn_13='$isbn' and bobm.batch_id=$batch  order by branch_order_id asc");
+            where (isbn_13='$isbn' or jt.titleid='$isbn')  and bobm.batch_id=$batch  order by branch_order_id asc");
         if (count($isbnResponse) == 0 || empty($isbnResponse)) {
             return array("message" => "ISBN NOT PRESENT", 'code' => 500);
         }
@@ -159,7 +167,7 @@ on a.id=b.batch_id";
 
         $branch_query = "select jb.id,jb.branchname from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
                 join memp.jb_titles jt on bo.title_id=jt.titleid join memp.jb_branches jb on bo.branch_id=jb.id
-                where isbn_13='$isbn' and bobm.batch_id=$batch  order by branch_order_id asc";
+                where (isbn_13='$isbn' or jt.titleid = '$isbn') and bobm.batch_id=$batch  order by branch_order_id asc";
         $branchResponse = DB::select($branch_query);
         $branch_id = [];
         $branch_name = [];
@@ -191,7 +199,7 @@ on a.id=b.batch_id";
 
         $isbnResponse = DB::select("select title_id,title from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
             join memp.jb_titles jt on bo.title_id=jt.titleid
-            where isbn_13='$isbn' and bobm.batch_id=$batch and remaining_quantity!=0 order by branch_order_id asc");
+            where (isbn_13='$isbn' or jt.titleid = '$isbn')  and bobm.batch_id=$batch and remaining_quantity!=0 order by branch_order_id asc");
 
         if (count($isbnResponse) == 0 || empty($isbnResponse)) {
             return array("message" => "Already Added", 'code' => 500);
@@ -202,7 +210,7 @@ on a.id=b.batch_id";
 
         $newBranch_orderQuery = "select branch_order_id from opac.branch_orders bo join opac.branch_order_batch_map bobm on bo.id=bobm.branch_order_id
                 join memp.jb_titles jt on bo.title_id=jt.titleid join memp.jb_branches jb on bo.branch_id=jb.id
-                where isbn_13='$isbn' and bobm.batch_id=$batch and  jb.id =$newBranch and remaining_quantity!=0 order by branch_order_id asc";
+                where (isbn_13='$isbn' or jt.titleid = '$isbn')  and bobm.batch_id=$batch and  jb.id =$newBranch and remaining_quantity!=0 order by branch_order_id asc";
 
         $newBranch_orderResponse = DB::select($newBranch_orderQuery);
 
@@ -382,7 +390,7 @@ on a.id=b.batch_id";
             }
 
             foreach ($array as $value) {
-                $title_id=$value[0];
+                $title_id = $value[0];
                 $isbn = $value[1];
                 $num = $value[2];
 
@@ -424,10 +432,10 @@ on a.id=b.batch_id";
                 array_push($isbn_array, array("isbn" => $index, "count" => $val));
             }
             foreach ($array as $value) {
-                $title_id=$value[0];
+                $title_id = $value[0];
                 $isbn = $value[1];
                 $num = $value[2];
-                $vendor=$value[4];
+                $vendor = $value[4];
 
 
                 $insertQuery = "insert into memp.catalogue_details (isbn,title_id,vendor,batch_id,po_id,branch_order_id,book_num,created_at,branch_id) 
@@ -626,7 +634,7 @@ left join ams.suppliers s on s.id=cd.vendor
     public static function indISBNVal()
     {
         $isbn = $_GET['isbn'];
-        $hi=(int)$isbn;
+        $hi = (int)$isbn;
         $query = "select titleid,nvl(isbn_13,'N/A') isbn_13 from jbprod.titles where isbn_10='$isbn' or isbn_13 = '$isbn' or titleid=$hi";
         $response = DB::select($query);
         if (empty($response) || $response == []) {
@@ -636,7 +644,7 @@ left join ams.suppliers s on s.id=cd.vendor
 //            $end=array();
 //            array_push($end,$response[0]->titleid);
 //            array_push($end,$response[0]->titleid);
-            return json_encode(array('id'=>$response[0]->titleid,'isbn'=>$response[0]->isbn_13)) ;
+            return json_encode(array('id' => $response[0]->titleid, 'isbn' => $response[0]->isbn_13));
 
         }
 
@@ -680,91 +688,89 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
 
     public static function getDefaultReports()
     {
-        $startD=date('m-y');
-        $start= "01-".$startD;
-        $end='30-'.$startD;
+        $startD = date('m-y');
+        $start = "01-" . $startD;
+        $end = '30-' . $startD;
 
 
         $poc = "select count(*) count  from (select distinct bvp.orderid  from memp.batch_vendor_po bvp  left join OPAC.BATCH_PO_INVOICE_DETAILS  bpid on bvp.orderid= bpid.po_id where to_char(bvp.ordered_date,'YYYY-MM-DD')
         between '$start'  and 'end' and bvp.isbn=bpid.ISBN)";
         $pocres = DB::select($poc);
-        $completed_pos= $pocres[0]->count;
+        $completed_pos = $pocres[0]->count;
 
-        $totalPOQuery="select  count(*) count from (select distinct orderid from memp.batch_vendor_po BVP where to_char(BVP.ordered_date,'YYYY-MM-DD')
+        $totalPOQuery = "select  count(*) count from (select distinct orderid from memp.batch_vendor_po BVP where to_char(BVP.ordered_date,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $totalPORes=DB::select($totalPOQuery);
-        $totalPO=$totalPORes[0]->count;
+        $totalPORes = DB::select($totalPOQuery);
+        $totalPO = $totalPORes[0]->count;
 
 
-        $totalBatchQuery="select  count(*) count from (select id from opac.batch b where to_char(b.created_at,'YYYY-MM-DD')
+        $totalBatchQuery = "select  count(*) count from (select id from opac.batch b where to_char(b.created_at,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $totalBatchRes=DB::select($totalBatchQuery);
-        $totalBatches=$totalBatchRes[0]->count;
+        $totalBatchRes = DB::select($totalBatchQuery);
+        $totalBatches = $totalBatchRes[0]->count;
 
-        $totalBooksQuery="select sum(ordered_quantity) sum from memp.batch_vendor_po bvp where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        $totalBooksQuery = "select sum(ordered_quantity) sum from memp.batch_vendor_po bvp where to_char(bvp.ordered_date,'YYYY-MM-DD')
         between '$start'  and '$end' ";
-        $totalBooksRes=DB::select($totalBooksQuery);
-        $totalBooks=$totalBooksRes[0]->sum;
+        $totalBooksRes = DB::select($totalBooksQuery);
+        $totalBooks = $totalBooksRes[0]->sum;
 
-        $receivedQuery="select  count(*) count from (select  isbn from opac.batch_po_invoice_details bpvd where to_char(bpvd.created_at,'YYYY-MM-DD')
+        $receivedQuery = "select  count(*) count from (select  isbn from opac.batch_po_invoice_details bpvd where to_char(bpvd.created_at,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $receivedRes=DB::select($receivedQuery);
-        $recievdedBooks=$receivedRes[0]->count;
+        $receivedRes = DB::select($receivedQuery);
+        $recievdedBooks = $receivedRes[0]->count;
 
 
-        $remainigQuery="select sum(ordered_quantity)-sum(quantity_recieved) sum from (select to_number(ordered_quantity) ordered_quantity,quantity_recieved from memp.BATCH_VENDOR_PO bvp left 
+        $remainigQuery = "select sum(ordered_quantity)-sum(quantity_recieved) sum from (select to_number(ordered_quantity) ordered_quantity,quantity_recieved from memp.BATCH_VENDOR_PO bvp left 
         join OPAC.BATCH_PO_INVOICE_DETAILS  bpvd on  bvp.isbn  = BPVD.ISBN where to_char(bvp.ordered_date,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $remanigRes=DB::select($remainigQuery);
-        $remainigBooks=$remanigRes[0]->sum;
+        $remanigRes = DB::select($remainigQuery);
+        $remainigBooks = $remanigRes[0]->sum;
 
-        return array('completed'=>$completed_pos,'totalPo'=>$totalPO,'totalBatches'=>$totalBatches,'totalBooks'=>$totalBooks,'receivedBooks'=>$recievdedBooks,'remainingBooks'=>$remainigBooks);
+        return array('completed' => $completed_pos, 'totalPo' => $totalPO, 'totalBatches' => $totalBatches, 'totalBooks' => $totalBooks, 'receivedBooks' => $recievdedBooks, 'remainingBooks' => $remainigBooks);
 
     }
-
-
 
 
     public static function getDateReports()
     {
 
-        $start=$_GET['start'];
-        $end= $_GET['end'];
+        $start = $_GET['start'];
+        $end = $_GET['end'];
 
         $poc = "select count(*) count  from (select distinct bvp.orderid  from memp.batch_vendor_po bvp  left join OPAC.BATCH_PO_INVOICE_DETAILS  bpid on bvp.orderid= bpid.po_id where to_char(bvp.ordered_date,'YYYY-MM-DD')
         between '$start'  and 'end' and bvp.isbn=bpid.ISBN)";
         $pocres = DB::select($poc);
-        $completed_pos= $pocres[0]->count;
+        $completed_pos = $pocres[0]->count;
 
-        $totalPOQuery="select  count(*) count from (select distinct orderid from memp.batch_vendor_po BVP where to_char(BVP.ordered_date,'YYYY-MM-DD')
+        $totalPOQuery = "select  count(*) count from (select distinct orderid from memp.batch_vendor_po BVP where to_char(BVP.ordered_date,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $totalPORes=DB::select($totalPOQuery);
-        $totalPO=$totalPORes[0]->count;
+        $totalPORes = DB::select($totalPOQuery);
+        $totalPO = $totalPORes[0]->count;
 
 
-        $totalBatchQuery="select  count(*) count from (select id from opac.batch b where to_char(b.created_at,'YYYY-MM-DD')
+        $totalBatchQuery = "select  count(*) count from (select id from opac.batch b where to_char(b.created_at,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $totalBatchRes=DB::select($totalBatchQuery);
-        $totalBatches=$totalBatchRes[0]->count;
+        $totalBatchRes = DB::select($totalBatchQuery);
+        $totalBatches = $totalBatchRes[0]->count;
 
-        $totalBooksQuery="select sum(ordered_quantity) sum from memp.batch_vendor_po bvp where to_char(bvp.ordered_date,'YYYY-MM-DD')
+        $totalBooksQuery = "select sum(ordered_quantity) sum from memp.batch_vendor_po bvp where to_char(bvp.ordered_date,'YYYY-MM-DD')
         between '$start'  and '$end' ";
-        $totalBooksRes=DB::select($totalBooksQuery);
-        $totalBooks=$totalBooksRes[0]->sum;
+        $totalBooksRes = DB::select($totalBooksQuery);
+        $totalBooks = $totalBooksRes[0]->sum;
 
-        $receivedQuery="select  count(*) count from (select  isbn from opac.batch_po_invoice_details bpvd where to_char(bpvd.created_at,'YYYY-MM-DD')
+        $receivedQuery = "select  count(*) count from (select  isbn from opac.batch_po_invoice_details bpvd where to_char(bpvd.created_at,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $receivedRes=DB::select($receivedQuery);
-        $recievdedBooks=$receivedRes[0]->count;
+        $receivedRes = DB::select($receivedQuery);
+        $recievdedBooks = $receivedRes[0]->count;
 
 
-        $remainigQuery="select sum(ordered_quantity)-sum(quantity_recieved) sum from (select to_number(ordered_quantity) ordered_quantity,quantity_recieved from memp.BATCH_VENDOR_PO bvp left 
+        $remainigQuery = "select sum(ordered_quantity)-sum(quantity_recieved) sum from (select to_number(ordered_quantity) ordered_quantity,quantity_recieved from memp.BATCH_VENDOR_PO bvp left 
         join OPAC.BATCH_PO_INVOICE_DETAILS  bpvd on  bvp.isbn  = BPVD.ISBN where to_char(bvp.ordered_date,'YYYY-MM-DD')
         between '$start'  and '$end')";
-        $remanigRes=DB::select($remainigQuery);
-        $remainigBooks=$remanigRes[0]->sum;
+        $remanigRes = DB::select($remainigQuery);
+        $remainigBooks = $remanigRes[0]->sum;
 
-        return array('completed'=>$completed_pos,'totalPo'=>$totalPO,'totalBatches'=>$totalBatches,'totalBooks'=>$totalBooks,'receivedBooks'=>$recievdedBooks,'remainingBooks'=>$remainigBooks);
+        return array('completed' => $completed_pos, 'totalPo' => $totalPO, 'totalBatches' => $totalBatches, 'totalBooks' => $totalBooks, 'receivedBooks' => $recievdedBooks, 'remainingBooks' => $remainigBooks);
 
     }
 

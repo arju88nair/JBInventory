@@ -353,7 +353,7 @@
 <div id="poDivision" style="display: none;">
     <br>
     <div class="col-xs-3 col-lg-3">
-        <label for="dis">Discount:</label>
+        <label for="dis">DIscount:</label>
         <input type="text" class="form-control" id="dis" name="dis">
     </div>
     <br>
@@ -386,9 +386,6 @@
                     <th>Availability</th>
                     <th class="hideC">Branch ID</th>
                     <th class="hideC">ISBN</th>
-                    <th>Discount</th>
-                    <th class="hideC">Hidden</th>
-
 
                 </tr>
                 </thead>

@@ -88,7 +88,7 @@ function populateMain(jsonObj) {
     for(var i=0;i<jsonObj.length;i++){
 
 
-        $('#main_table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].invoice+'</td><td>'+jsonObj[i].isbn+'</td><td>'+jsonObj[i].title+'</td><td>'+jsonObj[i].author+'</td><td>'+jsonObj[i].quantity_recieved+'</td></tr>');
+        $('#main_table tbody').append('<tr><td>'+jsonObj[i].id+'</td><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].invoice+'</td><td>'+jsonObj[i].isbn+'</td><td>'+jsonObj[i].title+'</td><td>'+jsonObj[i].price+'</td><td>'+jsonObj[i].quantity_recieved+'</td></tr>');
     }
     $(".spinner").hide();
         $('#main_table').DataTable( {

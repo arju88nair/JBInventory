@@ -163,7 +163,7 @@
     </div>
     <br><br><br>
     <div class="catalogueDiv" style="display:none;margin-left: 18%">
-        <form class="form-inline">
+        <form class="form-inline" id="catForm" onsubmit="return false">
             <div class="form-group">
                 <label for="email">ISBN:</label>
                 <input type="text" class="form-control" id="isbn" name="isbn" autofocus>

@@ -1,4 +1,18 @@
+$(document).ready(function() {
+ $(window).keydown(function(event){
+   if(event.keyCode == 13) {
+     event.preventDefault();
+     return false;
+   }
+ });
+})
+
+
+
+
 $(document).ready(function () {
+    
+
     var table;
     var new_branch_id = "";
     $('form').submit(false);
@@ -44,7 +58,7 @@ $(document).ready(function () {
         // console.log(e.which + ":" + chars.join("|"));
         if (pressed == false) {
             setTimeout(function () {
-                if (chars.length >= 5) {
+                if (chars.length >= 4) {
                     var barcode = chars.join("");
                     console.log("Barcode Scanned: " + barcode);
 
