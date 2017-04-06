@@ -44,7 +44,7 @@ $(document).ready(function () {
         // console.log(e.which + ":" + chars.join("|"));
         if (pressed == false) {
             setTimeout(function () {
-                if (chars.length >= 20) {
+                if (chars.length >= 5) {
                     var barcode = chars.join("");
                     console.log("Barcode Scanned: " + barcode);
 

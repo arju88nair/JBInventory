@@ -18,7 +18,7 @@ class report extends Model
     {
         $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
 (select b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
-                  from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6
+                  from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6 
                   group by b.name,b.id) a
 left join
 (select batch_id,sum(quantity_recieved)rec_qnty from opac.batch_po_invoice_details group by batch_id) b

@@ -98,12 +98,11 @@ class Batch extends Model
 
             foreach ($excel[0] as $inputItem) {
                 $isbn = $inputItem["title"];
-
-                $isbn_query = "select titleid from jbprod.titles where isbn_10 = '$isbn' or isbn_13 = '$isbn' and rownum<=1";
+                $isbn_query = "select titleid from jbprod.titles where isbn_10 = '$isbn' or isbn_13 = '$isbn' or titleid = $isbn and rownum<=1";
                 $resu = DB::select($isbn_query);
-
-                if(empty($resu) || $resu==[])
+                if(count($resu) === 0)
                 {
+
                     array_push($notAvailableISBN,$isbn);
                     continue;
                 }
@@ -153,8 +152,8 @@ class Batch extends Model
                 $values = "";
             }
 
-            $bobm_query = "insert into OPAC.BRANCH_ORDER_BATCH_MAP (branch_order_id,active,batch_id,created_at,updated_at)
-                          (select id,1,$id,sysdate,sysdate from opac.branch_orders where id>=$min_row and id<=$counter-1)";
+            $bobm_query = "insert into OPAC.BRANCH_ORDER_BATCH_MAP (branch_order_id,active,batch_id,created_at,updated_at,BRANCH_QUANTITY,REMAINING_QUANTITY)
+                          (select id,1,$id,sysdate,sysdate from opac.branch_orders where id>=$min_row and id<=$counter-1,$count,$count)";
             $result = DB::insert($bobm_query);
             if ($result) {
 

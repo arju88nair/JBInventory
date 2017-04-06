@@ -163,7 +163,7 @@
                             <th>Invoice</th>
                             <th>ISBN</th>
                             <th>Title Name</th>
-                            <th>Author</th>
+                            <th>Price</th>
                             <th>Recieved Quantity</th>
                         </tr>
                         </thead>

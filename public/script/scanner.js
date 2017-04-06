@@ -72,12 +72,12 @@ $(document).ready(function() {
         // console.log(e.which + ":" + chars.join("|"));
         if (pressed == false) {
             setTimeout(function(){
-                if (chars.length >= 10) {
+                if (chars.length >= 5) {
                     var barcode = chars.join("");
                     console.log("Barcode Scanned: " + barcode);
                     // assign value to some input (or do whatever you want)
                     // $("#barcode").text(barcode);
-                    if($.inArray(barcode, isbn)== -1||$.inArray(barcode, isbn)=== "-1")
+                    if($.inArray(barcode.trim(), isbn)== -1||$.inArray(barcode.trim(), isbn)=== "-1")
                     {
                         var check=localStorage.getItem("check")
                         if(check){
@@ -86,7 +86,7 @@ $(document).ready(function() {
                         }
                     }
                     else{
-                        $('#isbn tbody').append('<tr><td >'+barcode+'</td><td >1</td><td><a  href="#">Remove</a></td></tr>');
+                        $('#isbn tbody').append('<tr><td >'+barcode.trim()+'</td><td >1</td><td><a  href="#">Remove</a></td></tr>');
                     }
 
                     // var index=arraySearch(isbn,barcode);
@@ -200,7 +200,7 @@ function saveisbn(){
     var isbnTable=myTableArray;
     $.ajax({
         type: "POST",
-        url: "savegr",
+        url: "savegrsavegr",
         data: {'batch': batch,'order':order,'isbn':isbnTable,'invoice':invoice,'vendor':vendor,'amount':amount},
         async: true,
         dataType: 'json',
@@ -256,6 +256,9 @@ function populateStatus(val){
             +getObjectFromJson(val[i],"invoice")+'</td><td >' +getObjectFromJson(val[i],"isbn")+'</td><td >' +getObjectFromJson(val[i],"oq")+'</td><td>'
             +getObjectFromJson(val[i],"qr")+'</td><td >' +getObjectFromJson(val[i],"final")+'</td></tr>');
     }
+
+
+
 }
 
 function getisbn(order)

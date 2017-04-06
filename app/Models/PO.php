@@ -134,7 +134,7 @@ class PO extends Model
     {
         $vId = $_POST['vname'];
         $discount=$_POST['dis'];
-        $discount=(int)$discount;
+        $discount=(float)$discount;
 
 //        $getVID="select id from ams.suppliers where  name= '$vName'";
 //        $vId=DB::select($getVID)[0]->id;
@@ -181,8 +181,8 @@ class PO extends Model
     {
         $id = $_GET['id'];
         $vid = $_GET['vid'];
-	$query="select  isbn,title,address,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl(price-dis,0) total from
-(select t.isbn,title,s.address,ordered_quantity,a.name author,p.name publisher,bvp.price,bvp.discount,(bvp.price*bvp.discount/100) dis from
+	$query="select title_id, isbn,title,address,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl(price-dis,0) total from
+(select bvp.title_id,t.isbn,title,s.address,ordered_quantity,a.name author,p.name publisher,bvp.price,bvp.discount,(bvp.price*bvp.discount/100) dis from
 memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
 left join ams.authors a on t.authorid=a.id
 left join ams.publishers p on t.publisherid=p.id
@@ -269,7 +269,11 @@ $totalRes=DB::select($totalQuery);
         foreach ($isbn_array as $item) {
             $isbn = $item['isbn'];
             $count = $item['count'];
-            $query = "insert into opac.batch_po_invoice_details (batch_id,po_id,invoice,isbn,quantity_recieved,created_at,invoice_amount) values ($batch,'$order','$invoice','$isbn',$count,sysdate,'$amount')";
+            $titleQuery="select titleid from jbprod.titles where isbn_13 = '$isbn' or isbn_10='$isbn' or titleid=$isbn";
+            $titleRes=DB::select($titleQuery);
+            $title_id=$titleRes[0]->titleid;
+
+            $query = "insert into opac.batch_po_invoice_details (batch_id,po_id,titleid,invoice,isbn,quantity_recieved,created_at,invoice_amount) values ($batch,'$order','$invoice','$isbn',$count,sysdate,'$amount')";
             $result = DB::insert($query);
         }
 

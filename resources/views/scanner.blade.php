@@ -17,6 +17,7 @@
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/scanner.js') !!}"></script>
 
+
     <style>
         .panel-heading{
             color: #fff;
