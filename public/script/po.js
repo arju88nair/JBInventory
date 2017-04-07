@@ -1,8 +1,8 @@
 $( document ).ready(function() {console.log("Gf")
-var table;
+    var table;
 
 
-$(".spinner").show();
+    $(".spinner").show();
     $.ajax({
         type: "GET",
         url: "getBatches",
@@ -196,8 +196,8 @@ function vendorAjax(id)
 
 function vendorDetailsAJax()
 {
-var id=localStorage.getItem("bId");
-var data=localStorage.getItem("vID");
+    var id=localStorage.getItem("bId");
+    var data=localStorage.getItem("vID");
 
     $.ajax({
         type: "POST",
@@ -234,11 +234,11 @@ function populateBatch(jsonVal,ti_id,v_name)
 
     $(".spinner").hide();
     for(var i=0;i<jsonObj.length;i++){
-        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td></tr>');
+        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td><td><input type=\"number\"  class="tdInputDis" value='+dis+' oninput="inputDis(this)" min=\"0\"   onkeydown=\"return false\"></input></td><td class="disClass hideC">'+dis+'</td></tr>');
     };
 
 
-     table=$('#dev-table').DataTable( {
+    table=$('#dev-table').DataTable( {
         destroy: true,
 
         "order": [[ 0, "asc" ]]
@@ -269,7 +269,7 @@ function populateBatch(jsonVal,ti_id,v_name)
 //
 // }
 $('#vendors').on('hidden', function () {
-  ;
+    ;
     // do something…
     $(".spinner").hide();
 
@@ -326,17 +326,18 @@ function array_combine()
     var array=[];
     table.destroy();
     table=$('#dev-table').DataTable();
-   var data= table.rows().every(function(){
-       console.log(this.data());
-       var cell=[];
-       cell.push(this.data()[1]);
-       cell.push(this.data()[5]);
-       cell.push(this.data()[8]);
-       cell.push(this.data()[9]);
-       cell.push(this.data()[6]);
-       array.push(cell);
-   });
-   console.log(array);
+    var data= table.rows().every(function(){
+        console.log(this.data());
+        var cell=[];
+        cell.push(this.data()[1]);
+        cell.push(this.data()[5]);
+        cell.push(this.data()[8]);
+        cell.push(this.data()[9]);
+        cell.push(this.data()[6]);
+        cell.push(this.data()[11]);
+        array.push(cell);
+    });
+    console.log(array);
 
 
     // var myTableArray = [];
@@ -400,6 +401,16 @@ function input(thisID)
 
 
 }
+
+
+function inputDis(thisID){
+    var tr =thisID.closest('tr');
+    var input=$('td input.tdInputDis', tr).val();
+    // var req=$('td.reqClass', tr).text();
+
+    $('td.disClass',tr).text(parseInt(input));
+}
+
 
 function populateBatchTable(val)
 {

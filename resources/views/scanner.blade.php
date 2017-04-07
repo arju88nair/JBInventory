@@ -171,6 +171,8 @@
         <br>
         <button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Start Scanning</button>
 
+
+
     </div>
     <div id="statusDiv" style="display: none;">
         <h3 style="text-align: center">Status Of The Uploaded Data</h3>

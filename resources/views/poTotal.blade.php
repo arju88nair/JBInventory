@@ -52,26 +52,26 @@
 
 
     </style>
-<style>td
-    {
-        height: 50px;
-        width:50px;
-    }
+    <style>td
+        {
+            height: 50px;
+            width:50px;
+        }
 
-    #totalPO td
-    {
-        text-align:center;
-        vertical-align:middle;
-    }
-    #totalPO th
-    {
-        text-align:center;
-        vertical-align:middle;
-    }
-    #totalPO td {text-align:center; vertical-align:middle;}
-    #totalPO th {text-align:center; vertical-align:middle;}
-    #viewPO td {text-align:center; vertical-align:middle;}
-    #viewPO th {text-align:center; vertical-align:middle;}</style>
+        #totalPO td
+        {
+            text-align:center;
+            vertical-align:middle;
+        }
+        #totalPO th
+        {
+            text-align:center;
+            vertical-align:middle;
+        }
+        #totalPO td {text-align:center; vertical-align:middle;}
+        #totalPO th {text-align:center; vertical-align:middle;}
+        #viewPO td {text-align:center; vertical-align:middle;}
+        #viewPO th {text-align:center; vertical-align:middle;}</style>
 </head>
 <script>
 
@@ -115,59 +115,59 @@
         <div class="double-bounce2"></div>
     </div>
 
-        <a href="purchaseOrders" class="btn btn-warning btn-lg" role="button" id="navig" style="float: left;display:none;margin-left: 11px" >Generate New Purchase Order</a>
-       <br><br><br>
-        <div id="POTotalTableDiv" style="display: none;">
-            <br><br>
-            <div class="col-md-12" id ="Totaldivision" >
-                <div class="panel panel-primary">
-                    <div class="panel-heading" style="">
-                        <h3 class="panel-title">Total POs</h3>
-                        <div class="pull-right">
+    <a href="purchaseOrders" class="btn btn-warning btn-lg" role="button" id="navig" style="float: left;display:none;margin-left: 11px" >Generate New Purchase Order</a>
+    <br><br><br>
+    <div id="POTotalTableDiv" style="display: none;">
+        <br><br>
+        <div class="col-md-12" id ="Totaldivision" >
+            <div class="panel panel-primary">
+                <div class="panel-heading" style="">
+                    <h3 class="panel-title">Total POs</h3>
+                    <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
                         </span>
-                        </div>
                     </div>
-                    <div class="panel-body">
-                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
-                    </div>
-                    <table class="table table-hover table-striped" id="totalPO">
-                        <thead>
-                        <tr>
-
-                            <th align="center">#</th>
-                            <th align="center">Name</th>
-                            <th align="center">PO Order ID</th>
-                            <th align="center">Vendor</th>
-                            <th align="center">Qauntity</th>
-                            <th align="center">Generate PDF</th>
-                            <th align="center">View</th>
-
-
-                        </tr>
-                        </thead>
-                        <tbody class="populatePOTable">
-                        </tbody>
-                    </table>
-
                 </div>
+                <div class="panel-body">
+                    <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                </div>
+                <table class="table table-hover table-striped" id="totalPO">
+                    <thead>
+                    <tr>
+
+                        <th align="center">#</th>
+                        <th align="center">Name</th>
+                        <th align="center">PO Order ID</th>
+                        <th align="center">Vendor</th>
+                        <th align="center">Qauntity</th>
+                        <th align="center">Generate PDF</th>
+                        <th align="center">View</th>
+
+
+                    </tr>
+                    </thead>
+                    <tbody class="populatePOTable">
+                    </tbody>
+                </table>
+
             </div>
-
-
-
-
         </div>
 
 
 
-        <div id="viewPODiv" style="display: none;">
 
-            {{--<button style="border: 2px solid lightblue;background-color: white;float: left;margin-left: 13px;" type="button" class="btn btn-outline-primary" ><span class="glyphicon glyphicon-menu-left" onclick="backView()"></span> &nbsp; Previous</button>--}}
-            <br><br>
-            <br><br>
+    </div>
 
-            <div class="col-md-12" id ="Totaldivision" >
+
+
+    <div id="viewPODiv" style="display: none;">
+
+        {{--<button style="border: 2px solid lightblue;background-color: white;float: left;margin-left: 13px;" type="button" class="btn btn-outline-primary" ><span class="glyphicon glyphicon-menu-left" onclick="backView()"></span> &nbsp; Previous</button>--}}
+        <br><br>
+        <br><br>
+
+        <div class="col-md-12" id ="Totaldivision" >
             <div class="panel panel-primary">
                 <div class="panel-heading" style="">
                     <h3 class="panel-title">Total POs</h3>

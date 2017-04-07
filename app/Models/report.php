@@ -16,10 +16,17 @@ class report extends Model
 
     public static function summaryReport($input)
     {
-        $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
-(select b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
+//        $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
+//(select b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
+        //                from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6 and active = 1
+        //              group by b.name,b.id) a
+//left join
+//(select batch_id,sum(quantity_recieved)rec_qnty from opac.batch_po_invoice_details group by batch_id) b
+//on a.id=b.batch_id";
+        $query = "select nvl(orderid,'Not Available') po_id,id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
+(select bvp.orderid,b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
                   from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6 and active = 1
-                  group by b.name,b.id) a
+                  group by b.name,b.id,bvp.orderid) a
 left join
 (select batch_id,sum(quantity_recieved)rec_qnty from opac.batch_po_invoice_details group by batch_id) b
 on a.id=b.batch_id";
@@ -41,14 +48,15 @@ on a.id=b.batch_id";
 //        $query = "select b.id,b.name,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available') isbn,nvl(quantity_recieved,0) quantity_recieved,mt.title title,mt.author_name author from
         //                  opac.batch b left join opac.batch_po_invoice_details bpid on b.id=bpid.batch_id join memp.titles mt on bpid.isbn=mt.isbn
         //                where b.id=$id";
-        $query = "select a.id,a.name,invoice,a.isbn,quantity_recieved,title_id,regexp_replace(title, '(^[[:space:]]+)|([[:space:]]+$)',null) title,price from
-(select b.id as id,b.name ,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available')
-isbn,nvl(quantity_recieved,0) quantity_recieved,title_id,price from
+        $query = "select a.id,a.name,invoice,a.isbn,quantity_recieved,title_id,regexp_replace(title, '(^[[:space:]]+)|([[:space:]]+$)',null) title,nvl((price-(price*discount)/100)*quantity_recieved ,0 ) price from
+(select bvp.orderid as id,b.name ,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available')
+isbn,nvl(quantity_recieved,0) quantity_recieved,title_id,price,bvp.discount from
                    opac.batch b left join opac.batch_po_invoice_details bpid 
                    on b.id=bpid.batch_id  join memp.batch_vendor_po bvp on ((bvp.isbn=bpid.isbn or bvp.title_id=bpid.isbn) 
                    and bvp.orderid=bpid.po_id)
                    where b.id=$id) a
-join memp.titles t on (a.isbn=t.isbn and a.title_id=t.id) or (a.isbn=t.id)";
+join memp.titles t on (a.isbn=t.isbn and a.title_id=t.id) or (a.isbn=t.id)
+";
 
         $response = DB::select($query);
         $array = [];
@@ -58,7 +66,20 @@ join memp.titles t on (a.isbn=t.isbn and a.title_id=t.id) or (a.isbn=t.id)";
         }
         $array = json_encode($array);
 
-        return View::make('detailedSummary')->with('array', $array);
+
+        $queryTotal = "select sum(price) total from (select a.id,a.name,invoice,a.isbn,quantity_recieved,title_id,regexp_replace(title, '(^[[:space:]]+)|([[:space:]]+$)',null) title,nvl((price-(price*discount)/100)*quantity_recieved ,0 ) price from
+(select b.id as id,b.name ,nvl(invoice,'Not Available') invoice,nvl(bpid.isbn,'Not Available')
+isbn,nvl(quantity_recieved,0) quantity_recieved,title_id,price,bvp.discount from
+                   opac.batch b left join opac.batch_po_invoice_details bpid 
+                   on b.id=bpid.batch_id  join memp.batch_vendor_po bvp on ((bvp.isbn=bpid.isbn or bvp.title_id=bpid.isbn) 
+                   and bvp.orderid=bpid.po_id)
+                   where b.id=$id) a
+join memp.titles t on (a.isbn=t.isbn and a.title_id=t.id) or (a.isbn=t.id))";
+
+        $responseTotal = DB::select($queryTotal);
+        $total = $responseTotal[0]->total;
+
+        return View::make('detailedSummary')->with('array', $array)->with('total', $total);
 
 
     }
@@ -111,7 +132,7 @@ join memp.titles t on (a.isbn=t.isbn and a.title_id=t.id) or (a.isbn=t.id)";
                     left join ams.suppliers s on s.id=bvp.vendor_id
                     where orderid='$id' ) a";
  */
-        $query = "select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl(price-dis,0) total from
+        $query = "select  isbn,title,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,,nvl((price-dis)*ordered_quantity,0) total from
             (select t.isbn,title,ordered_quantity,a.name author,p.name publisher,bvp.price,bvp.discount,(bvp.price*bvp.discount/100) dis from
             memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
             left join ams.authors a on t.authorid=a.id

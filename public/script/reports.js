@@ -73,7 +73,7 @@ function populateBatch(jsonObj)
     for(var i=0;i<jsonObj.length;i++){
 
 
-        $('#dev-table tbody').append('<tr><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].no_of_pos+'</td><td>'+jsonObj[i].order_qnty+'</td><td>'+jsonObj[i].rec_qnty+'</td><td></span>&nbsp;&nbsp;&nbsp; <a href=\"detailedReport?id='+jsonObj[i].id+'\"><span class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px"></span></a></span></td></tr>');
+$('#dev-table tbody').append('<tr><td>'+jsonObj[i].name+'</td><td>'+jsonObj[i].po_id+'</td><td>'+jsonObj[i].no_of_pos+'</td><td>'+jsonObj[i].order_qnty+'</td><td>'+jsonObj[i].rec_qnty+'</td><td></span>&nbsp;&nbsp;&nbsp; <a href=\"detailedReport?id='+jsonObj[i].id+'\"><span class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px"></span></a></span></td></tr>');
     }
     $('#dev-table').DataTable( {
         "order": [[ 0, "desc" ]]

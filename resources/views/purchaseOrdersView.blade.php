@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -307,7 +309,7 @@
         {{--PO Divisoin--}}
 
         <div id="poDivision" style="display: none;">
-            <div class="col-xs-3 col-lg-3">
+            <div class="col-xs-3 col-lg-3" style="display:none">
                 <label for="dis">Discount:</label>
                 <input type="text" class="form-control" id="dis" name="dis">
             </div>
@@ -338,6 +340,8 @@
                             <th>Availability</th>
                             <th class="hideC">Branch ID</th>
                             <th class="hideC">ISBN</th>
+                            <th>Discount</th>
+                            <th class="hideC">Hidden</th>
 
                         </tr>
                         </thead>
@@ -467,5 +471,4 @@
     }
 </style>
 </html>
-
 

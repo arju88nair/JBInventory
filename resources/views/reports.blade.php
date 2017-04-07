@@ -174,6 +174,7 @@
                         <thead>
                         <tr>
                             <th>Name</th>
+<th>PO Id</th>
                             <th>Number of POs</th>
                             <th>Ordered Quantity</th>
                             <th>Recieved Quantity</th>

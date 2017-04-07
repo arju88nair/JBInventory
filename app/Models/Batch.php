@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use DB;
-use Illuminate\Database\Eloquent\Model;
-use Maatwebsite\Excel\Facades\Excel;
 use Redirect;
 use View;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Database\Eloquent\Model;
 
 class Batch extends Model
 {
@@ -50,7 +51,10 @@ class Batch extends Model
         if ($_POST['select'] == 5 || $_POST['select'] == 6) {
             $startDate = date('Y-m-d');
             $endDate = date('Y-m-d');;
-        } else {
+        }
+
+
+        else {
             $startDate = $_POST['start'];
             $endDate = $_POST['end'];
         }
@@ -74,7 +78,7 @@ class Batch extends Model
             return Redirect::to('giftCatalogue');
         }
         $id = $model['id'];
-        $notAvailableISBN = [];
+        $notAvailableISBN=[];
         if ($_FILES['file']['name']) {
             $min_query = "select max(id)+1 as id from opac.branch_orders";
             $min_row = DB::select($min_query);
@@ -94,28 +98,30 @@ class Batch extends Model
 
             foreach ($excel[0] as $inputItem) {
                 $isbn = $inputItem["title"];
+                $titID=(int)$isbn;
 
-                $isbn_query = "select titleid from jbprod.titles where (isbn_10 = '$isbn' or isbn_13 = '$isbn' or titleid='$isbn') and mrp is not null  and rownum<=1";
+                $isbn_query = "select titleid from jbprod.titles where (isbn_10 = '$isbn' or isbn_13 = '$isbn' or titleid=$titID) and mrp is not null  and rownum<=1";
                 $resu = DB::select($isbn_query);
-
-                if (empty($resu) || $resu == []) {
-                    array_push($notAvailableISBN, $isbn);
+                if(empty($resu) || $resu==[] )
+                {
+                    array_push($notAvailableISBN,$isbn);
                     continue;
                 }
                 $title_id = $resu[0]->titleid;
 
 
                 $count = $inputItem["count"];
+                $branch=$inputItem['branch'];
 
                 $added++;
-                $ibtrsQuery = "insert into opac.ibtrs (id,title_id,member_id,card_id,branch_id,created_at,order_type,state,created_by,PROCESSING_TEAM_ID) values (opac.IBTRS_SEQ.NEXTVAL,$title_id,16210,'MWAREHOUSE1',901,sysdate,'BranchOrder','new',1010,10000  )";
+                $ibtrsQuery = "insert into opac.ibtrs (id,title_id,member_id,card_id,branch_id,created_at,order_type,state,created_by,PROCESSING_TEAM_ID) values (opac.IBTRS_SEQ.NEXTVAL,$title_id,16210,'MWAREHOUSE1',$branch,sysdate,'BranchOrder','new',1010,10000  )";
                 DB::insert($ibtrsQuery);
 
-                $selectIbtrs = "select max(id) id from opac.ibtrs where title_id= $title_id and member_id=16210 and card_id='MWAREHOUSE1' and branch_id =901 and order_type ='BranchOrder' and state = 'new'";
+                $selectIbtrs = "select max(id) id from opac.ibtrs where title_id= $title_id and member_id=16210 and card_id='MWAREHOUSE1' and branch_id =$branch and order_type ='BranchOrder' and state = 'new'";
                 $resSelect = DB::select($selectIbtrs);
                 $ibId = $resSelect[0]->id;
 
-                $query = "select $counter,$title_id,'F',$count,901,901,'new',$ibId from dual ";
+                $query = "select $counter,$title_id,'F',$count,$branch,$branch,'new',$ibId from dual ";
                 $counter++;
                 if ($values == '') {
                     $values = $query;
@@ -134,11 +140,13 @@ class Batch extends Model
 
 
             }
-            if (count($notAvailableISBN) > 0) {
+            if(count($notAvailableISBN) > 0)
+            {
                 DB::rollback();
                 $model->delete();
-                return View::make('invalidISBN')->with('invalidISBN', $notAvailableISBN);
-            } else {
+                return View::make('invalidISBN') ->with('invalidISBN',$notAvailableISBN) ;
+            }
+            else{
                 DB::commit();
             }
             if ($values != "") {
@@ -146,8 +154,8 @@ class Batch extends Model
                 $values = "";
             }
 
-            $bobm_query = "insert into OPAC.BRANCH_ORDER_BATCH_MAP (branch_order_id,active,batch_id,created_at,updated_at)
-                          (select id,1,$id,sysdate,sysdate from opac.branch_orders where id>=$min_row and id<=$counter-1)";
+            $bobm_query = "insert into OPAC.BRANCH_ORDER_BATCH_MAP (branch_order_id,active,batch_id,created_at,updated_at,BRANCH_QUANTITY,REMAINING_QUANTITY)
+                          (select id,1,$id,sysdate,sysdate,quantity,quantity from opac.branch_orders where id>=$min_row and id<=$counter-1)";
             $result = DB::insert($bobm_query);
             if ($result) {
 
@@ -281,13 +289,13 @@ class Batch extends Model
     {
 
         $id = $_POST['id'];
-        /*        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount,ap.name  from
-                                opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
-                                join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id
-                                where bobm.batch_id=$id and bobm.active=1
-                                group by title_id,amount,isbn_13,title,batch_id,ap.name";
-        */
-        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,t.mrp as amount,batch_id,sum(t.mrp)*sum(quantity) total_amount,ap.name  from
+/*        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount,ap.name  from
+                        opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
+                        join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
+                        where bobm.batch_id=$id and bobm.active=1 
+                        group by title_id,amount,isbn_13,title,batch_id,ap.name";
+*/
+	$batchQuery="select isbn_13,title_id,title,sum(quantity) copies,t.mrp as amount,batch_id,sum(t.mrp)*sum(quantity) total_amount,ap.name  from
                         opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
                         join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
                         where bobm.batch_id=$id and bobm.active=1

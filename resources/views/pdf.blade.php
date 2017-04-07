@@ -217,69 +217,69 @@
         {{--<P class="p7 ft1">Pin Code: 560009</P>--}}
 
 
-        </div>
-    </DIV>
+    </div>
+</DIV>
 <br><BR><br>
 </DIV>
 
 
-    <DIV class="dclr"></DIV>
+<DIV class="dclr"></DIV>
+<DIV id="id_1">
+    {{--<P class="p21 ft0">STRATA RETAIL TECHNOLOGY SERVICES PRIVATE LIMITED</P>--}}
+    {{--<P class="p22 ft1">24/1,2ndMain,AshtalakshmiLayout,PuttenahalliMainRoad,J.P.Nagar,6thPhase</P>--}}
+    {{--<P class="p23 ft1"><NOBR>Bangalore-560078,</NOBR> Phone : <NOBR>91-80-425-15000</NOBR></P>--}}
+    <table>
+        <TR>
+            <TH>ISBN</TH>
+            <TH>Title</TH>
+            <TH>Price</TH>
+            <TH>Quantity</TH>
+            <TH>Discount</TH>
+            <TH>Net Discount Amount </TH>
+            <TH>Total Amount</TH>
+
+        </TR>
+        <?php foreach($array as $brand): ?>
+        <TR>
+            <TD><?php echo $brand->isbn; ?></TD>
+            <TD><?php echo $brand->title; ?></TD>
+            <TD><?php echo $brand->price; ?></TD>
+            <TD><?php echo $brand->quantity; ?></TD>
+            <TD><?php echo $brand->discount; ?>%</TD>
+            <TD><?php echo $brand->net_price; ?></TD>
+            <TD><?php echo $brand->total; ?></TD>
+
+
+        </TR>
+        <?php endforeach ?>
+
+    </table>
+    <br><br>
+    <p style="font-weight: bold"> Total :<?php echo $total; ?> Rupees</p>
+    <br>
     <DIV id="id_1">
-        {{--<P class="p21 ft0">STRATA RETAIL TECHNOLOGY SERVICES PRIVATE LIMITED</P>--}}
-        {{--<P class="p22 ft1">24/1,2ndMain,AshtalakshmiLayout,PuttenahalliMainRoad,J.P.Nagar,6thPhase</P>--}}
-        {{--<P class="p23 ft1"><NOBR>Bangalore-560078,</NOBR> Phone : <NOBR>91-80-425-15000</NOBR></P>--}}
-        <table>
-            <TR>
-                <TH>ISBN</TH>
-                <TH>Title</TH>
-		<TH>Title ID</TH>
-                <TH>Price</TH>
-                <TH>Quantity</TH>
-                <TH>Net Discount Amount </TH>
-                <TH>Total Amount</TH>
 
-            </TR>
-            <?php foreach($array as $brand): ?>
-            <TR>
-                <TD><?php echo $brand->isbn; ?></TD>
-                <TD><?php echo $brand->title; ?></TD>
-		<TD><?php echo $brand->title_id; ?></TD>
-                <TD><?php echo $brand->price; ?></TD>
-                <TD><?php echo $brand->quantity; ?></TD>
-                <TD><?php echo $brand->net_price; ?></TD>
-                <TD><?php echo $brand->total; ?></TD>
+        <P class="p8 ft1">Dear Sir/s,</P>
+        <P class="p9 ft1">Please supply/execute the following activities as per the terms & conditions mentioned below</P>
+        <div style="margin-top: -60px;">
+            <P class="p10 ft0">For JUST BOOKS CLC &trade;</P>
+            <P class="p11 ft0">Authorized Signatory</P>
+            <P class="p12 ft0">Terms & Conditions:</P>
+            <P class="p13 ft8"><SPAN class="ft3">1.</SPAN><SPAN class="ft7">Books to be supplied for POs raised against your company name only </SPAN></P>
+            <P class="p14 ft10"><SPAN class="ft3">2.</SPAN><SPAN class="ft9">Please indicate in advance about </SPAN><NOBR>miss-match</NOBR> of ISBN, MRP, Discount, etc. to avoid subsequent returns.</P>
+            <P class="p15 ft1"><SPAN class="ft3">3.</SPAN><SPAN class="ft11">Please raise a separate invoice against each PO and pack separately by mentioning the PO number both on invoice and cartons.</SPAN></P>
+            <P class="p16 ft1"><SPAN class="ft3">4.</SPAN><SPAN class="ft11">Please do not supply "Activity, workbook, Box Set" under any circumstances even its reflecting in PO.</SPAN></P>
+            <P class="p17 ft1"><SPAN class="ft3">5.</SPAN><SPAN class="ft11">Any mismatch in ISBN, MRP, PO, Discount, etc will be returned and might get delay in payout.</SPAN></P>
 
-
-            </TR>
-            <?php endforeach ?>
-
-        </table>
-        <br><br>
-<p style="font-weight: bold"> Total :<?php echo $total; ?> Rupees</p>
-        <br>
-        <DIV id="id_1">
-
-            <P class="p8 ft1">Dear Sir/s,</P>
-            <P class="p9 ft1">Please supply/execute the following activities as per the terms & conditions mentioned below</P>
-            <div style="margin-top: -60px;">
-                <P class="p10 ft0">For JUST BOOKS CLC &trade;</P>
-                <P class="p11 ft0">Authorized Signatory</P>
-                <P class="p12 ft0">Terms & Conditions:</P>
-                <P class="p13 ft8"><SPAN class="ft3">1.</SPAN><SPAN class="ft7">Books to be supplied for POs raised against your company name only </SPAN></P>
-                <P class="p14 ft10"><SPAN class="ft3">2.</SPAN><SPAN class="ft9">Please indicate in advance about </SPAN><NOBR>miss-match</NOBR> of ISBN, MRP, Discount, etc. to avoid subsequent returns.</P>
-                <P class="p15 ft1"><SPAN class="ft3">3.</SPAN><SPAN class="ft11">Please raise a separate invoice against each PO and pack separately by mentioning the PO number both on invoice and cartons.</SPAN></P>
-                <P class="p16 ft1"><SPAN class="ft3">4.</SPAN><SPAN class="ft11">Please do not supply "Activity, workbook, Box Set" under any circumstances even its reflecting in PO.</SPAN></P>
-                <P class="p17 ft1"><SPAN class="ft3">5.</SPAN><SPAN class="ft11">Any mismatch in ISBN, MRP, PO, Discount, etc will be returned and might get delay in payout.</SPAN></P>
-
-            </div>
-        </DIV>
-
-        <P class="p38 ft12">www.justbooksclc.com</P>
-        <P class="p39 ft1">Regd. Off. : 28/1, Ground Floor, RNR Complex, Tubarahalli, Varthur Road, Bangalore 560066</P>
+        </div>
     </DIV>
-    {{--<DIV id="id_2">--}}
-    {{--<P class="p20 ft1">Page No. 2 of 3</P>--}}
-    {{--</DIV>--}}
+
+    <P class="p38 ft12">www.justbooksclc.com</P>
+    <P class="p39 ft1">Regd. Off. : 28/1, Ground Floor, RNR Complex, Tubarahalli, Varthur Road, Bangalore 560066</P>
+</DIV>
+{{--<DIV id="id_2">--}}
+{{--<P class="p20 ft1">Page No. 2 of 3</P>--}}
+{{--</DIV>--}}
 </DIV>
 
 </BODY>

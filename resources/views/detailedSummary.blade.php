@@ -134,11 +134,13 @@
         <div class="double-bounce2"></div>
     </div>
     <div id="data"></div>
+
     <div class="row">
     {{--<div class="col-md-12" id="create" style="padding-bottom: 15px">--}}
     {{--<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#Batch">Create Batch</button>--}}
     {{--</div>--}}
 
+<h3 style="margin-left:2%"><b>Total is  </b>{{$total}} Ruppees</h3>
 
     <!-- Modal -->
         <div class="row">
