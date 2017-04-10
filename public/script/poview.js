@@ -231,7 +231,8 @@ function populateBatch(jsonVal,ti_id,v_name)
 
     $(".spinner").hide();
     for(var i=0;i<jsonObj.length;i++){
-        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].price+'</td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td><td><input type=\"number\"  class="tdInputDis" value='+dis+' oninput="inputDis(this)" min=\"0\"   onkeydown=\"return false\"></input></td><td class="disClass hideC">'+dis+'</td></tr>');
+        var netPrice=jsonObj[i].price-((jsonObj[i].price*dis)/100);
+        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input style=\"width: 72%;\" type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td><input style=\"width: 90%;white-space:nowrap;\" type=\"number\"  class="tdInputPrice" value='+jsonObj[i].price+' oninput="inputPrice(this)" min=\"0\"   ></input></td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td><td><input style=\"width: 80%;white-space:nowrap;\" type=\"number\"  class="tdInputDis" value='+dis+' oninput="inputDis(this)" min=\"0\"   ></input></td><td class="disClass hideC">'+dis+'</td><td class="priceClass hideC">'+jsonObj[i].price+'</td><td class="netClass ">'+netPrice+'</td></tr>');
     };
 
 
@@ -250,13 +251,29 @@ function populateBatch(jsonVal,ti_id,v_name)
 
 }
 
+
+function inputPrice(thisID){
+    var tr =thisID.closest('tr');
+    var input=$('td input.tdInputPrice', tr).val();
+    // var req=$('td.reqClass', tr).text();
+    $('td.priceClass',tr).text(parseFloat(input));
+    var discount=$('td input.tdInputDis', tr).val();
+    var net=input-((input*discount)/100);
+    $('td.netClass',tr).text(parseFloat(net).toFixed(2))
+
+}
+
+
 function inputDis(thisID){
     var tr =thisID.closest('tr');
     var input=$('td input.tdInputDis', tr).val();
     // var req=$('td.reqClass', tr).text();
-
-    $('td.disClass',tr).text(parseInt(input));
+    $('td.disClass',tr).text(parseFloat(input));
+    var price=$('td input.tdInputPrice',tr).val();
+    var discount= price-((price*input)/100);
+    $('td.netClass',tr).text(parseFloat(discount).toFixed(2))
 }
+
 
 
 //<input type=\"number\" value="'+jsonObj[i].quantity_required+'" min=\"0\" max="'+jsonObj[i].quantity_required+'"  onkeydown=\"return false\" id="'+jsonObj[i].isbn+'" onchange="click()">
@@ -323,9 +340,11 @@ function populateModal(val)
 // }
 
 
+
 function array_combine()
 {
     var discount=$("#dis").val()
+
     $(".spinner").show();
     var array=[];
     table.destroy();
@@ -339,6 +358,7 @@ function array_combine()
         cell.push(this.data()[9]);
         cell.push(this.data()[6]);
         cell.push(this.data()[11]);
+        cell.push(this.data()[12]);
         array.push(cell);
     });
     console.log(array);
@@ -364,7 +384,7 @@ function array_combine()
     // // });
     // // console.log(myTableArray);
     var vId=localStorage.getItem("vID");
-    var bId=localStorage.getItem("linkBatch");
+    var bId=localStorage.getItem("bId");
 
     $.ajax({
         type: "POST",
@@ -399,12 +419,10 @@ function input(thisID)
     var tr =thisID.closest('tr');
     var input=$('td input.tdInput', tr).val();
     var req=$('td.reqClass', tr).text();
-
     $('td.total',tr).text(parseInt(input));
 
-
-
 }
+
 
 function populateBatchTable(val)
 {

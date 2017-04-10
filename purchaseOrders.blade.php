@@ -358,7 +358,7 @@
             </div>
             <br>
             <br><hr>
-            <div class="col-md-12"  id ="division" style="width:118% ;margin-left: -8%">
+            <div class="col-md-12"  id ="division" style="width:112% ;margin-left: -5%">
                 <div class="panel panel-primary">
                     <div class="panel-heading" style="background-color: #2A3F54;">
                         <h3 class="panel-title">Purchase Order</h3>
@@ -389,7 +389,6 @@
                             <th>Discount</th>
                             <th class="hideC">Hidden</th>
                             <th class="hideC">price</th>
-                            <th >Net Total</th>
 
 
                         </tr>

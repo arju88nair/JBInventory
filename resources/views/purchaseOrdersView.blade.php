@@ -342,6 +342,9 @@
                             <th class="hideC">ISBN</th>
                             <th>Discount</th>
                             <th class="hideC">Hidden</th>
+                            <th class="hideC">price</th>
+                            <th >Net Total</th>
+
 
                         </tr>
                         </thead>

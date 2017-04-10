@@ -141,13 +141,12 @@
     <div id="data"></div>
 
     <div class="row">
-    {{--<div class="col-md-12" id="create" style="padding-bottom: 15px">--}}
-    {{--<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#Batch">Create Batch</button>--}}
-    {{--</div>--}}
+        {{--<div class="col-md-12" id="create" style="padding-bottom: 15px">--}}
+        {{--<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#Batch">Create Batch</button>--}}
+        {{--</div>--}}
 
-<h3 style="margin-left:2%"><b>Total is  </b>{{$total}} Ruppees</h3>
 
-    <!-- Modal -->
+        <!-- Modal -->
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-primary">
@@ -166,25 +165,26 @@
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Invoice</th>
-                            <th>ISBN</th>
-                            <th>Title Name</th>
-                            <th>Price</th>
-                            <th>Recieved Quantity</th>
+                            <th>Title</th>
+                            <th>Book Number</th>
+                            <th>Branch</th>
+                            <th>PO_id</th>
+                            <th>Batch Name</th>
+
+
                         </tr>
                         </thead>
 
-                        <tbody class="populate"><?php if($array!=[]){?>
-                        <?php foreach($array as $brand): ?>
+                        <tbody class="populate"><?php if($report!=[]){?>
+                        <?php foreach($report as $brand): ?>
                         <TR>
-                            <TD><?php echo $brand->id; ?></TD>
-                            <TD><?php echo $brand->name; ?></TD>
-                            <TD><?php echo $brand->invoice; ?></TD>
-                            <TD><?php echo $brand->isbn; ?></TD>
+                            <TD><?php echo $brand->title_id; ?></TD>
                             <TD><?php echo $brand->title; ?></TD>
-                            <TD><?php echo $brand->price; ?></TD>
-                            <TD><?php echo $brand->quantity_recieved; ?></TD>
+                            <TD><?php echo $brand->book_num; ?></TD>
+                            <TD><?php echo $brand->branchname; ?></TD>
+                            <TD><?php echo $brand->po_id; ?></TD>
+                            <TD><?php echo $brand->name; ?></TD>
+
                         </TR>
                         <?php endforeach ?>
                         <?php }; ?>                        </tbody>

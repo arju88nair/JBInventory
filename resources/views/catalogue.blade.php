@@ -117,6 +117,45 @@
         <div class="double-bounce1"></div>
         <div class="double-bounce2"></div>
     </div>
+
+    <div class="row" style="margin-left:-3%">
+        <form class="form-inline" action="catReport" id="catReport">
+            <div class="form-group">
+                <label for="from">From :&nbsp;&nbsp;</label>
+                <input type="text" id="from"  name="from" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="form-group">
+                <label for="to">To :&nbsp;&nbsp;</label>
+                <input type="text" id="to"  name="to" required>
+            </div>
+            <div class="form-group" style="margin-left: 2%">
+                <label for="sel1">Select Batch:</label>
+
+                <select class="form-control" name="batch" style="width: 118px;">
+                    <option></option>
+                    <?php foreach($batch as $brand): ?>
+                    <option value="<?php echo $brand->id?>"><?php echo $brand->name?></option>
+                    <?php endforeach ?>
+
+                </select>
+            </div>
+            <div class="form-group" style="margin-left: 2%">
+                <label for="sel1">Select Po:</label>
+                <select class="form-control" name="po"  style="width: 118px;">
+                    <option></option>
+                    <?php foreach($po as $item): ?>
+                    <option><?php echo $item->orderid?></option>
+                    <?php endforeach ?>
+
+                </select>
+
+            </div>
+
+            <button type="submit" class="btn btn-info" style="margin-left: 2%">Submit</button>
+        </form>
+    </div>
+
+
     <div id="POTotalTableDiv" style="display: none;">
         <h2 style="text-align: center">Select a PO</h2>
         <br><br>
@@ -145,6 +184,7 @@
                         <th align="center">Vendor ID</th>
                         <th align="center">Vendor Name</th>
                         <th align="center">Qauntity</th>
+                        <th align="center"></th>
                         <th align="center"></th>
 
 
@@ -396,5 +436,30 @@
         padding-right: 1%;
     }
 </style>
+<script>var dateObj=new Date();
+    var year=dateObj.getFullYear();
+    var month=dateObj.getMonth()+1;
+    var date=dateObj.getDate();
+    //        var today_date=date+'-'+month+'-'+year;
+    if(date.toString().length <= 1) {
+        date = '0' + date;
+    }
+    var today_date=year+'-'+month+'-'+date
+    $( "#from" ).datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        onClose: function( selectedDate ) {
+            $( "#to" ).datepicker( "option", "maxDate", "0" );
+        }
+    }).val();
+    $( "#to" ).datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        onClose: function( selectedDate ) {
+            $( "#from" ).datepicker( "option", "maxDate", "0" );
+        }
+    }).val();
+</script>
+
 </html>
 

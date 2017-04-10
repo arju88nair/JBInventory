@@ -12,7 +12,7 @@
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="{!! asset('script/po.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('script/poview.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('script/table.js') !!}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
@@ -258,49 +258,7 @@
         {{--First Branch--}}
 
 
-        <div id="batchTableDiv" style="display: none;">
-            <h3 style="text-align: center">SELECT A BATCH</h3>
-            <br><br>
-            <div class="col-md-12" id ="Batchdivision" >
-                <div class="panel panel-primary">
-                    <div class="panel-heading" style="background-color: #2A3F54;">
-                        <h3 class="panel-title">Total Batches Available</h3>
-                        <div class="pull-right">
-                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
-                        <i class="glyphicon glyphicon-filter"></i>
-                        </span>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
-                    </div>
-                    <table class="table table-hover table-striped" id="batch-table">
-                        <thead>
-                        <tr>
 
-                            <th>Batch ID</th>
-                            <th>Batch Name</th>
-                            <th>From Date</th>
-                            <th>To date</th>
-                            <th>Status</th>
-                            <th>Created At</th>
-                            <th></th>
-
-
-                        </tr>
-                        </thead>
-                        <tbody class="populateBatchTable">
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-
-
-            {{--<button type="button" class="btn btn-success btn-lg disabled" id="batchNext" style="float: right;" >Select Vendor</button>--}}
-
-
-        </div>
 
 
         <div id="vendorDivision" style="display: none;">
@@ -351,18 +309,14 @@
         {{--PO Divisoin--}}
 
         <div id="poDivision" style="display: none;">
-            <br>
             <div class="col-xs-3 col-lg-3" style="display:none">
                 <label for="dis">Discount:</label>
                 <input type="text" class="form-control" id="dis" name="dis">
             </div>
-            <br>
-            <br><hr>
-            <div class="col-md-12"  id ="division" style="width:118% ;margin-left: -8%">
+            <div class="col-md-12"  id ="division" style="width:112% ;margin-left: -5%">
                 <div class="panel panel-primary">
                     <div class="panel-heading" style="background-color: #2A3F54;">
                         <h3 class="panel-title">Purchase Order</h3>
-
                         <div class="pull-right">
                         <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
                         <i class="glyphicon glyphicon-filter"></i>
@@ -389,7 +343,6 @@
                             <th>Discount</th>
                             <th class="hideC">Hidden</th>
                             <th class="hideC">price</th>
-                            <th >Net Total</th>
 
 
                         </tr>

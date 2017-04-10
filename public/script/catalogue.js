@@ -15,7 +15,7 @@ $(document).ready(function () {
 
     var table;
     var new_branch_id = "";
-    $('form').submit(false);
+    $('#catForm').submit(false);
     $(".spinner").show();
     $.ajax({
 
@@ -111,7 +111,7 @@ function populatePO(val) {
         var j = i + 1
         $('#totalPO tbody').append('<tr><td class="batch" >' + getObjectFromJson(val[i], "po_id") + '</td><td>'
             + getObjectFromJson(val[i], "name") + '</td><td class="vendor">' + getObjectFromJson(val[i], "orderid") + '</td><td class="idrow">' + getObjectFromJson(val[i], "vendor_id") + '</td><td>' + getObjectFromJson(val[i], "vname") + '</td><td>'
-            + getObjectFromJson(val[i], "quantity") + '</td><td><span id="' + getObjectFromJson(val[i], "orderid") + '" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="POClick(\'' + val[i].orderid + '\',\'' + val[i].po_id + '\')"></span></td></tr>');
+            + getObjectFromJson(val[i], "quantity") + '</td><td><button style="border: 2px solid lightblue;background-color: white;" type="button" class="btn btn-outline-primary" onclick="generatecsv(\'' + val[i].po_id + '\')">Generate CSV</button></td><td><span id="' + getObjectFromJson(val[i], "orderid") + '" class=\"glyphicon glyphicon-circle-arrow-right\" style="font-size: 16px;cursor: pointer; cursor: hand; " onclick="POClick(\'' + val[i].orderid + '\',\'' + val[i].po_id + '\')"></span></td></tr>');
     }
      table = $('#totalPO').DataTable({
         destroy:true,
@@ -125,6 +125,10 @@ function populatePO(val) {
 
 }
 
+function generatecsv(id)
+{
+    window.location.href="generatecsv?id="+id;
+}
 function POClick(id, batch) {
     localStorage.setItem('batch', batch)
     localStorage.setItem("vendor", id);

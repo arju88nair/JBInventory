@@ -183,19 +183,7 @@ Route::get('invoiceView',function(){
 Route::get('getInvoicePOs','HomeController@getInvoicePOs');
 
 
-Route::get('catalogue',function(){
-
-    if(!Auth::check())
-    {
-        return view('login');
-    }
-
-
-
-    return view('catalogue');
-
-
-});
+Route::get('catalogue','HomeController@catalogue');
 
 
 Route::get('viewPOPDF','HomeController@viewPOPDF');
@@ -328,3 +316,5 @@ Route::post('processDateReport','HomeController@processDateReport');
 Route::get('getDefaultReports','HomeController@getDefaultReports');
 
 Route::get('getDateReports','HomeController@getDateReports');
+
+Route::get('catReport','HomeController@catReport');

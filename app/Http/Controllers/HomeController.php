@@ -324,6 +324,18 @@ class HomeController extends Controller
     }
 
 
+    public function catReport(Request $request)
+    {
+        return report::catReport($request->all());
+    }
+
+
+    public function catalogue(Request $request)
+    {
+        return report::catalogue($request->all());
+    }
+
+
 }
 
 

@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use DB;
-use View;
-use PDFS;
 use Illuminate\Database\Eloquent\Model;
+use PDFS;
+use View;
+
 ini_set('max_execution_time', 300); //300 seconds = 5 minutes
 class PO extends Model
 {
@@ -82,15 +83,18 @@ class PO extends Model
         $id = $_POST['id'];
 //        $getVID="select id from ams.suppliers where  name= '$vendor_name'";
 //        $vId=DB::select($getVID)[0]->id;
-        $query = " select title_id,z.isbn,quantity_required,z.title,z.branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) quantity,nvl(currency,'INR') currency,nvl(nvl(price,mrp),'N/A') price from (
-              select distinct title_id,a.isbn,quantity_required,title,branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) quantity, currency, price from
-             (select z.title_id,isbn,quantity_required,title,branch_order_id from
-             (select a.title_id,quantity_required-nvl(ordered_qnty,0) as quantity_required,branch_order_id from
-             (select title_id,sum(quantity) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) as branch_order_id
+        $query = " select title_id,z.isbn,quantity_required,z.title,z.branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) 
+      quantity,nvl(currency,'INR') currencynvl,nvl(nvl(amnt,mrp),0) price,mrp from (
+              select distinct title_id,a.isbn,quantity_required,title,branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A')
+              name,nvl(quantity,0) quantity, currency, price,amnt from
+             (select z.title_id,isbn,quantity_required,title,branch_order_id,amnt from
+             (select a.title_id,quantity_required-nvl(ordered_qnty,0) as quantity_required,branch_order_id,amnt from
+             (select title_id,bo.amount as amnt,sum(quantity) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) 
+             as branch_order_id
              from opac.branch_order_batch_map bobm left join opac.branch_orders bo
              on bobm.branch_order_id=bo.id join opac.branchorder obo on bobm.branch_order_id=obo.branch_order_id
              where batch_id=$id and active=1
-             group by title_id) a
+             group by title_id,bo.amount) a
              left join
              (select title_id,sum(ORDERED_QUANTITY) ordered_qnty from memp.batch_vendor_po where po_id=$id group by title_id) b
              on a.title_id=b.title_id) z
@@ -113,8 +117,8 @@ class PO extends Model
     {
         $isbn = $_POST['isbn'];
         $title = $_POST['title_id'];
-        if($isbn == '' or empty($isbn)){
-            $isbn=0;
+        if ($isbn == '' or empty($isbn)) {
+            $isbn = 0;
         }
         $query = "select vendor_id,ISBN,currency,price,quantity,title,name from   opac.vendor_stock_details vsd   join   jbprod.titles jt on jt.isbn_13 = vsd.isbn join ams.suppliers ass on vendor_id=ass.id where  titleid= $title or  isbn_13 = '$isbn'";
         $response = DB::select($query);
@@ -133,8 +137,8 @@ class PO extends Model
     public static function insertPO($input)
     {
         $vId = $_POST['vname'];
-        $discount=$_POST['dis'];
-        $discount=(int)$discount;
+        $discount = $_POST['dis'];
+        $discount = (int)$discount;
 
 //        $getVID="select id from ams.suppliers where  name= '$vName'";
 //        $vId=DB::select($getVID)[0]->id;
@@ -148,13 +152,8 @@ class PO extends Model
             $titleid = $cell[0];
             $b_id = $cell[2];
             $isbn = $cell[3];
-            $price = $cell[4]*$quantity;
-            $discount = $cell[5];
-
-
-
-
-
+            $price = (float)$cell[6];
+            $discount = (float)$cell[5];
             $bid = explode(",", $b_id);
             foreach ($bid as $branch) {
                 $ibtrQUery = "update opac.ibtrs set state='InProgress',po_no=$bId where id=(select ibtr_id from opac.branch_orders where id=$branch)";
@@ -163,11 +162,9 @@ class PO extends Model
                 DB::update($query);
             }
             $po_id = $bId . "_" . $vId;
-            if($quantity != 0)
-            {
+            if ($quantity != 0) {
 
-                $query = "insert into memp.BATCH_VENDOR_PO (po_id,vendor_id,title_id,ordered_quantity,ordered_date,ORDERID,isbn,price,discount) VALUES ($bId,$vId,$titleid,$quantity,sysdate,'$po_id','$isbn',$price,$discount)";
-                DB::insert($query);
+                $query = "insert into memp.BATCH_VENDOR_PO (id,po_id,vendor_id,title_id,ordered_quantity,ordered_date,ORDERID,isbn,price,discount) VALUES (memp.BATCH_VENDOR_PO_SEQ.NEXTVAL,$bId,$vId,$titleid,$quantity,sysdate,'$po_id','$isbn',$price,$discount)";                DB::insert($query);
             }
 
         }
@@ -181,7 +178,7 @@ class PO extends Model
     {
         $id = $_GET['id'];
         $vid = $_GET['vid'];
-        $query="select  isbn,title,address,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl((price-dis)*ordered_quantity,0) total from
+        $query = "select  isbn,title,address,ordered_quantity quantity,nvl(author,'N/A') author,nvl(publisher,'N/A') publisher,nvl(price,0) price,discount,nvl(price,0)-nvl(price-dis,0) net_price,nvl((price-dis)*ordered_quantity,0) total from
 (select t.isbn,title,s.address,ordered_quantity,a.name author,p.name publisher,bvp.price,bvp.discount,(bvp.price*bvp.discount/100) dis from
 memp.batch_vendor_po bvp join memp.titles t on bvp.title_id=t.id
 left join ams.authors a on t.authorid=a.id
@@ -218,13 +215,13 @@ where orderid='$id' ) a";
                    left join opac.vendor_stock_details vsd on (t.isbn=vsd.isbn and vsd.vendor_id=bvp.vendor_id)
                    left join ams.suppliers s on s.id=bvp.vendor_id
                    where orderid='$id' ) a)";*/
-        $totalQuery="select sum(total) total from ( $query ) ";
+        $totalQuery = "select sum(total) total from ( $query ) ";
 
-        $totalRes=DB::select($totalQuery);
-        $total=$totalRes[0]->total;
+        $totalRes = DB::select($totalQuery);
+        $total = $totalRes[0]->total;
 
 //        $data1=json_encode($data);
-        $pdf = PDFS::loadView('pdf', compact('array', 'vendor', 'id','date','total'));
+        $pdf = PDFS::loadView('pdf', compact('array', 'vendor', 'id', 'date', 'total'));
         return $pdf->download('POreport.pdf');
     }
 
@@ -279,19 +276,19 @@ where orderid='$id' ) a";
         }
 
 //        $statusQuery = " 
-  //                 select b.id,b.name,
+        //                 select b.id,b.name,
 //nvl(invoice,'Invoice Not Available') 
 //invoice,nvl(bvp.isbn,'Not Recieved') 
 //isbn,ordered_quantity oq,nvl(quantity_recieved,0) qr,
-  //                  case when ordered_quantity=nvl(quantity_recieved,0) then 'completed'
-    //                when ordered_quantity<nvl(quantity_recieved,0) then 'Recieved More'
-      //              when ordered_quantity>nvl(quantity_recieved,0) then 'Not completed'
+        //                  case when ordered_quantity=nvl(quantity_recieved,0) then 'completed'
+        //                when ordered_quantity<nvl(quantity_recieved,0) then 'Recieved More'
+        //              when ordered_quantity>nvl(quantity_recieved,0) then 'Not completed'
         //            end as final
-          //          from
-            //        opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id
-              //      left join opac.batch_po_invoice_details bpid on (bvp.orderid=bpid.po_id and bvp.isbn=bpid.isbn)
-                //    where b.id=$batch";
-	$statusQuery = "select b.id,b.name,
+        //          from
+        //        opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id
+        //      left join opac.batch_po_invoice_details bpid on (bvp.orderid=bpid.po_id and bvp.isbn=bpid.isbn)
+        //    where b.id=$batch";
+        $statusQuery = "select b.id,b.name,
 nvl(invoice,'Invoice Not Available')
 invoice,nvl(bpid.isbn,'Not Recieved')
 isbn,ordered_quantity oq,nvl(quantity_recieved,0) qr,

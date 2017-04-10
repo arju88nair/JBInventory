@@ -92,7 +92,7 @@ class Batch extends Model
             $counter = $min_row;
             $added = 0;
             $loopCounter = 0;
-            $sql = 'INSERT INTO "BRANCH_ORDERS" (id,title_id,order_type,quantity,branch_id,created_in,state,ibtr_id)  ';
+            $sql = 'INSERT INTO "BRANCH_ORDERS" (id,title_id,order_type,quantity,branch_id,created_in,state,ibtr_id,amount)  ';
             $values = '';
             DB::beginTransaction();
 
@@ -112,6 +112,7 @@ class Batch extends Model
 
                 $count = $inputItem["count"];
                 $branch=$inputItem['branch'];
+                $price=$inputItem['price'];
 
                 $added++;
                 $ibtrsQuery = "insert into opac.ibtrs (id,title_id,member_id,card_id,branch_id,created_at,order_type,state,created_by,PROCESSING_TEAM_ID) values (opac.IBTRS_SEQ.NEXTVAL,$title_id,16210,'MWAREHOUSE1',$branch,sysdate,'BranchOrder','new',1010,10000  )";
@@ -121,7 +122,7 @@ class Batch extends Model
                 $resSelect = DB::select($selectIbtrs);
                 $ibId = $resSelect[0]->id;
 
-                $query = "select $counter,$title_id,'F',$count,$branch,$branch,'new',$ibId from dual ";
+                $query = "select $counter,$title_id,'F',$count,$branch,$branch,'new',$ibId,$price from dual ";
                 $counter++;
                 if ($values == '') {
                     $values = $query;
@@ -266,7 +267,7 @@ class Batch extends Model
     {
         $id = $_GET['batch'];
 
-        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount,ap.name  from
+        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,bo.amount,batch_id,(bo.amount*sum(quantity)) total_amount,ap.name  from
                         opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
                         join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
                         where bobm.batch_id=$id and bobm.active=1 
@@ -295,11 +296,11 @@ class Batch extends Model
                         where bobm.batch_id=$id and bobm.active=1 
                         group by title_id,amount,isbn_13,title,batch_id,ap.name";
 */
-	$batchQuery="select isbn_13,title_id,title,sum(quantity) copies,t.mrp as amount,batch_id,sum(t.mrp)*sum(quantity) total_amount,ap.name  from
+	$batchQuery="select isbn_13,title_id,title,sum(quantity) copies,nvl(bo.amount,t.mrp) as amount,batch_id,sum(nvl(bo.amount,t.mrp))*sum(quantity) total_amount,ap.name  from
                         opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
                         join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
                         where bobm.batch_id=$id and bobm.active=1
-                        group by title_id,t.mrp,isbn_13,title,batch_id,ap.name
+                        group by title_id,nvl(bo.amount,t.mrp),isbn_13,title,batch_id,ap.name
                         ";
         $batchResult = DB::select($batchQuery);
         $array = [];
