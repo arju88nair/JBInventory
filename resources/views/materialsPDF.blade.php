@@ -208,13 +208,14 @@
         <P class="p3 ft2">PURCHASE ORDER</P>
         <TABLE cellpadding=0 cellspacing=0 class="t0">
             <TR>
-                <TD style="margin-left: -1% "class="tr0 td0"><P class="p4 ft1">PO Number: &nbsp;&nbsp; <?php echo $id?></P></TD>
+                <TD style="margin-left: -1% "class="tr0 td0"><P class="p4 ft1">PO Number: &nbsp;&nbsp; <?php echo $poid?></P></TD>
                 <TD class="tr0 td1"><P class="p4 ft1">Date: <?php echo $date?></P></TD>
             </TR>
         </TABLE>
-        <P class="p5 ft1">To : <?php echo $vendor?></P>
-        <P class="p6 ft6"><SPAN class="ft4"></SPAN><SPAN class="ft5"><?php echo $array[0]->address?></SPAN></P>
-        {{--<P class="p7 ft1">Pin Code: 560009</P>--}}
+        <P class="p5 ft1">To : <?php echo $Vname?></P>
+        <P class="p6 ft6"><SPAN class="ft4"></SPAN><SPAN class="ft5"><?php echo $vAddress?></SPAN></P>
+        <P class="p6 ft6"><SPAN class="ft4"></SPAN><SPAN class="ft5"><?php echo $vCity?></SPAN></P>
+
 
 
     </div>
@@ -230,24 +231,21 @@
     {{--<P class="p23 ft1"><NOBR>Bangalore-560078,</NOBR> Phone : <NOBR>91-80-425-15000</NOBR></P>--}}
     <table>
         <TR>
-            <TH>ISBN</TH>
-            <TH>Title</TH>
-            <TH>Price</TH>
+            <TH>ID</TH>
+            <TH>Name</TH>
             <TH>Quantity</TH>
-            <TH>Discount</TH>
-            <TH>Net Discount Amount </TH>
-            <TH>Total Amount</TH>
+            <TH>Amount/unit</TH>
+            <TH>Total </TH>
 
         </TR>
-        <?php foreach($array as $brand): ?>
+        <?php foreach($contArrayBat as $brand): ?>
         <TR>
-            <TD><?php echo $brand->isbn; ?></TD>
-            <TD><?php echo $brand->title; ?></TD>
-            <TD><?php echo $brand->price; ?></TD>
-            <TD><?php echo $brand->quantity; ?></TD>
-            <TD><?php echo $brand->discount; ?>%</TD>
-            <TD><?php echo $brand->net_price; ?></TD>
+            <TD><?php echo $brand->id; ?></TD>
+            <TD><?php echo $brand->name; ?></TD>
+            <TD><?php echo $brand->ordered_quantity; ?></TD>
+            <TD><?php echo $brand->amount; ?></TD>
             <TD><?php echo $brand->total; ?></TD>
+
 
 
         </TR>

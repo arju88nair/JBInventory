@@ -862,6 +862,43 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
 
     }
 
+
+
+    public static function materialPDF()
+    {
+        $id=$_GET['id'];
+        $query="select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,amount,nvl(po_id,'N/A') po_id,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at,mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
+        and mp.id=$id";
+        $response=DB::select($query);
+        $vid=  $response[0]->vid;
+        $poid=$response[0]->po_id;
+        $total=$response[0]->total;
+        $date = date('Y-m-d');
+        $name=$response[0]->po_id;
+
+
+
+        $vendorQuery="select name,address,city from memp.material_vendor where id =$vid";
+        $vResponse=DB::select($vendorQuery);
+        $Vname=$vResponse[0]->name;
+        $vAddress=$vResponse[0]->address;
+        $vCity=$vResponse[0]->city;
+
+
+
+        $contArrayBat = [];
+        foreach ($response as $item) {
+
+
+            array_push($contArrayBat, $item);
+        }
+
+        $pdf = PDFS::loadView('materialsPDF', compact('contArrayBat', 'Vname', 'poid', 'date', 'total','vAddress','vCity'));
+        return $pdf->download($name.'.pdf');
+
+
+    }
+
 }
 
 

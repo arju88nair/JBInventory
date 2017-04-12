@@ -335,6 +335,31 @@ class HomeController extends Controller
         return report::catalogue($request->all());
     }
 
+    public function insertMaterials(Request $request)
+    {
+        return PO::insertMaterials($request->all());
+    }
+
+
+    public function materials(Request $request)
+    {
+        return PO::materials($request->all());
+    }
+
+    public function deleteMaterialPO(Request $request)
+    {
+        return PO::deleteMaterialPO($request->all);
+    }
+
+    public function updateMaterials(Request $request)
+    {
+        return PO::updateMaterials($request->all());
+    }
+    public function materialPDF(Request $request)
+    {
+        return report::materialPDF($request->all());
+    }
+
 
 }
 

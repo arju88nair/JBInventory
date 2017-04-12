@@ -66,6 +66,7 @@
          &nbsp;
          <ul class="nav navbar-nav" style="margin-left: 3%;">
             <li class="active"><a href="/">Batches</a></li>
+            <li ><a href="materials">Material PO</a></li>
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
@@ -73,6 +74,7 @@
              <li ><a href="catalogue">Catalogue</a></li>
             <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
             <li ><a href="branchInvoice">Branch Invoice</a></li>
+
          </ul>
          <ul class="nav navbar-nav navbar-right">
             <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>

@@ -318,3 +318,13 @@ Route::get('getDefaultReports','HomeController@getDefaultReports');
 Route::get('getDateReports','HomeController@getDateReports');
 
 Route::get('catReport','HomeController@catReport');
+
+Route::get('materials','HomeController@materials');
+
+Route::post('insertMaterials','HomeController@insertMaterials');
+
+Route::get('deleteMaterialPO','HomeController@deleteMaterialPO');
+
+Route::post('updateMaterials','HomeController@updateMaterials');
+
+Route::get('materialPDF','HomeController@materialPDF');
