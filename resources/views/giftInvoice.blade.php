@@ -104,6 +104,7 @@
         &nbsp;
         <ul class="nav navbar-nav" style="margin-left: 3%;">
             <li ><a href="/">Batches</a></li>
+            <li ><a href="materials">Material PO</a></li>
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>

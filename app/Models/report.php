@@ -867,12 +867,11 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
     public static function materialPDF()
     {
         $id=$_GET['id'];
-        $query="select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,amount,nvl(po_id,'N/A') po_id,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at,mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
-        and mp.id=$id";
+        $query="select mp.id,mp.material name,mp.description,ordered_quantity,recieved_quantity,amount,nvl(po_id,'N/A') po_id,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at,mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
+        and mp.po_id='$id'";
         $response=DB::select($query);
         $vid=  $response[0]->vid;
         $poid=$response[0]->po_id;
-        $total=$response[0]->total;
         $date = date('Y-m-d');
         $name=$response[0]->po_id;
 
@@ -884,6 +883,14 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
         $vAddress=$vResponse[0]->address;
         $vCity=$vResponse[0]->city;
 
+
+        $totalQuery="select sum(total) total from (select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,
+amount,nvl(po_id,'N/A') po_id,amount*ordered_quantity as total,
+mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at,
+mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
+        and mp.po_id='$id')";
+        $totalResponse=DB::select($totalQuery);
+        $total=$totalResponse[0]->total;
 
 
         $contArrayBat = [];

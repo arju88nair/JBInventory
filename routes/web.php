@@ -328,3 +328,5 @@ Route::get('deleteMaterialPO','HomeController@deleteMaterialPO');
 Route::post('updateMaterials','HomeController@updateMaterials');
 
 Route::get('materialPDF','HomeController@materialPDF');
+
+Route::post('listMaterials','HomeController@listMaterials');

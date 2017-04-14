@@ -323,24 +323,46 @@ isbn,ordered_quantity oq,nvl(quantity_recieved,0) qr,
     {
 
         $batch = $_POST['name'];
-        $type = $_POST['select'];
-        $amount = $_POST['price'];
+        $data = $_POST['data'];
+//        $amount = $_POST['price'];
         $vendor = $_POST['vendor'];
-        $quantity = $_POST['quantity'];
+//        $quantity = $_POST['quantity'];
         $description = $_POST['description'];
-$poid=$batch."_".$vendor;
-        $query = "insert into memp.material_po (name,material,description,ordered_quantity,vendor,recieved_quantity,amount,created_at,po_id)
-                  values ('$batch','$type','$description','$quantity',$vendor,0,$amount,sysdate,'$poid')";
+        $poid=uniqid()."_".$vendor;
 
-        $response = DB::insert($query);
-        $showQuery = "select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,amount,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1";
-        $showResponse = DB::select($showQuery);
-        $statusArray = [];
-        foreach ($showResponse as $item) {
-            array_push($statusArray, $item);
 
+        foreach ($data as $item)
+        {
+
+            $query = "insert into memp.material_po (name,material,description,ordered_quantity,vendor,recieved_quantity,amount,created_at,po_id)
+                values ('$batch','$item[0]','$description','$item[1]',$vendor,0,$item[2],sysdate,'$poid')";
+                $response = DB::insert($query);
         }
-        return Redirect::to('materials')->with('data', $statusArray);
+
+
+        return response(array('message' => "Successfuly Added", 'status' => 200));
+
+//        $query = "insert into memp.material_po (name,material,description,ordered_quantity,vendor,recieved_quantity,amount,created_at,po_id)
+//                  values ('$batch','$type','$description','$quantity',$vendor,0,$amount,sysdate,'$poid')";
+//
+//        $response = DB::insert($query);
+//        $showQuery = "select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,amount,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1";
+//        $showResponse = DB::select($showQuery);
+//        $statusArray = [];
+//        foreach ($showResponse as $item) {
+//            array_push($statusArray, $item);
+//
+//        }
+//        $vendorQuery="select id,name from memp.material_vendor";
+//        $vResponse=DB::select($vendorQuery);
+//        $VArray = [];
+//        foreach ($vResponse as $item) {
+//            array_push($VArray, $item);
+//
+//        }
+//
+//
+//        return Redirect::to('materials')->with('data', $statusArray)->with('vendor',$VArray);
 
 
     }
@@ -348,21 +370,38 @@ $poid=$batch."_".$vendor;
 
     public static function materials()
     {
-        $showQuery = "select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,amount,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1";
+        $showQuery = "select  mp.po_id,mp.name,nvl(mp.description,'N/A') description,
+ mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY')
+created_at,sum(ordered_quantity) ordered_quantity,sum(mp.RECIEVED_QUANTITY) RECIEVED_QUANTITY,sum(amount*ordered_quantity) as total 
+from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1 
+group by mp.po_id,mp.name,mp.description,to_char(mp.created_at, 'DD-MM-YYYY'),mv.name
+";
         $showResponse = DB::select($showQuery);
         $statusArray = [];
         foreach ($showResponse as $item) {
             array_push($statusArray, $item);
 
         }
-        return View::make('materials')->with('data', $statusArray);
+
+
+
+        $vendorQuery="select id,name from memp.material_vendor";
+        $vResponse=DB::select($vendorQuery);
+        $VArray = [];
+        foreach ($vResponse as $item) {
+            array_push($VArray, $item);
+
+        }
+
+
+        return View::make('materials')->with('data', $statusArray)->with('vendor',$VArray);
     }
 
 
     public static function deleteMaterialPO()
     {
         $id = $_GET['id'];
-        $query = "update memp.material_po set active=0 where id=$id";;
+        $query = "update memp.material_po set active=0 where po_id='$id'";;
         $response = DB::update($query);
         if ($response) {
             return response(array('message' => "Successfuly Deleted", 'status' => 200));
@@ -376,19 +415,54 @@ $poid=$batch."_".$vendor;
     public static function updateMaterials()
     {
 
-        $id = $_POST['id'];
-        $quantity = $_POST['recQuan'];
-        $query = "update memp.material_po set recieved_quantity=$quantity where id=$id";;
+        $id = $_POST['data'];
+        foreach ($id as $data)
+        {
+        $query = "update memp.material_po set recieved_quantity=$data[1] where id=$data[0]";
         $response = DB::update($query);
-        $showQuery = "select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,amount,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1";
-        $showResponse = DB::select($showQuery);
-        $statusArray = [];
-        foreach ($showResponse as $item) {
-            array_push($statusArray, $item);
+        }
+        if ($response) {
+            return response(array('message' => "Successfuly Deleted", 'status' => 200));
 
         }
-        return Redirect::to('materials')->with('data', $statusArray);
+        return response(array("message" => "Try again", 'status' => 501));
 
+//        $query = "update memp.material_po set recieved_quantity=$quantity where id=$id";;
+//        $response = DB::update($query);
+//        $showQuery = "select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,amount,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1";
+//        $showResponse = DB::select($showQuery);
+//        $statusArray = [];
+//        foreach ($showResponse as $item) {
+//            array_push($statusArray, $item);
+//
+//        }
+//        $vendorQuery="select id,name from memp.material_vendor";
+//        $vResponse=DB::select($vendorQuery);
+//        $VArray = [];
+//        foreach ($vResponse as $item) {
+//            array_push($VArray, $item);
+//
+//        }
+//
+//
+//        return Redirect::to('materials')->with('data', $statusArray)->with('vendor',$VArray);
+//
+
+    }
+
+
+
+    public static function listMaterials()
+    {
+        $id=$_POST['id'];
+        $query="select id,material ,ordered_quantity,recieved_quantity from memp.material_po mp where po_id='$id'";
+        $vResponse=DB::select($query);
+        $VArray = [];
+        foreach ($vResponse as $item) {
+            array_push($VArray, $item);
+
+        }
+        return json_encode($VArray);
 
     }
 

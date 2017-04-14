@@ -361,6 +361,12 @@ class HomeController extends Controller
     }
 
 
+    public function listMaterials(Request $request)
+    {
+        return PO::listMaterials($request->all());
+    }
+
+
 }
 
 
