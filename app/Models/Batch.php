@@ -92,15 +92,15 @@ class Batch extends Model
             $counter = $min_row;
             $added = 0;
             $loopCounter = 0;
-            $sql = 'INSERT INTO "BRANCH_ORDERS" (id,title_id,order_type,quantity,branch_id,created_in,state,ibtr_id,amount)  ';
+            $sql = 'INSERT INTO "BRANCH_ORDERS" (id,title_id,order_type,quantity,branch_id,created_in,state,ibtr_id,amount,mrp)  ';
             $values = '';
             DB::beginTransaction();
 
             foreach ($excel[0] as $inputItem) {
                 $isbn = $inputItem["title"];
                 $titID=(int)$isbn;
-
-                $isbn_query = "select titleid from jbprod.titles where (isbn_10 = '$isbn' or isbn_13 = '$isbn' or titleid=$titID) and mrp is not null  and rownum<=1";
+                $mrp='';
+                $isbn_query = "select titleid,mrp from jbprod.titles where (isbn_10 = '$isbn' or isbn_13 = '$isbn' or titleid=$titID) and mrp is not null  and rownum<=1";
                 $resu = DB::select($isbn_query);
                 if(empty($resu) || $resu==[] )
                 {
@@ -108,6 +108,7 @@ class Batch extends Model
                     continue;
                 }
                 $title_id = $resu[0]->titleid;
+                $mrp=$resu[0]->mrp;
 
 
                 $count = $inputItem["count"];
@@ -122,7 +123,7 @@ class Batch extends Model
                 $resSelect = DB::select($selectIbtrs);
                 $ibId = $resSelect[0]->id;
 
-                $query = "select $counter,$title_id,'F',$count,$branch,$branch,'new',$ibId,$price from dual ";
+                $query = "select $counter,$title_id,'F',$count,$branch,$branch,'new',$ibId,$price,$mrp from dual ";
                 $counter++;
                 if ($values == '') {
                     $values = $query;
@@ -267,11 +268,11 @@ class Batch extends Model
     {
         $id = $_GET['batch'];
 
-        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,bo.amount,batch_id,(bo.amount*sum(quantity)) total_amount,ap.name  from
+        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,bo.mrp,batch_id,(bo.mrp*sum(quantity)) total_amount,ap.name  from
                         opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
                         join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
                         where bobm.batch_id=$id and bobm.active=1 
-                        group by title_id,amount,isbn_13,title,batch_id,ap.name";
+                        group by title_id,bo.mrp,isbn_13,title,batch_id,ap.name";
 
 
         $batchResult = DB::select($batchQuery);
@@ -290,17 +291,17 @@ class Batch extends Model
     {
 
         $id = $_POST['id'];
-/*        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount,ap.name  from
+        /*        $batchQuery = "select isbn_13,title_id,title,sum(quantity) copies,amount,batch_id,sum(amount) total_amount,ap.name  from
+                                opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
+                                join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id
+                                where bobm.batch_id=$id and bobm.active=1
+                                group by title_id,amount,isbn_13,title,batch_id,ap.name";
+        */
+        $batchQuery="select isbn_13,title_id,title,sum(quantity) copies,bo.mrp as amount,batch_id,(bo.mrp*sum(quantity)) total_amount,ap.name  from
                         opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
                         join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
-                        where bobm.batch_id=$id and bobm.active=1 
-                        group by title_id,amount,isbn_13,title,batch_id,ap.name";
-*/
-	$batchQuery="select isbn_13,title_id,title,sum(quantity) copies,nvl(bo.amount,t.mrp) as amount,batch_id,sum(nvl(bo.amount,t.mrp))*sum(quantity) total_amount,ap.name  from
-                        opac.branch_order_batch_map bobm join opac.branch_orders bo on bobm.branch_order_id=bo.id
-                        join jbprod.titles t on bo.title_id=t.titleid left join ams.publishers ap on t.publisherid=ap.id  
-                        where bobm.batch_id=$id and bobm.active=1
-                        group by title_id,nvl(bo.amount,t.mrp),isbn_13,title,batch_id,ap.name
+                        where bobm.batch_id=$id  and bobm.active=1
+                        group by title_id,bo.mrp,isbn_13,title,batch_id,ap.name
                         ";
         $batchResult = DB::select($batchQuery);
         $array = [];

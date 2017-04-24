@@ -16,7 +16,7 @@ class report extends Model
 
     public static function summaryReport($input)
     {
-//        $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from    
+//        $query = " select id,name,no_of_pos,order_qnty,nvl(batch_id,0) batch_id,nvl(rec_qnty,0) rec_qnty from
 //(select b.id ,b.name,nvl(count(distinct orderid),0) no_of_pos,nvl(sum(ordered_quantity),0) order_qnty
         //                from opac.batch b left join memp.batch_vendor_po bvp on b.id=bvp.po_id where  procurement_type_id !=5 and procurement_type_id != 6 and active = 1
         //              group by b.name,b.id) a
@@ -174,10 +174,10 @@ where orderid='$id' ) a";
         $branch_nameSelec = $updateSelectResponse[0]->branchname;
 
         $chechRes=DB::select("select remaining_quantity from opac.branch_order_batch_map where branch_order_id = $branch_order_id and batch_id=$batch");
-            if($chechRes[0]->remaining_quantity == 0)
-            {
-                return array("message" => "Maximum quantity reached", 'code' => 400);
-            }
+        if($chechRes[0]->remaining_quantity == 0)
+        {
+            return array("message" => "Maximum quantity reached", 'code' => 400);
+        }
 
 
         $updateQuery = "update opac.branch_order_batch_map set remaining_quantity=REMAINING_QUANTITY-1 where BRANCH_ORDER_ID in($branch_order_id)";
@@ -696,12 +696,18 @@ left join ams.suppliers s on s.id=cd.vendor
             $branchAppend = "";
         }
 
+        if ($proce != 0) {
+            $proceAppend = "and b.procurement_type_id = $proce";
+        } else {
+            $proceAppend = "";
+        }
+
         $queryFirst = "select case when isbn='NOISBN' then to_char(title_id) else isbn end isbn,
-title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname,
-b.procurement_type_id from memp.catalogue_details cd join opac.batch b on b.id=cd.batch_id join memp.jb_titles jt on jt.titleid=cd.title_id
-join memp.jb_branches jb  on cd.branch_id=jb.id
-where to_char(cd.created_at,'YYYY-MM-DD') 
-between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
+                title,title_id,book_num,to_char(cd.created_at,'YYYY-MM-DD') created_at,jb.id,jb.branchname,
+                b.procurement_type_id from memp.catalogue_details cd join opac.batch b on b.id=cd.batch_id join memp.jb_titles jt on jt.titleid=cd.title_id
+                join memp.jb_branches jb  on cd.branch_id=jb.id
+                where to_char(cd.created_at,'YYYY-MM-DD') 
+                between '$start' and '$end'$proceAppend $branchAppend";
 
         $response = DB::select($queryFirst);
 
@@ -823,8 +829,8 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
             $po_query="and PO_ID='$po'";
 
         }
-        $query ="select b.name,jb.branchname,cd.title_id,bo.amount,
-                jt.title ,po_id,batch_id,book_num,cd.branch_id from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid 
+        $query ="select b.name,jb.branchname,jb.id branchid,cd.title_id,nvl(bo.mrp,0) amount,
+                jt.title ,po_id,batch_id,cd.isbn,book_num,cd.branch_id,to_char(cd.created_at,'YYYY-MM-DD') created_at  from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid 
                 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=b.id 
                 join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID
                 where to_char(cd.CREATED_AT,'YYYY-MM-DD')  between '$from' and '$to'$batchQuery $po_query";
@@ -867,7 +873,9 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
     public static function materialPDF()
     {
         $id=$_GET['id'];
-        $query="select mp.id,mp.material name,mp.description,ordered_quantity,recieved_quantity,amount,nvl(po_id,'N/A') po_id,amount*ordered_quantity as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at,mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
+        $query="select mp.id,mp.material name,mp.description,mp.vat,ordered_quantity,recieved_quantity,
+amount,nvl(po_id,'N/A') po_id,((((amount*ordered_quantity)*mp.vat)/100)+amount*ordered_quantity) as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY')
+ created_at,mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
         and mp.po_id='$id'";
         $response=DB::select($query);
         $vid=  $response[0]->vid;
@@ -884,10 +892,9 @@ between '$start' and '$end'and b.procurement_type_id = $proce $branchAppend";
         $vCity=$vResponse[0]->city;
 
 
-        $totalQuery="select sum(total) total from (select mp.id,mp.name,mp.description,ordered_quantity,recieved_quantity,
-amount,nvl(po_id,'N/A') po_id,amount*ordered_quantity as total,
-mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY') created_at,
-mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
+        $totalQuery="select sum(total) total from (select mp.id,mp.material name,mp.description,ordered_quantity,recieved_quantity,
+                    amount,nvl(po_id,'N/A') po_id,((((amount*ordered_quantity)*mp.vat)/100)+amount*ordered_quantity) as total,mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY')
+                     created_at,mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1
         and mp.po_id='$id')";
         $totalResponse=DB::select($totalQuery);
         $total=$totalResponse[0]->total;
@@ -905,6 +912,191 @@ mp.vendor vid from memp.material_po mp join memp.material_vendor mv on mp.vendor
 
 
     }
+
+
+
+
+
+
+
+
+    public static function eightyTwenty()
+    {
+        $from=$_POST['from'];
+        $to=$_POST['to'];
+        $branch=$_POST['branch'];
+        $queryProc="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+                from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+                join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+                b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+                to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and b.procurement_type_id != 5 and b.procurement_type_id !=6)
+
+                  ";
+
+        $procRes=DB::select($queryProc);
+        $procQuantity=$procRes[0]->quantity;
+        $proccost=$procRes[0]->cost;
+        $procpcharge=$procRes[0]->p_charge;
+
+
+        $querybranc="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+                from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+                join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+                b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+                to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and  b.procurement_type_id =6)
+
+                  ";
+
+        $procbranch=DB::select($querybranc);
+        $branchQuantity=$procbranch[0]->quantity;
+        $branchcost=$procbranch[0]->cost;
+        $branchcharge=$procbranch[0]->p_charge;
+
+
+
+        $queryGift="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+                from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+                join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+                b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+                to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and b.procurement_type_id =5)
+
+                  ";
+
+        $giftRes=DB::select($queryGift);
+        $giftQuantity=$giftRes[0]->quantity;
+        $giftcost=$giftRes[0]->cost;
+        $giftcpcharge=$giftRes[0]->p_charge;
+
+        $query="select b.name,bo.amount,cd.title_id,nvl(bo.quantity*bo.amount,0) amount, jt.title ,nvl(bo.quantity,0) quantity,
+po_id,batch_id,cd.isbn,book_num,cd.branch_id,b.procurement_type_id,to_char(cd.created_at,'YYYY-MM-DD') created_at 
+from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+ to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and b.procurement_type_id != 5 and b.procurement_type_id !=6
+";
+        $res=DB::select($query);
+        $contArrayBat = [];
+        foreach ($res as $item) {
+
+
+            array_push($contArrayBat, $item);
+        }
+
+
+
+        return array('data'=>$contArrayBat,'procQuantity'=>$procQuantity,'procCost'=>$proccost,'procCharge'=>$procpcharge,'giftQuantity'=>$giftQuantity,'giftCost'=>$giftcost,'giftCharge'=>$giftcpcharge,'branchQuantity'=>$branchQuantity,'branchCost'=>$branchcost,'branchCharge'=>$branchcost);
+
+
+
+    }
+
+
+
+
+    public static function invoice()
+    {
+
+
+        $query="select id,branchname from memp.jb_branches";
+        $batchRes=DB::select($query);
+        $contArrayBat = [];
+        foreach ($batchRes as $item) {
+
+
+            array_push($contArrayBat, $item);
+        }
+
+
+        return View::make('invoice')->with('data',$contArrayBat);
+    }
+
+
+
+    public static function invoicePDFDownload()
+    {
+
+
+        $from=$_GET['from'];
+        $to=$_GET['to'];
+        $branch=$_GET['branch'];
+
+        $branch_query="select branchname,branchaddress from  memp.jb_branches where id= $branch";
+        $branchResponse=DB::select($branch_query);
+        $branchName=$branchResponse[0]->branchname;
+        $branchAddress=$branchResponse[0]->branchaddress;
+
+
+
+
+        $queryProc="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+                from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+                join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+                b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+                to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and b.procurement_type_id != 5 and b.procurement_type_id !=6)
+
+                  ";
+
+        $procRes=DB::select($queryProc);
+        $procQuantity=$procRes[0]->quantity;
+        $proccost=$procRes[0]->cost;
+        $procpcharge=$procRes[0]->p_charge;
+
+
+        $querybranc="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+                from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+                join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+                b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+                to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and  b.procurement_type_id =6)
+
+                  ";
+
+        $procbranch=DB::select($querybranc);
+        $branchQuantity=$procbranch[0]->quantity;
+        $branchcost=$procbranch[0]->cost;
+        $branchcharge=$procbranch[0]->p_charge;
+
+
+
+        $queryGift="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+                from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+                join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+                b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+                to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and b.procurement_type_id =5)
+
+                  ";
+
+        $giftRes=DB::select($queryGift);
+        $giftQuantity=$giftRes[0]->quantity;
+        $giftcost=$giftRes[0]->cost;
+        $giftcpcharge=$giftRes[0]->p_charge;
+
+        $query="select b.name,bo.amount,cd.title_id,nvl(bo.quantity*bo.amount,0) amount, jt.title ,nvl(bo.quantity,0) quantity,
+po_id,batch_id,cd.isbn,book_num,cd.branch_id,b.procurement_type_id,to_char(cd.created_at,'YYYY-MM-DD') created_at 
+from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
+join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
+b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
+ to_char(cd.CREATED_AT,'YYYY-MM-DD') between '$from' and '$to' and jb.id=$branch and b.procurement_type_id != 5 and b.procurement_type_id !=6
+";
+        $res=DB::select($query);
+        $contArrayBat = [];
+        foreach ($res as $item) {
+
+
+            array_push($contArrayBat, $item);
+        }
+        $date = date('Y-m-d');
+
+
+        $pdf = PDFS::loadView('invoiceBranchPDF', compact('procQuantity', 'proccost', 'procpcharge','date','branchName','branchAddress','giftQuantity','giftcost','giftcpcharge','branchQuantity','branchcost','branchcharge','contArrayBat'));
+        return $pdf->download($branch.'.pdf');
+        return array('data'=>$contArrayBat,'procQuantity'=>$procQuantity,'procCost'=>$proccost,'procCharge'=>$procpcharge,'giftQuantity'=>$giftQuantity,'giftCost'=>$giftcost,'giftCharge'=>$giftcpcharge,'branchQuantity'=>$branchQuantity,'branchCost'=>$branchcost,'branchCharge'=>$branchcost);
+
+    }
+
+
+
+
+
 
 }
 

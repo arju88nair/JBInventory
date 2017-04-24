@@ -213,7 +213,6 @@
             </TR>
         </TABLE>
         <P class="p5 ft1">To : <?php echo $Vname?></P>
-        <P class="p6 ft6"><SPAN class="ft4"></SPAN><SPAN class="ft5"><?php echo $vAddress?></SPAN></P>
         <P class="p6 ft6"><SPAN class="ft4"></SPAN><SPAN class="ft5"><?php echo $vCity?></SPAN></P>
 
 
@@ -234,6 +233,7 @@
             <TH>ID</TH>
             <TH>Name</TH>
             <TH>Quantity</TH>
+            <TH>Vat/unit</TH>
             <TH>Amount/unit</TH>
             <TH>Total </TH>
 
@@ -243,6 +243,7 @@
             <TD><?php echo $brand->id; ?></TD>
             <TD><?php echo $brand->name; ?></TD>
             <TD><?php echo $brand->ordered_quantity; ?></TD>
+            <TD><?php echo $brand->vat; ?></TD>s
             <TD><?php echo $brand->amount; ?></TD>
             <TD><?php echo $brand->total; ?></TD>
 

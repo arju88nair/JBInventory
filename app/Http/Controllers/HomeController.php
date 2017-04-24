@@ -366,6 +366,27 @@ class HomeController extends Controller
         return PO::listMaterials($request->all());
     }
 
+    public function eightyTwenty(Request $request)
+    {
+        return report::eightyTwenty($request->all());
+    }
+
+    public function invoice(Request $request)
+    {
+        return report::invoice($request->all());
+    }
+
+
+    public function invoicePDFDownload(Request $request)
+    {
+        return report::invoicePDFDownload($request->all());
+    }
+
+
+    public function debitCredit(Request $request)
+    {
+        return report::debitCredit($request->all());
+    }
 
 }
 

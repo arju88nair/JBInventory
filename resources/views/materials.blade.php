@@ -72,10 +72,18 @@
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
-            <li ><a href="reports">Reports</a></li>
             <li ><a href="catalogue">Catalogue</a></li>
-            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
-            <li ><a href="branchInvoice">Branch Invoice</a></li>
+            <li ><a href="giftCatalogue">Donation/Gift</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Others
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ><a href="branchInvoice">Branch Invoice</a></li>
+                    <li><a href="invoice">Invoice</a></li>
+                    <li ><a href="reports">Reports</a></li>
+                    <li ><a href="debitCredit">Debit/Credit Notes</a></li>
+                </ul>
+            </li>
 
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -267,11 +275,15 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Quantity:</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" required maxlength="20">
+                                <input type="number" class="form-control" id="quantity" name="quantity"  maxlength="20">
                             </div>
                             <div class="form-group">
                                 <label for="name">Price Per Unit:</label>
-                                <input type="number" class="form-control" id="priceFirst" name="price" required maxlength="20">
+                                <input type="number" class="form-control" id="priceFirst" name="price"  maxlength="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Vat Per Unit:</label>
+                                <input type="number" class="form-control" id="vat" name="vat"  maxlength="20">
                             </div>
                             <div class="form-group">
                                 <label for="name">Vendor Name:</label>
@@ -290,7 +302,7 @@
                                 <label for="comment">Description:</label>
                                 <textarea class="form-control" rows="5" id="description" maxlength="255" name="description"></textarea>
                             </div>
-                            <button class="btn btn-primary" onclick="add()">add</button>
+                            <button class="btn btn-primary" onclick="add()">Add</button>
                             <button  class="btn btn-primary" onclick="submitData()">Submit</button>
 
                         </form>
@@ -315,6 +327,8 @@
                                         <th align="center">Item</th>
                                         <th align="center">Qauntity</th>
                                         <th align="center">Price</th>
+                                        <th align="center">Vat</th>
+
                                         <th align="center">Remove</th>
 
 

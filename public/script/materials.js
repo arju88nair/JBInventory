@@ -93,20 +93,24 @@ $(document).ready(function() {
     $('#isbn').on('click', 'tr a', function (e) {
         e.preventDefault();
         $(this).parents('tr').remove();
+        table=$('#isbn').DataTable();
+
     });
 });
 
 function add() {
-    
-   var type= $("#type").val();
-    $('#isbn tbody').append('<tr><td >'+$("#type").val()+'</td><td >'+$("#quantity").val()+'</td><td>'+$("#priceFirst").val()+'</td><td><a  href="#">Remove</a></td></tr>');
+
+    var type= $("#type").val();
+    $('#isbn tbody').append('<tr><td >'+$("#type").val()+'</td><td >'+$("#quantity").val()+'</td><td>'+$("#priceFirst").val()+'</td>><td>'+$("#vat").val()+'</td><td><a  href="#">Remove</a></td></tr>');
 
     $("#quantity").val("");
     $("#priceFirst").val("");
+    $("#vat").val("")
 }
 
 function submitData()
 {
+
     $(".spinner").show();
     var batch=$("#name").val();
     var description=$("#description").val();
@@ -119,6 +123,8 @@ function submitData()
         cell.push(this.data()[0]);
         cell.push(this.data()[1]);
         cell.push(this.data()[2]);
+        cell.push(this.data()[3]);
+
 
         array.push(cell);
     });
@@ -138,10 +144,10 @@ function submitData()
             console.log(data);
             alert("Successfully added");
 
-            // if(data.status==200)
-            // {
-            //     window.location="materials";
-            // }
+            if(data.status==200)
+            {
+                window.location="materials";
+            }
 
         },
         error: function (err) {
@@ -150,10 +156,10 @@ function submitData()
             console.log(err.responseText)
             alert("Successfully added");
 
-            // if(err.responseText.status==200)
-            // {
-            //     window.location="materials";
-            // }
+            if(err.responseText.status==200)
+            {
+                window.location="materials";
+            }
 
         }
     });

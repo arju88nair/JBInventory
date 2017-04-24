@@ -77,6 +77,7 @@ class PO extends Model
     }
 
 
+
     public static function getPODetails($Input)
     {
 
@@ -85,34 +86,34 @@ class PO extends Model
 //        $getVID="select id from ams.suppliers where  name= '$vendor_name'";
 //        $vId=DB::select($getVID)[0]->id;
         $query = " select title_id,z.isbn,quantity_required,z.title,z.branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A') name,nvl(quantity,0) 
-      quantity,nvl(currency,'INR') currencynvl,nvl(nvl(amnt,mrp),0) price,mrp from (
+      quantity,nvl(currency,'INR') currencynvl,nvl(nvl(amnt,mrp),0) price,mrp,pname from (
               select distinct title_id,a.isbn,quantity_required,title,branch_order_id,nvl(vendor_id,0) vendor_id,nvl(name,'N/A')
-              name,nvl(quantity,0) quantity, currency, price,amnt from
-             (select z.title_id,isbn,quantity_required,title,branch_order_id,amnt from
+              name,nvl(quantity,0) quantity, currency, price,amnt, pname from
+             (select z.title_id,isbn,quantity_required,title,branch_order_id,amnt,ap.name pname from
              (select a.title_id,quantity_required-nvl(ordered_qnty,0) as quantity_required,branch_order_id,amnt from
-             (select title_id,bo.amount as amnt,sum(quantity) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) 
+             (select title_id,bo.mrp as amnt,sum(quantity) quantity_required,TAB_TO_STRING(cast(collect(obo.branch_order_id) as t_varchar2_tab)) 
              as branch_order_id
              from opac.branch_order_batch_map bobm left join opac.branch_orders bo
              on bobm.branch_order_id=bo.id join opac.branchorder obo on bobm.branch_order_id=obo.branch_order_id
              where batch_id=$id and active=1
-             group by title_id,bo.amount) a
+             group by title_id,bo.mrp) a
              left join
              (select title_id,sum(ORDERED_QUANTITY) ordered_qnty from memp.batch_vendor_po where po_id=$id group by title_id) b
              on a.title_id=b.title_id) z
-             join memp.titles t on z.title_id=t.id ) a
+             join memp.titles t on z.title_id=t.id  join ams.publishers ap on t.publisherid = ap.id 
+) a
              left join
              (select vendor_id,s.name,vsd.isbn,quantity,currency,price
              from ams.suppliers s join opac.vendor_stock_details vsd
              on s.id=vsd.vendor_id
              where vsd.vendor_id=$vId) b
-             on a.isbn=b.isbn) z join memp.titles ti on z.title_id=ti.id";
+             on a.isbn=b.isbn) z join memp.titles ti on z.title_id=ti.id 
+             ";
 
         return json_encode(DB::select($query));
 
 
     }
-
-
     public static function getIsbnVendors($input)
 
     {
@@ -128,11 +129,14 @@ class PO extends Model
     }
 
 
+
     public static function savePoVendor($input)
     {
 //        $name=$_POST['name'];
 //        $id=$_p[]
     }
+
+
 
 
     public static function insertPO($input)
@@ -230,8 +234,9 @@ where orderid='$id' ) a";
 
     public static function getPO()
     {
-        $query = "select ass.name vname,b.name,orderid,sum(ordered_quantity) quantity,vendor_id,po_id from opac.batch b join memp.batch_vendor_po bvp
-    on b.id=bvp.po_id join ams.suppliers ass on vendor_id=ass.id where orderid != '-1' and b.active=1  group by ass.name,b.name,orderid,vendor_id,po_id     ";
+        $query = "select ass.name vname,b.name,orderid,sum(ordered_quantity) quantity,vendor_id,trunc(to_date(bvp.ordered_date)),po_id from opac.batch b join memp.batch_vendor_po bvp
+    on b.id=bvp.po_id join ams.suppliers ass on vendor_id=ass.id where orderid != '-1' and b.active=1
+    group by ass.name,b.name,orderid,vendor_id,po_id,trunc(to_date(bvp.ordered_date)) order by trunc(to_date(bvp.ordered_date)) desc";
         $array = [];
         $response = DB::select($query);
         foreach ($response as $arr) {
@@ -277,10 +282,10 @@ where orderid='$id' ) a";
 
         }
 
-//        $statusQuery = " 
+//        $statusQuery = "
         //                 select b.id,b.name,
-//nvl(invoice,'Invoice Not Available') 
-//invoice,nvl(bvp.isbn,'Not Recieved') 
+//nvl(invoice,'Invoice Not Available')
+//invoice,nvl(bvp.isbn,'Not Recieved')
 //isbn,ordered_quantity oq,nvl(quantity_recieved,0) qr,
         //                  case when ordered_quantity=nvl(quantity_recieved,0) then 'completed'
         //                when ordered_quantity<nvl(quantity_recieved,0) then 'Recieved More'
@@ -334,10 +339,31 @@ isbn,ordered_quantity oq,nvl(quantity_recieved,0) qr,
         foreach ($data as $item)
         {
 
-            $query = "insert into memp.material_po (name,material,description,ordered_quantity,vendor,recieved_quantity,amount,created_at,po_id)
-                values ('$batch','$item[0]','$description','$item[1]',$vendor,0,$item[2],sysdate,'$poid')";
-                $response = DB::insert($query);
+            $query = "insert into memp.material_po (name,material,description,ordered_quantity,vendor,recieved_quantity,amount,created_at,po_id,vat)
+                values ('$batch','$item[0]','$description','$item[1]',$vendor,0,$item[2],sysdate,'$poid','$item[3]')";
+
+            $response = DB::insert($query);
         }
+
+
+
+        $selectQuery="select id from memp.material_po where po_id='$poid'";
+        $seleResposne=DB::select($selectQuery);
+        $id=$seleResposne[0]->id;
+        $po_id='MPO-'.$vendor.'-'.$id;
+
+        foreach ($seleResposne as $res)
+        {
+            $updateQuery="update memp.material_po set po_id='$po_id' where id=$res->id";
+            $response=DB::update($updateQuery);
+        }
+
+
+
+
+
+
+
 
 
         return response(array('message' => "Successfuly Added", 'status' => 200));
@@ -372,7 +398,7 @@ isbn,ordered_quantity oq,nvl(quantity_recieved,0) qr,
     {
         $showQuery = "select  mp.po_id,mp.name,nvl(mp.description,'N/A') description,
  mv.name vendor,to_char(mp.created_at, 'DD-MM-YYYY')
-created_at,sum(ordered_quantity) ordered_quantity,sum(mp.RECIEVED_QUANTITY) RECIEVED_QUANTITY,sum(amount*ordered_quantity) as total 
+created_at,sum(ordered_quantity) ordered_quantity,sum(mp.RECIEVED_QUANTITY) RECIEVED_QUANTITY,sum((((amount*ordered_quantity)*mp.vat)/100)+amount*ordered_quantity) as total 
 from memp.material_po mp join memp.material_vendor mv on mp.vendor=mv.id where mp.active=1 
 group by mp.po_id,mp.name,mp.description,to_char(mp.created_at, 'DD-MM-YYYY'),mv.name
 ";
@@ -418,8 +444,8 @@ group by mp.po_id,mp.name,mp.description,to_char(mp.created_at, 'DD-MM-YYYY'),mv
         $id = $_POST['data'];
         foreach ($id as $data)
         {
-        $query = "update memp.material_po set recieved_quantity=$data[1] where id=$data[0]";
-        $response = DB::update($query);
+            $query = "update memp.material_po set recieved_quantity=$data[1] where id=$data[0]";
+            $response = DB::update($query);
         }
         if ($response) {
             return response(array('message' => "Successfuly Deleted", 'status' => 200));
@@ -467,5 +493,6 @@ group by mp.po_id,mp.name,mp.description,to_char(mp.created_at, 'DD-MM-YYYY'),mv
     }
 
 }
+
 
 

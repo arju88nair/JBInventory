@@ -96,11 +96,18 @@
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li><a href="scanner">GR</a></li>
-            <li><a href="reports">Reports</a></li>
             <li><a href="catalogue">Catalogue</a></li>
-            <li class="active"><a href="giftCatalogue">Dontaion/Gift</a></li>
-            <li><a href="branchInvoice">Branch Invoice</a></li>
-
+            <li class="active"><a href="giftCatalogue">Donation/Gift</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Others
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ><a href="branchInvoice">Branch Invoice</a></li>
+                    <li><a href="invoice">Invoice</a></li>
+                    <li ><a href="reports">Reports</a></li>
+                    <li ><a href="debitCredit">Debit/Credit Notes</a></li>
+                </ul>
+            </li>
 
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -124,6 +131,11 @@
             <div class="form-group">
                 <label for="sel1">Select Procurement:</label>
                 <select class="form-control" id="selProc" name="proc">
+                    <option value="0">All</option>
+                    <option value="1">New Arrivals</option>
+                    <option value="2">New Branch</option>
+                    <option value="3">IBT</option>
+                    <option value="4">Warehouse Procurement</option>
                     <option value="5">Donation/Gift</option>
                     <option value="5">Branch Procurement</option>
 

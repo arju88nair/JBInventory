@@ -330,3 +330,12 @@ Route::post('updateMaterials','HomeController@updateMaterials');
 Route::get('materialPDF','HomeController@materialPDF');
 
 Route::post('listMaterials','HomeController@listMaterials');
+
+Route::get('invoice','HomeController@invoice');
+
+Route::post('eightyTwenty','HomeController@eightyTwenty');
+
+Route::get('invoicePDFDownload','HomeController@invoicePDFDownload');
+
+Route::get('debitCredit','HomeController@debitCredit');
+

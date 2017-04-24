@@ -98,11 +98,18 @@
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li><a href="scanner">GR</a></li>
-            <li><a href="reports">Reports</a></li>
             <li class="active"><a href="catalogue">Catalogue</a></li>
             <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
-            <li ><a href="branchInvoice">Branch Invoice</a></li>
-
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Others
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ><a href="branchInvoice">Branch Invoice</a></li>
+                    <li><a href="invoice">Invoice</a></li>
+                    <li ><a href="reports">Reports</a></li>
+                    <li ><a href="debitCredit">Debit/Credit Notes</a></li>
+                </ul>
+            </li>
 
 
         </ul>

@@ -114,11 +114,18 @@
             <li><a href="vendors">Vendors</a></li>
             <li><a href="getPO">Purchase Orders</a></li>
             <li ><a href="scanner">GR</a></li>
-            <li class="active"><a href="reports">Reports</a>
             <li ><a href="catalogue">Catalogue</a></li>
-            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
-            <li ><a href="branchInvoice">Branch Invoice</a></li>
-
+            <li ><a href="giftCatalogue">Donation/Gift</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Others
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ><a href="branchInvoice">Branch Invoice</a></li>
+                    <li><a href="invoice">Invoice</a></li>
+                    <li ><a href="reports">Reports</a></li>
+                    <li ><a href="debitCredit">Debit/Credit Notes</a></li>
+                </ul>
+            </li>
 
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -166,25 +173,33 @@
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Title</th>
-                            <th>Book Number</th>
-                            <th>Branch</th>
-                            <th>PO_id</th>
+                            <th>Material Code</th>
+                            <th>Material Description</th>
+                            <th>Book Serial Number</th>
+                            <th>Branch Code </th>
+                            <th>Branch Name </th>
+                            <th>PO Id</th>
                             <th>Batch Name</th>
+                            <th>Production Date</th>
+
 
 
                         </tr>
                         </thead>
 
                         <tbody class="populate"><?php if($report!=[]){?>
+                        <?php $i=1;?>
                         <?php foreach($report as $brand): ?>
                         <TR>
-                            <TD><?php echo $brand->title_id; ?></TD>
+                            <TD><?php echo $i ++; ?></TD>
+                            <TD><?php echo $brand->isbn; ?></TD>
                             <TD><?php echo $brand->title; ?></TD>
                             <TD><?php echo $brand->book_num; ?></TD>
+                            <TD><?php echo $brand->branchid; ?></TD>
                             <TD><?php echo $brand->branchname; ?></TD>
                             <TD><?php echo $brand->po_id; ?></TD>
                             <TD><?php echo $brand->name; ?></TD>
+                            <TD><?php echo $brand->created_at; ?></TD>
 
                         </TR>
                         <?php endforeach ?>
