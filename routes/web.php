@@ -339,3 +339,8 @@ Route::get('invoicePDFDownload','HomeController@invoicePDFDownload');
 
 Route::get('debitCredit','HomeController@debitCredit');
 
+Route::post('InsertdebitCredit','HomeController@InsertdebitCredit');
+
+Route::get('debitPDF','HomeController@debitPDF');
+
+

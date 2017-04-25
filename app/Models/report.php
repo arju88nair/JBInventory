@@ -983,7 +983,6 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
         }
 
 
-
         return array('data'=>$contArrayBat,'procQuantity'=>$procQuantity,'procCost'=>$proccost,'procCharge'=>$procpcharge,'giftQuantity'=>$giftQuantity,'giftCost'=>$giftcost,'giftCharge'=>$giftcpcharge,'branchQuantity'=>$branchQuantity,'branchCost'=>$branchcost,'branchCharge'=>$branchcost);
 
 
@@ -1093,6 +1092,96 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
 
     }
 
+
+
+
+        public static function debitCredit()
+        {
+            $query="select distinct po_id from opac.batch_po_invoice_details where po_id != '-1'";
+            $response=DB::select($query);
+            $contArrayBat = [];
+            foreach ($response as $item) {
+
+
+                array_push($contArrayBat, $item);
+            }
+
+            return View::make('debit')->with('data',$contArrayBat);
+
+
+        }
+
+
+
+
+        public static function InsertdebitCredit()
+        {
+
+
+            $data=$_POST['table'];
+            $po=$_POST['po'];
+            $type=$_POST['type'];
+            $invoice=$_POST['invoice'];
+
+            foreach ($data as $item)
+            {
+                $titleID=(int)$item[0];
+                $titleQuery="select titleid from jbprod.titles where titleid = $titleID or isbn_13 ='$item[0]'  or isbn_10 = '$item[0]'";
+                $titRes=DB::select($titleQuery);
+                $titeID=0;
+                if($titRes !=[] && !empty($titRes))
+                {
+                    $titeID=$titRes[0]->titleid;
+                }
+
+
+
+                    $query="insert into memp.debitnotes (po,invoice,type,titleid,price,quantity,reason,created_at) VALUES 
+                ('$po','$invoice','$type',$titeID,$item[2],$item[1],'$item[3]',sysdate)";
+                
+                
+                $response=DB::insert($query);
+            }
+            return array("message" => "Successfully Added", 'code' => 200);
+
+        }
+
+
+
+
+
+
+        public static function debitPDF()
+        {
+            $po_id=$_GET['poid'];
+            $venderQuery="select name,contact,city from ams.suppliers where id=(select vendor_id  from memp.batch_vendor_po where orderid='$po_id'and rownum =1)";
+            $response=DB::select($venderQuery);
+            if($response !=[] && !empty($response))
+            {
+                $name=$response[0]->name;
+                $contact=$response[0]->contact;
+                $city=$response[0]->city;
+            }
+
+            $query="select po,invoice,type,db.titleid,price,quantity,reason,title,to_char(created_at,'DD-MM-YYYY') created_at from memp.debitnotes db join jbprod.titles jt on db.titleid=jt.titleid  ";
+            $final=DB::select($query);
+
+            $contArrayBat = [];
+            foreach ($final as $item) {
+
+
+                array_push($contArrayBat, $item);
+            }
+            $date = date('Y-m-d');
+
+            $pdf = PDFS::loadView('debitPDF', compact('name', 'contact', 'city','date','contArrayBat','po_id'));
+            return $pdf->download($po_id.'.pdf');
+
+
+
+
+            
+        }
 
 
 

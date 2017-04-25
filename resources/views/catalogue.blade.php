@@ -99,7 +99,7 @@
             <li><a href="getPO">Purchase Orders</a></li>
             <li><a href="scanner">GR</a></li>
             <li class="active"><a href="catalogue">Catalogue</a></li>
-            <li ><a href="giftCatalogue">Dontaion/Gift</a></li>
+            <li ><a href="giftCatalogue">Donation/Gift</a></li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Others
                     <span class="caret"></span></a>

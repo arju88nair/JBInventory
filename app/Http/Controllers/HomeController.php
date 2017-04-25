@@ -388,6 +388,19 @@ class HomeController extends Controller
         return report::debitCredit($request->all());
     }
 
+
+
+    public function InsertdebitCredit(Request $request)
+    {
+        return report::InsertdebitCredit($request->all());
+    }
+
+
+    public function debitPDF(Request $request)
+    {
+        return report::debitPDF($request->all());
+    }
+
 }
 
 
