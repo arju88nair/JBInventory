@@ -232,7 +232,7 @@ function populateBatch(jsonVal,ti_id,v_name)
     $(".spinner").hide();
     for(var i=0;i<jsonObj.length;i++){
         var netPrice=jsonObj[i].price-((jsonObj[i].price*dis)/100);
-        $('#dev-table tbody').append('<tr><td >'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input style=\"width: 72%;\" type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td><input style=\"width: 90%;white-space:nowrap;\" type=\"number\"  class="tdInputPrice" value='+jsonObj[i].price+' oninput="inputPrice(this)" min=\"0\"   ></input></td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td><td><input style=\"width: 80%;white-space:nowrap;\" type=\"number\"  class="tdInputDis" value='+dis+' oninput="inputDis(this)" min=\"0\"   ></input></td><td class="disClass hideC">'+dis+'</td><td class="priceClass hideC">'+jsonObj[i].price+'</td><td class="netClass ">'+netPrice+'</td></tr>');
+        $('#dev-table tbody').append('<tr><td style=\"width: 90%;white-space:nowrap;\">'+jsonObj[i].title+'</td><td>'+jsonObj[i].title_id+'</td><td>'+jsonObj[i].pname+'</td><td class="reqClass">'+jsonObj[i].quantity_required+'</td><td>'+jsonObj[i].quantity+'</td><td><input style=\"width: 72%;\" type=\"number\"  class="tdInput" value='+jsonObj[i].quantity_required+' oninput="input(this)" min=\"0\" max='+jsonObj[i].quantity_required+'  onkeydown=\"return false\"></input></td><td class="total">'+jsonObj[i].quantity_required+'</td><td><input style=\"width: 90%;white-space:nowrap;\" type=\"number\"  class="tdInputPrice" value='+jsonObj[i].price+' oninput="inputPrice(this)" min=\"0\"   ></input></td><td><span style="cursor: pointer; cursor: hand; "  class=\'glyphicon glyphicon-list\' data-toggle=\"modal\"   data-target=\"#vendors\" data-isbn='+jsonVal[i].isbn+' data-title='+jsonVal[i].title_id+'  ></span></td><td class="hideC">'+jsonObj[i].branch_order_id+'</td><td class="hideC">'+jsonObj[i].isbn+'</td><td><input style=\"width: 80%;white-space:nowrap;\" type=\"number\"  class="tdInputDis" value='+dis+' oninput="inputDis(this)" min=\"0\"   ></input></td><td class="disClass hideC">'+dis+'</td><td class="priceClass hideC">'+jsonObj[i].price+'</td><td class="netClass ">'+netPrice+'</td></tr>');
     };
 
 
@@ -353,12 +353,12 @@ function array_combine()
         console.log(this.data());
         var cell=[];
         cell.push(this.data()[1]);
-        cell.push(this.data()[5]);
-        cell.push(this.data()[8]);
-        cell.push(this.data()[9]);
         cell.push(this.data()[6]);
-        cell.push(this.data()[11]);
+        cell.push(this.data()[9]);
+        cell.push(this.data()[10]);
+        cell.push(this.data()[7]);
         cell.push(this.data()[12]);
+        cell.push(this.data()[13]);
         array.push(cell);
     });
     console.log(array);
@@ -384,7 +384,7 @@ function array_combine()
     // // });
     // // console.log(myTableArray);
     var vId=localStorage.getItem("vID");
-    var bId=localStorage.getItem("bId");
+    var bId=localStorage.getItem("linkBatch");
 
     $.ajax({
         type: "POST",

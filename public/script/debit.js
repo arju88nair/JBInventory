@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $('table').on('click','tr a',function(e){
+    $('isbn').on('click','tr a',function(e){
         e.preventDefault();
         $(this).parents('tr').remove();
     });
@@ -10,12 +10,20 @@ $(document).ready(function(){
 
 function submitButton()
 {
-$("#dataDIv").show();
+    $("#searchDIv").hide();
+
+    $("#dataDIv").show();
 }
 
 
 function appendTable()
 {
+
+    if($("#invoiceInput").val() == '')
+    {
+        alert("Please Enter An Invoice Number");
+        return false;
+    }
 $("#tableDov").show();
 var isbn=$("#isbn").val();
 var price=$("#price").val();
@@ -90,25 +98,29 @@ function pdfDOwn()
 
 function searchButton()
 {
+    $(".spinner").show();
+    $("#dataDIv").hide();
+    var po=$("#selProc").val();
+
+
+    $
     $.ajax({
         type: "GET",
-        url: "searchInvoice",
-        data: {'table': myTableArray,'po':po,'type':type,'invoice':invoice},
-        async: true,
+        url: "searchInvoice?po="+po,
         dataType: 'json',
         enctype: 'multipart/form-data',
         cache: false,
         success: function (res) {
-
+            $("#searchDIv").show();
+            $("#populateInvoiceTable tbody").empty();
             $(".spinner").hide();
-            console.log(res);
-            if(res.code==200)
+            console.log(res.length);
+            for(var i=0;i<res.length;i++)
             {
-                $("html, body").animate({ scrollTop: 0 }, "slow");
+                $('#populateInvoiceTable tbody').append('<tr><td >' + res[i].invoice + '</td><td >   <a href="debitPDF?poid='+po+'&invoice='+res[i].invoice+'"  class="btn btn-info" role="button">Download</a></td></tr>');
 
-                $("#pdfBUt").show()
-                alert("Succesfully added")
             }
+
 
 
 
@@ -121,4 +133,11 @@ function searchButton()
 
         }
     });
+}
+
+
+function DownloadPO()
+{
+    var po=$("#selProc").val();
+    window.location.href="debitPDF?poid="+po;
 }

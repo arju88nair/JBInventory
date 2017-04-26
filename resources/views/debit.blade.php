@@ -130,14 +130,14 @@
             &nbsp;&nbsp;
             <div class="form-group" style="margin-left: 4%;">
                 <label for="from">Invoice No.:</label>
-                <input type="text" class="form-control" id="invoiceInput" name="invoice" style="width:48%;" required>
+                <input type="text" class="form-control" id="invoiceInput" name="invoice" style="width:48%;" >
             </div>
 
 
 
             <button  class="btn btn-info btn-sm" style="margin-left: -2%;" onclick="submitButton()">Create</button>
             <button  class="btn btn-info btn-sm" style="margin-left: 2%;" onclick="searchButton()">Search</button>
-            <button type="button" class="btn btn-default btn-sm"onclick="DownloadPO()" style="margin-left: 2%;>
+            <button type="button" class="btn btn-default btn-sm" onclick="DownloadPO()" style="margin-left: 2%;">
                 <span class="glyphicon glyphicon-download-alt"></span> Download
             </button>
         </form>
@@ -155,17 +155,17 @@
         <form role="form" class="form-inline" >
             <div class="form-group" style="margin-left: 4%;">
                 <label for="from">ISBN/TitleID</label>
-                <input type="text" class="form-control" id="isbn" name="isbn" style="width:48%;" required>
+                <input type="text" class="form-control" id="isbn" name="isbn" style="width:48%;" >
             </div>
 
             <div class="form-group" style="margin-left: -5%;">
                 <label for="from">Price:</label>
-                <input type="text" class="form-control" id="price" name="price" style="width:48%;" required>
+                <input type="text" class="form-control" id="price" name="price" style="width:48%;" >
             </div>
 
             <div class="form-group" style="margin-left: -7%;">
                 <label for="from">Quantity:</label>
-                <input type="text" class="form-control" id="quantity" name="quantity" style="width:48%;" required>
+                <input type="text" class="form-control" id="quantity" name="quantity" style="width:48%;" >
             </div>
 
 
@@ -173,9 +173,14 @@
             <div class="form-group" style="margin-left: -8%;">
             <label for="sel1">Select Reasons:</label>
             <select class="form-control" id="selReason" style="width: 44%;" name="branch">
-            <option value="Reason 1">Reason 1</option>
-            <option value="Reason 2">Reason 2</option>
-            <option value="Reason 3">Reason 3</option>
+            <option value=" Short supply"> Short supply</option>
+            <option value="ISBN mismatch">ISBN mismatch</option>
+            <option value="Duplicate supply">Duplicate supply</option>
+            <option value="Activity book">Activity book</option>
+            <option value="Activity book">Activity book</option>
+            <option value="Damage books">Damage books</option>
+
+
 
 
             </select>
@@ -206,7 +211,7 @@
                 <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
             </div>
             <table class="table table-hover table-striped" id="isbn">
-                <thead style="background-color: #1ABB9C;">
+                <thead style="text-align: left">
                 <tr>
 
                     <th align="center">Title</th>
@@ -227,6 +232,47 @@
         <br>
 
         <button  class="btn btn-info" style="margin-left: 2%;" onclick="uploadTable()">Submit</button>
+        <br><br>
+    </div>
+
+
+</div>
+<div class="container" id="searchDIv" style="display:none">
+
+    <div class="container" id="tableDov" >
+        <button type="button" id="pdfBUt" class="btn btn-info" style="float:right;display:none" onclick="pdfDOwn()">Download as PDF</button>
+        <br><br>
+        <div class="col-md-12" id ="Totaldivision" style="margin-left: -2%;">
+            <div class="panel panel-primary">
+                <div class="panel-heading" >
+                    <h3 class="panel-title">Total Invoice</h3>
+                    <div class="pull-right">
+                        <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                        <i class="glyphicon glyphicon-filter"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Batches" />
+                </div>
+                <table class="table table-hover table-striped" id="populateInvoiceTable">
+                    <thead style="">
+                    <tr>
+
+                        <th align="center">Invoice Number</th>
+                        <th align="center">Download</th>
+
+
+                    </tr>
+                    </thead >
+                    <tbody class="populateInvoiceTable" style="background-color: white !important;text-align: left">
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <br>
+
         <br><br>
     </div>
 

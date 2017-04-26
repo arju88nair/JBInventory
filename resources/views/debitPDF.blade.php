@@ -205,7 +205,7 @@
         <P class="p0 ft0">JUST BOOKS CLC &trade;</P>
         <P class="p1 ft1">“Skanda” # 972/1, 13th cross, 16th Main,Banashankari 2nd Stage, </P>
         <P class="p2 ft1"><NOBR>Bangalore – 560070.</NOBR> Phone : <NOBR>+91 080 6570 1480</NOBR></P>
-        <P class="p3 ft2">PURCHASE ORDER</P>
+        <P class="p3 ft2">DEBIT/CREDIT NOTES</P>
         <TABLE cellpadding=0 cellspacing=0 class="t0">
             <TR>
                 <TD style="margin-left: -1% "class="tr0 td0"><P class="p4 ft1">PO Number: &nbsp;&nbsp; <?php echo $po_id?></P></TD>
@@ -227,16 +227,15 @@
 
 <DIV class="dclr"></DIV>
 <DIV id="id_1">
-    {{--<P class="p21 ft0">STRATA RETAIL TECHNOLOGY SERVICES PRIVATE LIMITED</P>--}}
-    {{--<P class="p22 ft1">24/1,2ndMain,AshtalakshmiLayout,PuttenahalliMainRoad,J.P.Nagar,6thPhase</P>--}}
-    {{--<P class="p23 ft1"><NOBR>Bangalore-560078,</NOBR> Phone : <NOBR>91-80-425-15000</NOBR></P>--}}
+
     <table>
         <TR>
             <TH>Title ID</TH>
-            <TH>Title</TH>
+            <TH>Material Description</TH>
             <TH>Price</TH>
             <TH>Quantity</TH>
-            <TH>Reason</TH>
+            <TH>Gross Total</TH>
+            <TH>Remarks</TH>
             <TH>Invoice</TH>
             <TH>Created At</TH>
 
@@ -247,6 +246,7 @@
             <TD><?php echo $brand->title; ?></TD>
             <TD><?php echo $brand->price; ?></TD>
             <TD><?php echo $brand->quantity; ?></TD>
+            <TD><?php echo (int)$brand->price*(int)$brand->quantity; ?></TD>
             <TD><?php echo $brand->reason; ?></TD>
             <TD><?php echo $brand->invoice; ?></TD>
             <TD><?php echo $brand->created_at; ?></TD>

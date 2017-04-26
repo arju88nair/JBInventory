@@ -342,6 +342,8 @@
 
                             <th>Book Name</th>
                             <th>Title Id</th>
+                            <th>Publisher</th>
+
                             <th>Quantity Required</th>
                             <th>Quantity Available</th>
                             <th>Quantity Ordered</th>

@@ -925,7 +925,7 @@ amount,nvl(po_id,'N/A') po_id,((((amount*ordered_quantity)*mp.vat)/100)+amount*o
         $from=$_POST['from'];
         $to=$_POST['to'];
         $branch=$_POST['branch'];
-        $queryProc="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+        $queryProc="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.mrp,0) amount
                 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
                 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
                 b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
@@ -939,7 +939,7 @@ amount,nvl(po_id,'N/A') po_id,((((amount*ordered_quantity)*mp.vat)/100)+amount*o
         $procpcharge=$procRes[0]->p_charge;
 
 
-        $querybranc="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+        $querybranc="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.mrp,0) amount
                 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
                 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
                 b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
@@ -954,7 +954,7 @@ amount,nvl(po_id,'N/A') po_id,((((amount*ordered_quantity)*mp.vat)/100)+amount*o
 
 
 
-        $queryGift="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+        $queryGift="select sum(quantity) quantity,sum(amount) cost,sum(quantity*18) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.mrp,0) amount
                 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
                 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
                 b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
@@ -967,7 +967,7 @@ amount,nvl(po_id,'N/A') po_id,((((amount*ordered_quantity)*mp.vat)/100)+amount*o
         $giftcost=$giftRes[0]->cost;
         $giftcpcharge=$giftRes[0]->p_charge;
 
-        $query="select b.name,bo.amount,cd.title_id,nvl(bo.quantity*bo.amount,0) amount, jt.title ,nvl(bo.quantity,0) quantity,
+        $query="select b.name,bo.mrp,cd.title_id,nvl(bo.quantity*bo.amount,0) amount, jt.title ,nvl(bo.quantity,0) quantity,
 po_id,batch_id,cd.isbn,book_num,cd.branch_id,b.procurement_type_id,to_char(cd.created_at,'YYYY-MM-DD') created_at 
 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
@@ -1027,7 +1027,7 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
 
 
 
-        $queryProc="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+        $queryProc="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.mrp,0) amount
                 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
                 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
                 b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
@@ -1041,7 +1041,7 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
         $procpcharge=$procRes[0]->p_charge;
 
 
-        $querybranc="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+        $querybranc="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.mrp,0) amount
                 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
                 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
                 b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
@@ -1056,7 +1056,7 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
 
 
 
-        $queryGift="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.amount,0) amount
+        $queryGift="select nvl(sum(quantity),0) quantity,nvl(sum(amount),0) cost,nvl(sum(quantity*18),0) p_charge from (select b.procurement_type_id,nvl(bo.quantity,0) quantity,nvl(bo.quantity*bo.mrp,0) amount
                 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
                 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
                 b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where 
@@ -1069,7 +1069,7 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
         $giftcost=$giftRes[0]->cost;
         $giftcpcharge=$giftRes[0]->p_charge;
 
-        $query="select b.name,bo.amount,cd.title_id,nvl(bo.quantity*bo.amount,0) amount, jt.title ,nvl(bo.quantity,0) quantity,
+        $query="select b.name,bo.mrp,cd.title_id,nvl(bo.quantity*bo.mrp,0) amount, jt.title ,nvl(bo.quantity,0) quantity,
 po_id,batch_id,cd.isbn,book_num,cd.branch_id,b.procurement_type_id,to_char(cd.created_at,'YYYY-MM-DD') created_at 
 from memp.catalogue_details cd join memp.jb_titles jt on cd.title_id=jt.titleid
 join memp.jb_branches jb on cd.branch_id=jb.id join opac.batch b on cd.batch_id=
@@ -1154,16 +1154,32 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
         public static function debitPDF()
         {
             $po_id=$_GET['poid'];
-            $venderQuery="select name,contact,city from ams.suppliers where id=(select vendor_id  from memp.batch_vendor_po where orderid='$po_id'and rownum =1)";
+
+            if(isset($_GET['invoice']))
+            {
+                $inv=$_GET['invoice'];
+
+                $invoice="and invoice='$inv'";
+            }
+            else{
+                $invoice='';
+            }
+            $venderQuery="select name,contact,city,discount from ams.suppliers where id=(select vendor_id  from memp.batch_vendor_po where orderid='$po_id'and rownum =1)";
             $response=DB::select($venderQuery);
+            $name='';
+            $contact='';
+            $city='';
+            $discount='';
+
             if($response !=[] && !empty($response))
             {
                 $name=$response[0]->name;
                 $contact=$response[0]->contact;
                 $city=$response[0]->city;
+                $discount=$response[0]->discount;
             }
 
-            $query="select po,invoice,type,db.titleid,price,quantity,reason,title,to_char(created_at,'DD-MM-YYYY') created_at from memp.debitnotes db join jbprod.titles jt on db.titleid=jt.titleid  ";
+            $query="select po,invoice,type,db.titleid,price,quantity,reason,title,to_char(created_at,'DD-MM-YYYY') created_at from memp.debitnotes db join jbprod.titles jt on db.titleid=jt.titleid where po = '$po_id'$invoice ";
             $final=DB::select($query);
 
             $contArrayBat = [];
@@ -1174,13 +1190,30 @@ b.id join opac.branch_orders bo on bo.id=cd.BRANCH_ORDER_ID where
             }
             $date = date('Y-m-d');
 
-            $pdf = PDFS::loadView('debitPDF', compact('name', 'contact', 'city','date','contArrayBat','po_id'));
+            $pdf = PDFS::loadView('debitPDF', compact('name', 'contact', 'city','date','contArrayBat','po_id','discount'));
             return $pdf->download($po_id.'.pdf');
 
 
 
 
             
+        }
+
+
+        public static function searchInvoice()
+        {
+            $po=$_GET['po'];
+
+            $query="select distinct invoice from memp.debitnotes where po='$po'";
+            $res=DB::select($query);
+            $array = [];
+            foreach ($res as $item) {
+                array_push($array, $item);
+            }
+
+            return $array;
+
+
         }
 
 

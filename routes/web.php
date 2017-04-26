@@ -343,4 +343,7 @@ Route::post('InsertdebitCredit','HomeController@InsertdebitCredit');
 
 Route::get('debitPDF','HomeController@debitPDF');
 
+Route::get('searchInvoice','HomeController@searchInvoice');
+
+
 

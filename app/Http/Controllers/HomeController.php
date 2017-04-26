@@ -401,6 +401,12 @@ class HomeController extends Controller
         return report::debitPDF($request->all());
     }
 
+
+    public function searchInvoice(Request $request)
+    {
+        return report::searchInvoice($request->all());
+    }
+
 }
 
 
